@@ -2,7 +2,7 @@ from beeai_framework.tools import StringToolOutput, tool
 
 from tools.utils import fetch_json, format_response
 
-BASE_URL = "https://content.osu.edu/v2/api/v1/dining"
+BASE_URL = "https://content.osu.edu/v2/api/v1/dining/locations"
 
 
 @tool
@@ -22,5 +22,5 @@ async def get_dining_locations_with_menus() -> StringToolOutput:
 @tool
 async def get_dining_menu(section_id: int) -> StringToolOutput:
     """Get detailed menu items for a specific dining section. Use get_dining_locations_with_menus first to find section IDs."""
-    data = await fetch_json(f"{BASE_URL}/menu/{section_id}")
+    data = await fetch_json(f"https://content.osu.edu/v2/api/v1/dining/menu/{section_id}")
     return StringToolOutput(format_response(data, f"Menu for Section {section_id}"))
