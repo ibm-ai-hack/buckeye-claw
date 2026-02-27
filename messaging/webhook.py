@@ -16,6 +16,7 @@ app = Flask(__name__)
 
 # Set by main.py before starting the server
 _agent_handler = None
+_main_loop: asyncio.AbstractEventLoop | None = None
 
 
 def set_agent_handler(handler):
@@ -25,6 +26,12 @@ def set_agent_handler(handler):
     """
     global _agent_handler
     _agent_handler = handler
+
+
+def set_main_loop(loop: asyncio.AbstractEventLoop):
+    """Set the main asyncio event loop for coroutine submission from Flask threads."""
+    global _main_loop
+    _main_loop = loop
 
 
 @app.route("/webhook", methods=["POST", "GET"])
@@ -61,23 +68,37 @@ def linq_webhook():
 
 
 def _process_event(event):
-    """Background processing of webhook events."""
-    loop = asyncio.new_event_loop()
+    """Submit event processing to the main asyncio loop."""
+    if _main_loop is None or _main_loop.is_closed():
+        # Fallback: create a one-off loop if main loop isn't set yet
+        loop = asyncio.new_event_loop()
+        try:
+            loop.run_until_complete(_process_event_async(event))
+        except Exception:
+            logger.exception("Error processing webhook event")
+        finally:
+            loop.close()
+        return
+
+    future = asyncio.run_coroutine_threadsafe(_process_event_async(event), _main_loop)
     try:
-        if isinstance(event, InboundMessage):
-            loop.run_until_complete(_handle_inbound_message(event))
-        elif isinstance(event, StatusEvent):
-            logger.info("Message %s status: %s", event.message_id, event.status)
-        elif isinstance(event, ReactionEvent):
-            action = "added" if event.added else "removed"
-            logger.info("Reaction %s %s by %s on %s", event.reaction, action, event.from_number, event.message_id)
-        elif isinstance(event, TypingEvent):
-            state = "started" if event.started else "stopped"
-            logger.info("Typing %s by %s", state, event.from_number)
+        future.result(timeout=120)
     except Exception:
         logger.exception("Error processing webhook event")
-    finally:
-        loop.close()
+
+
+async def _process_event_async(event):
+    """Async event processing dispatched by type."""
+    if isinstance(event, InboundMessage):
+        await _handle_inbound_message(event)
+    elif isinstance(event, StatusEvent):
+        logger.info("Message %s status: %s", event.message_id, event.status)
+    elif isinstance(event, ReactionEvent):
+        action = "added" if event.added else "removed"
+        logger.info("Reaction %s %s by %s on %s", event.reaction, action, event.from_number, event.message_id)
+    elif isinstance(event, TypingEvent):
+        state = "started" if event.started else "stopped"
+        logger.info("Typing %s by %s", state, event.from_number)
 
 
 async def _handle_inbound_message(msg: InboundMessage):

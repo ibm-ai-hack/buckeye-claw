@@ -1,15 +1,17 @@
 [project]
-name = "buckeyebot"
+name = "buckeyeclaw"
 version = "0.1.0"
 description = "Unified AI agent for Ohio State University students via iMessage, RCS, and SMS"
 requires-python = ">=3.11"
 dependencies = [
     "beeai-framework",
+    "ibm-watsonx-ai",
     "anthropic",
     "flask",
     "httpx",
     "python-dotenv",
     "canvasapi",
+    "pydantic>=2.0",
 ]
 
 [project.optional-dependencies]
