@@ -1,6 +1,6 @@
 from beeai_framework.agents.requirement import RequirementAgent
 from beeai_framework.backend import ChatModel
-from beeai_framework.memory import TokenMemory
+from beeai_framework.memory import UnconstrainedMemory
 
 # Campus tools
 from tools.dining import get_dining_locations, get_dining_locations_with_menus, get_dining_menu
@@ -80,22 +80,38 @@ ALL_TOOLS = [
 ]
 
 
-def create_agent() -> RequirementAgent:
+def create_granite_agent(tools=None) -> RequirementAgent:
+    """Fast/cheap Granite agent for intent classification and SMS formatting."""
     llm = ChatModel.from_name("watsonx:ibm/granite-3-8b-instruct")
-
-    agent = RequirementAgent(
+    return RequirementAgent(
         llm=llm,
-        tools=ALL_TOOLS,
-        memory=TokenMemory(llm),
+        tools=tools or [],
+        memory=UnconstrainedMemory(),
         role="BuckeyeBot — Ohio State University student assistant",
         instructions=[
             "You help OSU students via text message. Keep responses concise and SMS-friendly (under 1500 characters).",
-            "Use campus tools to answer questions about dining, buses, parking, events, classes, library rooms, rec sports, buildings, the academic calendar, student orgs, food trucks, athletics, and BuckID merchants.",
-            "Use Canvas tools to check courses, assignments, grades, announcements, and to-do items.",
-            "Use Grubhub tools to help order food from nearby restaurants.",
-            "Use BuckeyeLink tools to check class schedules, grades, financial aid, holds/to-dos, enrollment info, and the dashboard overview.",
             "When presenting data, summarize the most relevant results rather than dumping raw JSON.",
             "If a tool returns an error, explain the issue simply and suggest alternatives.",
         ],
     )
-    return agent
+
+
+def create_claude_agent() -> RequirementAgent:
+    """Claude Opus 4.6 agent for complex reasoning and tool execution."""
+    llm = ChatModel.from_name("anthropic:claude-opus-4-6")
+    return RequirementAgent(
+        llm=llm,
+        tools=ALL_TOOLS,
+        memory=UnconstrainedMemory(),
+        role="BuckeyeBot planner — Ohio State University student assistant",
+        instructions=[
+            "You are the planning and execution brain of BuckeyeBot.",
+            "Given the user's intent and parameters, select and call the appropriate tools.",
+            "Synthesize tool results into a clear, helpful response.",
+            "Keep your response informative but concise — it will be reformatted for SMS.",
+            "Use campus tools for dining, buses, parking, events, classes, library rooms, rec sports, buildings, the academic calendar, student orgs, food trucks, athletics, and BuckID merchants.",
+            "Use Canvas tools to check courses, assignments, grades, announcements, and to-do items.",
+            "Use Grubhub tools to help order food from nearby restaurants.",
+            "Use BuckeyeLink tools to check class schedules, grades, financial aid, holds/to-dos, enrollment info, and the dashboard overview.",
+        ],
+    )
