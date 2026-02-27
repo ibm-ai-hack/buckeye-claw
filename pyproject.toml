@@ -9,6 +9,8 @@ dependencies = [
     "httpx",
     "python-dotenv",
     "canvasapi",
+    "supabase",
+    "openai",
 ]
 
 [project.optional-dependencies]
