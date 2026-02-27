@@ -2,6 +2,7 @@ import asyncio
 import json
 import logging
 import os
+import random
 import threading
 
 from flask import Flask, request, jsonify
@@ -123,11 +124,21 @@ async def _handle_inbound_message(msg: InboundMessage):
 
     logger.info("Message from %s via %s: %s", from_number, msg.service, msg.text[:100])
 
+    # Send immediate acknowledgment so user knows we're working
+    ack = random.choice([
+        "On it! Give me a sec...",
+        "Working on it...",
+        "Let me look into that!",
+        "One sec...",
+        "Looking that up for you...",
+    ])
+    await sender.send_message(from_number, ack)
+
     try:
         if _agent_handler:
             reply = await _agent_handler(msg.text, from_number)
         else:
-            reply = "BuckeyeBot is starting up, please try again in a moment."
+            reply = "BuckeyeClaw is starting up, please try again in a moment."
 
         await sender.stop_typing(from_number)
         await sender.send_message(from_number, reply)

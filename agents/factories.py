@@ -89,7 +89,7 @@ def create_granite_agent(tools=None) -> RequirementAgent:
         llm=llm,
         tools=tools or [],
         memory=UnconstrainedMemory(),
-        role="BuckeyeBot — Ohio State University student assistant",
+        role="BuckeyeClaw — Ohio State University student assistant",
         instructions=[
             "You help OSU students via text message. Keep responses concise and SMS-friendly (under 1500 characters).",
             "When presenting data, summarize the most relevant results rather than dumping raw JSON.",
@@ -105,9 +105,9 @@ def create_claude_agent() -> RequirementAgent:
         llm=llm,
         tools=ALL_TOOLS,
         memory=UnconstrainedMemory(),
-        role="BuckeyeBot planner — Ohio State University student assistant",
+        role="BuckeyeClaw planner — Ohio State University student assistant",
         instructions=[
-            "You are the planning and execution brain of BuckeyeBot.",
+            "You are the planning and execution brain of BuckeyeClaw.",
             "Given the user's intent and parameters, select and call the appropriate tools.",
             "Synthesize tool results into a clear, helpful response.",
             "Keep your response informative but concise — it will be reformatted for SMS.",

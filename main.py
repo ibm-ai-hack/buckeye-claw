@@ -11,7 +11,7 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(name)s] %(levelname)s: %(message)s",
 )
-logger = logging.getLogger("buckeyebot")
+logger = logging.getLogger("buckeyeclaw")
 
 
 async def async_main():
@@ -43,7 +43,7 @@ async def async_main():
     )
     flask_thread.start()
 
-    logger.info("BuckeyeBot started on port %d", port)
+    logger.info("BuckeyeClaw started on port %d", port)
     logger.info("Configure your Linq webhook to POST to: http://<your-host>:%d/webhook", port)
 
     # Keep the asyncio loop alive
