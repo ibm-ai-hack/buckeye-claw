@@ -76,6 +76,7 @@ def _build_workflow() -> Workflow:
         if state.is_simple:
             return
 
+        logger.info("Claude step starting for intent=%s", state.intent)
         agent = create_claude_agent()
         prompt = (
             f"User intent: {state.intent}\n"
@@ -89,10 +90,10 @@ def _build_workflow() -> Workflow:
             state.draft_response = response.last_message.text
         except FrameworkError as e:
             logger.error("Claude execution error: %s", e.explain())
-            state.draft_response = ""
-        except Exception:
+            state.draft_response = f"[DEBUG] Claude error: {e.explain()[:400]}"
+        except Exception as e:
             logger.exception("Unexpected error in Claude execution")
-            state.draft_response = ""
+            state.draft_response = f"[DEBUG] Claude exception: {type(e).__name__}: {e}"[:500]
 
     async def granite_format(state: PipelineState):
         """Granite formats the final response for SMS delivery."""
