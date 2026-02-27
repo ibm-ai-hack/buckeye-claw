@@ -24,12 +24,12 @@ export default function GradeBar({
 
   const color =
     percentage >= 85
-      ? "#22c55e"
+      ? "var(--color-success)"
       : percentage >= 70
-        ? "rgb(220,170,50)"
+        ? "var(--color-grade-mid)"
         : percentage >= 60
-          ? "#eab308"
-          : "#ef4444";
+          ? "var(--color-warning)"
+          : "var(--color-error)";
 
   return (
     <div
@@ -45,7 +45,7 @@ export default function GradeBar({
           fontFamily: "var(--font-space-mono)",
           fontWeight: 400,
           fontSize: 14,
-          color: "rgba(255,255,255,0.75)",
+          color: "var(--color-text-secondary)",
           minWidth: 120,
           letterSpacing: "0.5px",
         }}
@@ -57,7 +57,7 @@ export default function GradeBar({
           flex: 1,
           height: 8,
           borderRadius: 4,
-          background: "rgba(255,255,255,0.04)",
+          background: "var(--color-border)",
           overflow: "hidden",
         }}
       >
@@ -76,7 +76,7 @@ export default function GradeBar({
           fontFamily: "var(--font-space-mono)",
           fontWeight: 400,
           fontSize: 14,
-          color: "rgba(255,255,255,0.85)",
+          color: "var(--color-text-primary)",
           width: 36,
           textAlign: "right",
         }}
@@ -88,7 +88,7 @@ export default function GradeBar({
           fontFamily: "var(--font-outfit)",
           fontWeight: 300,
           fontSize: 15,
-          color: "rgba(255,255,255,0.70)",
+          color: "var(--color-text-tertiary)",
           width: 28,
         }}
       >

@@ -23,12 +23,12 @@ export default function ParkingRing({ name, available, total }: ParkingRingProps
 
   const color =
     available === 0
-      ? "#ef4444"
+      ? "var(--color-error)"
       : pct < 0.2
-        ? "rgb(198,40,40)"
+        ? "var(--color-scarlet)"
         : pct < 0.5
-          ? "#eab308"
-          : "#22c55e";
+          ? "var(--color-warning)"
+          : "var(--color-success)";
 
   return (
     <div
@@ -50,8 +50,8 @@ export default function ParkingRing({ name, available, total }: ParkingRingProps
             cy="36"
             r={radius}
             fill="none"
-            stroke="rgba(255,255,255,0.04)"
             strokeWidth="6"
+            style={{ stroke: "var(--color-border)" }}
           />
           {/* Fill */}
           <circle
@@ -86,7 +86,7 @@ export default function ParkingRing({ name, available, total }: ParkingRingProps
               fontFamily: "var(--font-outfit)",
               fontWeight: 200,
               fontSize: available === 0 ? 20 : 28,
-              color: "rgba(255,255,255,0.80)",
+              color: "var(--color-text-heading)",
               lineHeight: 1,
             }}
           >
@@ -99,7 +99,7 @@ export default function ParkingRing({ name, available, total }: ParkingRingProps
           fontFamily: "var(--font-space-mono)",
           fontWeight: 400,
           fontSize: 12,
-          color: "rgba(255,255,255,0.50)",
+          color: "var(--color-text-faint)",
           letterSpacing: "0.5px",
           textAlign: "center",
         }}

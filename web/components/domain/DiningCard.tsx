@@ -31,8 +31,8 @@ export default function DiningCard({
       style={{
         flex: "1 1 calc(50% - 8px)",
         minWidth: 280,
-        background: "rgba(255,255,255,0.02)",
-        border: "1px solid rgba(255,255,255,0.05)",
+        background: "var(--color-surface-1)",
+        border: "1px solid var(--color-surface-3)",
         borderRadius: 14,
         padding: 20,
         opacity: isOpen ? 1 : 0.5,
@@ -53,13 +53,13 @@ export default function DiningCard({
               fontFamily: "var(--font-outfit)",
               fontWeight: 300,
               fontSize: 18,
-              color: "rgba(255,255,255,0.80)",
+              color: "var(--color-text-heading)",
             }}
           >
             {hallName}
           </span>
           <PulseDot
-            color={isOpen ? "#22c55e" : "rgba(255,255,255,0.15)"}
+            color={isOpen ? "var(--color-success)" : "var(--color-border-focus)"}
             size={6}
             pulse={isOpen}
           />
@@ -71,7 +71,7 @@ export default function DiningCard({
           fontFamily: "var(--font-space-mono)",
           fontWeight: 400,
           fontSize: 13,
-          color: "rgba(255,255,255,0.55)",
+          color: "var(--color-text-subtle)",
           marginBottom: 4,
         }}
       >
@@ -82,7 +82,7 @@ export default function DiningCard({
           fontFamily: "var(--font-space-mono)",
           fontWeight: 400,
           fontSize: 13,
-          color: "rgba(255,255,255,0.45)",
+          color: "var(--color-text-label)",
           marginBottom: 14,
         }}
       >
@@ -96,7 +96,7 @@ export default function DiningCard({
             fontFamily: "var(--font-space-mono)",
             fontWeight: 400,
             fontSize: 13,
-            color: expanded ? "rgba(255,255,255,0.60)" : "rgba(255,255,255,0.60)",
+            color: "var(--color-text-muted)",
             background: "none",
             border: "none",
             cursor: "pointer",
@@ -104,7 +104,7 @@ export default function DiningCard({
             transition: "color 0.15s ease",
             textDecoration: expanded ? "none" : "underline",
             textUnderlineOffset: 3,
-            textDecorationColor: "rgba(255,255,255,0.10)",
+            textDecorationColor: "var(--color-border-bright)",
           }}
         >
           {expanded ? "hide menu" : "view menu"}
@@ -139,8 +139,8 @@ export default function DiningCard({
                     minWidth: 160,
                     width: 160,
                     padding: 14,
-                    background: "rgba(255,255,255,0.03)",
-                    border: "1px solid rgba(255,255,255,0.04)",
+                    background: "var(--color-surface-2)",
+                    border: "1px solid var(--color-border)",
                     borderRadius: 10,
                     flexShrink: 0,
                     animation: `fadeInUp 300ms ease-out ${i * 60}ms forwards`,
@@ -152,7 +152,7 @@ export default function DiningCard({
                       fontFamily: "var(--font-outfit)",
                       fontWeight: 300,
                       fontSize: 15,
-                      color: "rgba(255,255,255,0.80)",
+                      color: "var(--color-text-heading)",
                       marginBottom: 8,
                     }}
                   >
@@ -165,7 +165,7 @@ export default function DiningCard({
                         fontFamily: "var(--font-space-mono)",
                         fontWeight: 400,
                         fontSize: 12,
-                        color: "rgba(255,255,255,0.50)",
+                        color: "var(--color-text-faint)",
                         lineHeight: 1.8,
                       }}
                     >

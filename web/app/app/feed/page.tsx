@@ -149,13 +149,13 @@ function DiningResult({ data }: { data: Record<string, unknown> }) {
             fontFamily: "var(--font-outfit)",
             fontWeight: 200,
             fontSize: 18,
-            color: "rgba(255,255,255,0.85)",
+            color: "var(--color-text-primary)",
             letterSpacing: "0.1em",
           }}
         >
           {data.hall as string} — {data.meal as string}
         </span>
-        <PulseDot color="#22c55e" size={6} />
+        <PulseDot color="var(--color-success)" size={6} />
       </div>
       <div
         style={{
@@ -174,8 +174,8 @@ function DiningResult({ data }: { data: Record<string, unknown> }) {
               width: 160,
               height: 140,
               padding: 14,
-              background: "rgba(255,255,255,0.03)",
-              border: "1px solid rgba(255,255,255,0.04)",
+              background: "var(--color-surface-2)",
+              border: "1px solid var(--color-border)",
               borderRadius: 10,
               flexShrink: 0,
               scrollSnapAlign: "start",
@@ -188,7 +188,7 @@ function DiningResult({ data }: { data: Record<string, unknown> }) {
                 fontFamily: "var(--font-outfit)",
                 fontWeight: 300,
                 fontSize: 15,
-                color: "rgba(255,255,255,0.80)",
+                color: "var(--color-text-heading)",
                 marginBottom: 8,
               }}
             >
@@ -201,7 +201,7 @@ function DiningResult({ data }: { data: Record<string, unknown> }) {
                   fontFamily: "var(--font-space-mono)",
                   fontWeight: 400,
                   fontSize: 14,
-                  color: "rgba(255,255,255,0.70)",
+                  color: "var(--color-text-tertiary)",
                   lineHeight: 1.8,
                 }}
               >
@@ -224,7 +224,7 @@ function BusResult({ data }: { data: Record<string, unknown> }) {
           fontFamily: "var(--font-outfit)",
           fontWeight: 300,
           fontSize: 16,
-          color: "rgba(255,255,255,0.75)",
+          color: "var(--color-text-secondary)",
           marginBottom: 12,
         }}
       >
@@ -240,19 +240,19 @@ function BusResult({ data }: { data: Record<string, unknown> }) {
             height: 36,
             borderBottom:
               i < vehicles.length - 1
-                ? "1px solid rgba(255,255,255,0.03)"
+                ? "1px solid var(--color-border-subtle)"
                 : "none",
             animation: `fadeInUp 200ms ease-out ${i * 80}ms forwards`,
             opacity: 0,
           }}
         >
-          <PulseDot color="rgb(198,40,40)" size={6} pulse />
+          <PulseDot color="var(--color-scarlet)" size={6} pulse />
           <span
             style={{
               fontFamily: "var(--font-space-mono)",
               fontWeight: 400,
               fontSize: 15,
-              color: "rgba(255,255,255,0.75)",
+              color: "var(--color-text-secondary)",
               width: 60,
             }}
           >
@@ -263,7 +263,7 @@ function BusResult({ data }: { data: Record<string, unknown> }) {
               fontFamily: "var(--font-space-mono)",
               fontWeight: 400,
               fontSize: 15,
-              color: "rgba(255,255,255,0.75)",
+              color: "var(--color-text-secondary)",
               flex: 1,
             }}
           >
@@ -276,8 +276,8 @@ function BusResult({ data }: { data: Record<string, unknown> }) {
               fontSize: 14,
               color:
                 parseInt(v.eta) <= 5
-                  ? "rgb(198,40,40)"
-                  : "rgba(255,255,255,0.70)",
+                  ? "var(--color-scarlet)"
+                  : "var(--color-text-tertiary)",
               letterSpacing: "0.5px",
             }}
           >
@@ -293,12 +293,12 @@ function GradeResult({ data }: { data: Record<string, unknown> }) {
   const pct = data.percentage as number;
   const barColor =
     pct >= 85
-      ? "#22c55e"
+      ? "var(--color-success)"
       : pct >= 70
-        ? "rgb(220,170,50)"
+        ? "var(--color-grade-mid)"
         : pct >= 60
-          ? "#eab308"
-          : "#ef4444";
+          ? "var(--color-warning)"
+          : "var(--color-error)";
 
   return (
     <div>
@@ -315,7 +315,7 @@ function GradeResult({ data }: { data: Record<string, unknown> }) {
             fontFamily: "var(--font-space-mono)",
             fontWeight: 400,
             fontSize: 14,
-            color: "rgba(255,255,255,0.75)",
+            color: "var(--color-text-secondary)",
             width: 120,
           }}
         >
@@ -326,7 +326,7 @@ function GradeResult({ data }: { data: Record<string, unknown> }) {
             flex: 1,
             height: 8,
             borderRadius: 4,
-            background: "rgba(255,255,255,0.04)",
+            background: "var(--color-border)",
             overflow: "hidden",
           }}
         >
@@ -345,7 +345,7 @@ function GradeResult({ data }: { data: Record<string, unknown> }) {
             fontFamily: "var(--font-space-mono)",
             fontWeight: 400,
             fontSize: 14,
-            color: "rgba(255,255,255,0.85)",
+            color: "var(--color-text-primary)",
             width: 36,
             textAlign: "right",
           }}
@@ -357,7 +357,7 @@ function GradeResult({ data }: { data: Record<string, unknown> }) {
             fontFamily: "var(--font-outfit)",
             fontWeight: 300,
             fontSize: 15,
-            color: "rgba(255,255,255,0.70)",
+            color: "var(--color-text-tertiary)",
             width: 28,
           }}
         >
@@ -477,14 +477,14 @@ export default function FeedPage() {
           flexShrink: 0,
         }}
       >
-        <PulseDot color="rgb(198,40,40)" size={6} pulse={isProcessing} />
+        <PulseDot color="var(--color-scarlet)" size={6} pulse={isProcessing} />
         <h1
           style={{
             fontFamily: "var(--font-outfit)",
             fontWeight: 200,
             fontSize: 16,
             letterSpacing: "0.25em",
-            color: "rgba(255,255,255,0.85)",
+            color: "var(--color-text-primary)",
             textTransform: "lowercase",
             margin: 0,
           }}
@@ -546,51 +546,6 @@ export default function FeedPage() {
 
       {/* Input */}
       <InputBar onSubmit={handleSubmit} />
-
-      {/* Global keyframes */}
-      <style jsx global>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(8px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        @keyframes pulseDot {
-          0%,
-          100% {
-            transform: scale(1);
-            opacity: 1;
-          }
-          50% {
-            transform: scale(1.4);
-            opacity: 0.7;
-          }
-        }
-        @keyframes gradeBarFill {
-          from {
-            width: 0;
-          }
-        }
-
-        /* Hide scrollbar but keep scrollable */
-        ::-webkit-scrollbar {
-          width: 4px;
-        }
-        ::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-          background: rgba(255, 255, 255, 0.06);
-          border-radius: 2px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-          background: rgba(255, 255, 255, 0.12);
-        }
-      `}</style>
     </div>
   );
 }

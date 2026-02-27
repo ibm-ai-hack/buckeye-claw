@@ -287,7 +287,7 @@ export default function ConnectPage() {
         minHeight: "100vh",
         width: "100vw",
         background:
-          "radial-gradient(ellipse at 50% 40%, rgba(40,5,5,1) 0%, rgba(15,2,2,1) 40%, #0a0a0a 70%)",
+          "radial-gradient(ellipse at 50% 40%, rgba(40,5,5,1) 0%, rgba(15,2,2,1) 40%, var(--color-bg) 70%)",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -311,7 +311,7 @@ export default function ConnectPage() {
             fontSize: "clamp(24px, 4vw, 36px)",
             letterSpacing: "0.25em",
             textTransform: "lowercase",
-            color: "rgba(255,255,255,0.85)",
+            color: "var(--color-text-primary)",
             margin: 0,
             lineHeight: 1,
           }}
@@ -324,7 +324,7 @@ export default function ConnectPage() {
             fontWeight: 400,
             fontSize: 13,
             letterSpacing: "2px",
-            color: "rgba(255,255,255,0.5)",
+            color: "var(--color-text-faint)",
             margin: 0,
             marginTop: 10,
           }}
@@ -342,13 +342,13 @@ export default function ConnectPage() {
             aspectRatio: "16 / 10",
             borderRadius: 16,
             overflow: "hidden",
-            border: `1px solid ${browserFocused ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.08)"}`,
-            background: "rgba(255,255,255,0.03)",
+            border: `1px solid ${browserFocused ? "var(--color-border-active)" : "var(--color-border-strong)"}`,
+            background: "var(--color-surface-2)",
             backdropFilter: "blur(12px)",
             WebkitBackdropFilter: "blur(12px)",
             boxShadow: browserFocused
-              ? "0 8px 40px rgba(0,0,0,0.4), 0 2px 12px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.06)"
-              : "0 8px 40px rgba(0,0,0,0.4), 0 2px 12px rgba(0,0,0,0.3)",
+              ? "var(--shadow-browser-focus)"
+              : "var(--shadow-browser)",
             transition: "border-color 0.2s ease, box-shadow 0.2s ease",
           }}
         >
@@ -370,8 +370,8 @@ export default function ConnectPage() {
                 style={{
                   width: 20,
                   height: 20,
-                  border: "1.5px solid rgba(255,255,255,0.1)",
-                  borderTopColor: "rgba(255,255,255,0.6)",
+                  border: "1.5px solid var(--color-border-bright)",
+                  borderTopColor: "var(--color-text-muted)",
                   borderRadius: "50%",
                   display: "inline-block",
                   animation: "spin 0.9s linear infinite",
@@ -382,7 +382,7 @@ export default function ConnectPage() {
                   fontFamily: "var(--font-space-mono)",
                   fontSize: 13,
                   letterSpacing: "3px",
-                  color: "rgba(255,255,255,0.6)",
+                  color: "var(--color-text-muted)",
                   textTransform: "lowercase",
                   animation: "pulse 2s ease infinite",
                 }}
@@ -434,7 +434,7 @@ export default function ConnectPage() {
                   width: 24,
                   height: 24,
                   borderRadius: "50%",
-                  border: "1.5px solid rgba(255,255,255,0.5)",
+                  border: "1.5px solid var(--color-text-faint)",
                   animation: "ripple 0.4s ease-out forwards",
                   pointerEvents: "none",
                 }}
@@ -473,11 +473,11 @@ export default function ConnectPage() {
               width: 28,
               height: 28,
               borderRadius: 8,
-              border: "1px solid rgba(255,255,255,0.1)",
-              background: "rgba(0,0,0,0.5)",
+              border: "1px solid var(--color-border-bright)",
+              background: "var(--color-overlay-strong)",
               backdropFilter: "blur(8px)",
               WebkitBackdropFilter: "blur(8px)",
-              color: "rgba(255,255,255,0.5)",
+              color: "var(--color-text-faint)",
               fontSize: 14,
               cursor: "pointer",
               display: "flex",
@@ -489,12 +489,12 @@ export default function ConnectPage() {
               lineHeight: 1,
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(255,255,255,0.1)";
+              e.currentTarget.style.background = "var(--color-surface-hover)";
               e.currentTarget.style.color = "white";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = "rgba(0,0,0,0.5)";
-              e.currentTarget.style.color = "rgba(255,255,255,0.5)";
+              e.currentTarget.style.background = "var(--color-overlay-strong)";
+              e.currentTarget.style.color = "var(--color-text-faint)";
             }}
           >
             &times;
@@ -512,7 +512,7 @@ export default function ConnectPage() {
               fontFamily: "var(--font-space-mono)",
               fontSize: 12,
               letterSpacing: "1.5px",
-              color: "rgba(255,255,255,0.6)",
+              color: "var(--color-text-muted)",
               marginTop: 8,
               whiteSpace: "nowrap",
             }}
@@ -538,7 +538,7 @@ export default function ConnectPage() {
               fontFamily: "var(--font-space-mono)",
               fontSize: 13,
               letterSpacing: "2px",
-              color: "rgba(255,255,255,0.6)",
+              color: "var(--color-text-muted)",
               textTransform: "lowercase",
             }}
           >
@@ -552,9 +552,9 @@ export default function ConnectPage() {
                 fontSize: 12,
                 letterSpacing: "2px",
                 textTransform: "lowercase",
-                color: "rgba(255,255,255,0.5)",
-                background: "rgba(255,255,255,0.05)",
-                border: "1px solid rgba(255,255,255,0.1)",
+                color: "var(--color-text-faint)",
+                background: "var(--color-surface-3)",
+                border: "1px solid var(--color-border-bright)",
                 borderRadius: 6,
                 padding: "6px 16px",
                 cursor: "pointer",
@@ -562,12 +562,12 @@ export default function ConnectPage() {
                 transition: "all 0.2s ease",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(255,255,255,0.1)";
+                e.currentTarget.style.background = "var(--color-surface-hover)";
                 e.currentTarget.style.color = "white";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = "rgba(255,255,255,0.05)";
-                e.currentTarget.style.color = "rgba(255,255,255,0.5)";
+                e.currentTarget.style.background = "var(--color-surface-3)";
+                e.currentTarget.style.color = "var(--color-text-faint)";
               }}
             >
               try again
@@ -593,7 +593,7 @@ export default function ConnectPage() {
               fontWeight: 200,
               fontSize: 24,
               letterSpacing: "0.15em",
-              color: "rgba(255,255,255,0.7)",
+              color: "var(--color-text-tertiary)",
               textTransform: "lowercase",
               marginBottom: 20,
             }}
@@ -607,8 +607,8 @@ export default function ConnectPage() {
                 style={{
                   padding: "16px 20px",
                   borderRadius: 12,
-                  border: "1px solid rgba(255,255,255,0.06)",
-                  background: "rgba(255,255,255,0.02)",
+                  border: "1px solid var(--color-border-medium)",
+                  background: "var(--color-surface-1)",
                   display: "flex",
                   alignItems: "baseline",
                   gap: 16,
@@ -622,7 +622,7 @@ export default function ConnectPage() {
                     fontFamily: "var(--font-space-mono)",
                     fontSize: 15,
                     fontWeight: 400,
-                    color: "rgba(255,255,255,0.8)",
+                    color: "var(--color-text-heading)",
                     letterSpacing: "1px",
                     minWidth: 100,
                   }}
@@ -634,7 +634,7 @@ export default function ConnectPage() {
                     fontFamily: "var(--font-outfit)",
                     fontSize: 16,
                     fontWeight: 300,
-                    color: "rgba(255,255,255,0.75)",
+                    color: "var(--color-text-secondary)",
                     flex: 1,
                     minWidth: 180,
                   }}
@@ -645,7 +645,7 @@ export default function ConnectPage() {
                   style={{
                     fontFamily: "var(--font-space-mono)",
                     fontSize: 13,
-                    color: "rgba(255,255,255,0.75)",
+                    color: "var(--color-text-secondary)",
                     letterSpacing: "1px",
                   }}
                 >
@@ -655,7 +655,7 @@ export default function ConnectPage() {
                   style={{
                     fontFamily: "var(--font-space-mono)",
                     fontSize: 13,
-                    color: "rgba(255,255,255,0.75)",
+                    color: "var(--color-text-secondary)",
                     letterSpacing: "1px",
                   }}
                 >
@@ -667,7 +667,7 @@ export default function ConnectPage() {
                   style={{
                     fontFamily: "var(--font-space-mono)",
                     fontSize: 13,
-                    color: "rgba(255,255,255,0.45)",
+                    color: "var(--color-text-label)",
                     letterSpacing: "1px",
                   }}
                 >
@@ -694,27 +694,27 @@ export default function ConnectPage() {
                 fontWeight: 400,
                 fontSize: 12,
                 letterSpacing: "3px",
-                color: "rgba(255,255,255,0.5)",
+                color: "var(--color-text-faint)",
                 padding: "14px 48px",
-                background: "rgba(255,255,255,0.05)",
+                background: "var(--color-surface-3)",
                 backdropFilter: "blur(16px)",
                 WebkitBackdropFilter: "blur(16px)",
-                border: "1px solid rgba(255,255,255,0.1)",
+                border: "1px solid var(--color-border-bright)",
                 borderRadius: 12,
                 cursor: "pointer",
                 transition: "all 0.3s ease",
               }}
               onMouseEnter={(e) => {
                 const t = e.currentTarget;
-                t.style.background = "rgba(255,255,255,0.1)";
-                t.style.borderColor = "rgba(255,255,255,0.6)";
+                t.style.background = "var(--color-surface-hover)";
+                t.style.borderColor = "var(--color-text-muted)";
                 t.style.color = "white";
               }}
               onMouseLeave={(e) => {
                 const t = e.currentTarget;
-                t.style.background = "rgba(255,255,255,0.05)";
-                t.style.borderColor = "rgba(255,255,255,0.1)";
-                t.style.color = "rgba(255,255,255,0.5)";
+                t.style.background = "var(--color-surface-3)";
+                t.style.borderColor = "var(--color-border-bright)";
+                t.style.color = "var(--color-text-faint)";
               }}
             >
               continue
@@ -722,44 +722,6 @@ export default function ConnectPage() {
           </div>
         </div>
       )}
-
-      {/* Keyframes */}
-      <style jsx global>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        @keyframes pulse {
-          0%,
-          100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0.3;
-          }
-        }
-        @keyframes spin {
-          to {
-            transform: rotate(360deg);
-          }
-        }
-        @keyframes ripple {
-          0% {
-            transform: scale(0.5);
-            opacity: 1;
-          }
-          100% {
-            transform: scale(2);
-            opacity: 0;
-          }
-        }
-      `}</style>
     </div>
   );
 }
@@ -773,8 +735,8 @@ function StatusIndicator({ status }: { status: SessionStatus }) {
         style={{
           width: 12,
           height: 12,
-          border: "1.5px solid rgba(255,255,255,0.1)",
-          borderTopColor: "rgba(255,255,255,0.6)",
+          border: "1.5px solid var(--color-border-bright)",
+          borderTopColor: "var(--color-text-muted)",
           borderRadius: "50%",
           display: "inline-block",
           animation: "spin 0.9s linear infinite",
@@ -790,7 +752,7 @@ function StatusIndicator({ status }: { status: SessionStatus }) {
           width: 8,
           height: 8,
           borderRadius: "50%",
-          background: "#eab308",
+          background: "var(--color-warning)",
           display: "inline-block",
           animation: "pulse 1.5s ease infinite",
         }}
@@ -805,7 +767,7 @@ function StatusIndicator({ status }: { status: SessionStatus }) {
           width: 8,
           height: 8,
           borderRadius: "50%",
-          background: "#22c55e",
+          background: "var(--color-success)",
           display: "inline-block",
         }}
       />
@@ -818,8 +780,8 @@ function StatusIndicator({ status }: { status: SessionStatus }) {
         style={{
           width: 12,
           height: 12,
-          border: "1.5px solid rgba(255,255,255,0.15)",
-          borderTopColor: "rgba(255,255,255,0.6)",
+          border: "1.5px solid var(--color-border-focus)",
+          borderTopColor: "var(--color-text-muted)",
           borderRadius: "50%",
           display: "inline-block",
           animation: "spin 0.8s linear infinite",
@@ -830,7 +792,7 @@ function StatusIndicator({ status }: { status: SessionStatus }) {
 
   if (status === "complete") {
     return (
-      <span style={{ color: "#22c55e", fontSize: 14, lineHeight: 1 }}>
+      <span style={{ color: "var(--color-success)", fontSize: 14, lineHeight: 1 }}>
         &#10003;
       </span>
     );
@@ -843,7 +805,7 @@ function StatusIndicator({ status }: { status: SessionStatus }) {
           width: 8,
           height: 8,
           borderRadius: "50%",
-          background: "#ef4444",
+          background: "var(--color-error)",
           display: "inline-block",
         }}
       />

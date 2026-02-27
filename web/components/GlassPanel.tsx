@@ -65,7 +65,7 @@ export default function GlassPanel() {
             padding: "60px 80px",
             borderRadius: 20,
             overflow: "hidden",
-            boxShadow: "0 0 25px rgba(255, 255, 255, 0.15)",
+            boxShadow: "var(--shadow-glass)",
             opacity: visible ? 1 : 0,
             transform: visible ? "translateY(0)" : "translateY(10px)",
             transition: "opacity 1.5s ease, transform 1.5s ease",
@@ -93,7 +93,7 @@ export default function GlassPanel() {
               inset: 0,
               borderRadius: "inherit",
               zIndex: 2,
-              background: "rgba(0, 0, 0, 0.25)",
+              background: "var(--color-overlay)",
             }}
           />
           {/* Layer 3: Specular highlight (follows mouse) */}
@@ -104,7 +104,7 @@ export default function GlassPanel() {
               inset: 0,
               borderRadius: "inherit",
               zIndex: 3,
-              boxShadow: "inset 1px 1px 1px rgba(255, 255, 255, 0.15)",
+              boxShadow: "var(--shadow-specular)",
             }}
           />
           {/* Content */}
@@ -118,8 +118,8 @@ export default function GlassPanel() {
                 fontSize: "clamp(48px, 8vw, 100px)",
                 letterSpacing: "0.3em",
                 textTransform: "lowercase",
-                color: "rgba(255,255,255,0.9)",
-                textShadow: "0 0 40px rgba(198,40,40,0.3)",
+                color: "var(--color-text-bright)",
+                textShadow: "var(--shadow-scarlet-text)",
                 margin: 0,
                 lineHeight: 1,
               }}
@@ -133,7 +133,7 @@ export default function GlassPanel() {
                 fontWeight: 400,
                 fontSize: 16,
                 letterSpacing: "3.5px",
-                color: "rgba(255,255,255,0.45)",
+                color: "var(--color-text-label)",
                 margin: 0,
                 marginTop: 14,
               }}
@@ -164,27 +164,27 @@ export default function GlassPanel() {
                   fontWeight: 400,
                   fontSize: 18,
                   letterSpacing: "2.5px",
-                  color: "rgba(255,255,255,0.55)",
+                  color: "var(--color-text-subtle)",
                   padding: "22px 60px",
-                  background: "rgba(255,255,255,0.05)",
+                  background: "var(--color-surface-3)",
                   backdropFilter: "blur(16px)",
                   WebkitBackdropFilter: "blur(16px)",
-                  border: "1px solid rgba(255,255,255,0.12)",
+                  border: "1px solid var(--color-border-hover)",
                   borderRadius: 16,
                   cursor: "pointer",
                   transition: "all 0.3s ease",
                 }}
                 onMouseEnter={(e) => {
                   const t = e.currentTarget;
-                  t.style.background = "rgba(255,255,255,0.1)";
-                  t.style.borderColor = "rgba(255,255,255,0.2)";
+                  t.style.background = "var(--color-surface-hover)";
+                  t.style.borderColor = "var(--color-border-emphasis)";
                   t.style.color = "white";
                 }}
                 onMouseLeave={(e) => {
                   const t = e.currentTarget;
-                  t.style.background = "rgba(255,255,255,0.05)";
-                  t.style.borderColor = "rgba(255,255,255,0.12)";
-                  t.style.color = "rgba(255,255,255,0.55)";
+                  t.style.background = "var(--color-surface-3)";
+                  t.style.borderColor = "var(--color-border-hover)";
+                  t.style.color = "var(--color-text-subtle)";
                 }}
               >
                 text me
@@ -196,27 +196,27 @@ export default function GlassPanel() {
                   fontWeight: 400,
                   fontSize: 18,
                   letterSpacing: "2.5px",
-                  color: "rgb(198,40,40)",
+                  color: "var(--color-scarlet)",
                   padding: "22px 60px",
-                  background: "rgba(198,40,40,0.08)",
+                  background: "var(--color-scarlet-bg)",
                   backdropFilter: "blur(16px)",
                   WebkitBackdropFilter: "blur(16px)",
-                  border: "1px solid rgba(198,40,40,0.25)",
+                  border: "1px solid var(--color-scarlet-border)",
                   borderRadius: 16,
                   cursor: "pointer",
                   transition: "all 0.3s ease",
                 }}
                 onMouseEnter={(e) => {
                   const t = e.currentTarget;
-                  t.style.background = "rgba(198,40,40,0.15)";
-                  t.style.borderColor = "rgba(198,40,40,0.4)";
-                  t.style.color = "rgb(220,60,60)";
+                  t.style.background = "var(--color-scarlet-bg-hover)";
+                  t.style.borderColor = "var(--color-scarlet-glow-strong)";
+                  t.style.color = "var(--color-scarlet-light)";
                 }}
                 onMouseLeave={(e) => {
                   const t = e.currentTarget;
-                  t.style.background = "rgba(198,40,40,0.08)";
-                  t.style.borderColor = "rgba(198,40,40,0.25)";
-                  t.style.color = "rgb(198,40,40)";
+                  t.style.background = "var(--color-scarlet-bg)";
+                  t.style.borderColor = "var(--color-scarlet-border)";
+                  t.style.color = "var(--color-scarlet)";
                 }}
               >
                 open app

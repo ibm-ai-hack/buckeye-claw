@@ -6,7 +6,7 @@ export default function AppLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "#0a0a0a" }}>
+    <div style={{ display: "flex", minHeight: "100vh", background: "var(--color-bg)" }}>
       <LeftRail />
       <main
         style={{

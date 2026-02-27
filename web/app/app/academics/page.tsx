@@ -53,7 +53,7 @@ export default function AcademicsPage() {
         style={{
           display: "flex",
           gap: 0,
-          borderBottom: "1px solid rgba(255,255,255,0.04)",
+          borderBottom: "1px solid var(--color-border)",
           padding: "0 32px",
           flexShrink: 0,
         }}
@@ -69,14 +69,14 @@ export default function AcademicsPage() {
               letterSpacing: "1px",
               color:
                 activeTab === tab
-                  ? "rgba(255,255,255,0.85)"
-                  : "rgba(255,255,255,0.45)",
+                  ? "var(--color-text-primary)"
+                  : "var(--color-text-label)",
               padding: "12px 24px",
               background: "transparent",
               border: "none",
               borderBottom:
                 activeTab === tab
-                  ? "2px solid rgb(198,40,40)"
+                  ? "2px solid var(--color-scarlet)"
                   : "2px solid transparent",
               cursor: "pointer",
               transition: "color 0.2s ease, border-color 0.2s ease",

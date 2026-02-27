@@ -29,7 +29,7 @@ export default function DomainHero({ title, accentColor }: DomainHeroProps) {
         style={{
           position: "absolute",
           inset: 0,
-          background: `linear-gradient(180deg, transparent 0%, #0a0a0a 100%)`,
+          background: `linear-gradient(180deg, transparent 0%, var(--color-bg) 100%)`,
         }}
       />
       {/* Animated noise texture */}
@@ -52,7 +52,7 @@ export default function DomainHero({ title, accentColor }: DomainHeroProps) {
           fontWeight: 200,
           fontSize: 28,
           letterSpacing: "0.2em",
-          color: "rgba(255,255,255,0.85)",
+          color: "var(--color-text-primary)",
           textTransform: "lowercase",
           margin: 0,
         }}

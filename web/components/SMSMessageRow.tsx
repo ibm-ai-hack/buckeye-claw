@@ -18,8 +18,8 @@ export default function SMSMessageRow({
         padding: "16px 24px",
         borderLeft: `2px solid ${
           role === "agent"
-            ? "rgb(198,40,40)"
-            : "rgba(255,255,255,0.10)"
+            ? "var(--color-scarlet)"
+            : "var(--color-border-bright)"
         }`,
         animation: "fadeInUp 300ms ease-out forwards",
         display: "flex",
@@ -34,10 +34,7 @@ export default function SMSMessageRow({
           fontWeight: 400,
           fontSize: 15,
           lineHeight: 1.6,
-          color:
-            role === "agent"
-              ? "rgba(255,255,255,0.85)"
-              : "rgba(255,255,255,0.85)",
+          color: "var(--color-text-primary)",
           margin: 0,
           flex: 1,
           whiteSpace: "pre-wrap",
@@ -50,7 +47,7 @@ export default function SMSMessageRow({
           fontFamily: "var(--font-space-mono)",
           fontWeight: 400,
           fontSize: 12,
-          color: "rgba(255,255,255,0.35)",
+          color: "var(--color-text-placeholder)",
           letterSpacing: "1px",
           flexShrink: 0,
           marginTop: 2,

@@ -37,7 +37,7 @@ export default function ToolCallCard({
       style={{
         width: "100%",
         padding: "12px 24px",
-        borderLeft: "2px solid rgb(198,40,40)",
+        borderLeft: "2px solid var(--color-scarlet)",
         animation: "fadeInUp 300ms ease-out forwards",
       }}
     >
@@ -55,7 +55,7 @@ export default function ToolCallCard({
             fontFamily: "var(--font-space-mono)",
             fontWeight: 400,
             fontSize: 14,
-            color: "rgba(255,255,255,0.60)",
+            color: "var(--color-text-muted)",
             letterSpacing: "1px",
           }}
         >
@@ -74,7 +74,7 @@ export default function ToolCallCard({
                 fontFamily: "var(--font-space-mono)",
                 fontWeight: 400,
                 fontSize: 12,
-                color: "rgba(255,255,255,0.35)",
+                color: "var(--color-text-placeholder)",
                 letterSpacing: "1px",
               }}
             >
@@ -91,7 +91,7 @@ export default function ToolCallCard({
                 fontFamily: "var(--font-space-mono)",
                 fontWeight: 400,
                 fontSize: 12,
-                color: "rgba(255,255,255,0.35)",
+                color: "var(--color-text-placeholder)",
                 letterSpacing: "1px",
                 background: "none",
                 border: "none",
@@ -101,10 +101,10 @@ export default function ToolCallCard({
                 transition: "color 0.15s ease",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = "rgba(255,255,255,0.60)";
+                e.currentTarget.style.color = "var(--color-text-muted)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.color = "rgba(255,255,255,0.35)";
+                e.currentTarget.style.color = "var(--color-text-placeholder)";
               }}
             >
               expand
@@ -120,7 +120,7 @@ export default function ToolCallCard({
             fontFamily: "var(--font-space-mono)",
             fontWeight: 400,
             fontSize: 13,
-            color: "rgba(255,255,255,0.45)",
+            color: "var(--color-text-label)",
             marginTop: 4,
             display: "block",
           }}
@@ -149,8 +149,8 @@ export default function ToolCallCard({
               style={{
                 marginTop: 12,
                 padding: 16,
-                background: "rgba(255,255,255,0.02)",
-                border: "1px solid rgba(255,255,255,0.04)",
+                background: "var(--color-surface-1)",
+                border: "1px solid var(--color-border)",
                 borderRadius: 12,
               }}
             >

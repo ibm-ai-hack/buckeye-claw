@@ -98,8 +98,8 @@ export default function LeftRail() {
         position: "fixed",
         top: 0,
         left: 0,
-        background: "#0a0a0a",
-        borderRight: "1px solid rgba(255,255,255,0.04)",
+        background: "var(--color-bg)",
+        borderRight: "1px solid var(--color-border)",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -116,8 +116,8 @@ export default function LeftRail() {
           width: 36,
           height: 36,
           borderRadius: 10,
-          background: "rgba(198,40,40,0.15)",
-          border: "1px solid rgba(198,40,40,0.25)",
+          background: "var(--color-scarlet-bg-hover)",
+          border: "1px solid var(--color-scarlet-border)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -131,7 +131,7 @@ export default function LeftRail() {
             fontFamily: "var(--font-outfit)",
             fontWeight: 200,
             fontSize: 18,
-            color: "rgb(198,40,40)",
+            color: "var(--color-scarlet)",
           }}
         >
           s
@@ -164,26 +164,26 @@ export default function LeftRail() {
                 background: "transparent",
                 border: "none",
                 borderLeft: isActive
-                  ? "2px solid rgb(198,40,40)"
+                  ? "2px solid var(--color-scarlet)"
                   : "2px solid transparent",
                 cursor: "pointer",
                 transition: "all 0.15s ease",
                 borderRadius: 0,
                 color: isActive
-                  ? "rgba(255,255,255,0.85)"
-                  : "rgba(255,255,255,0.50)",
+                  ? "var(--color-text-primary)"
+                  : "var(--color-text-faint)",
                 filter: isActive
-                  ? "drop-shadow(0 0 6px rgba(198,40,40,0.3))"
+                  ? "drop-shadow(0 0 6px var(--color-scarlet-glow))"
                   : "none",
               }}
               onMouseEnter={(e) => {
                 if (!isActive) {
-                  e.currentTarget.style.color = "rgba(255,255,255,0.70)";
+                  e.currentTarget.style.color = "var(--color-text-tertiary)";
                 }
               }}
               onMouseLeave={(e) => {
                 if (!isActive) {
-                  e.currentTarget.style.color = "rgba(255,255,255,0.50)";
+                  e.currentTarget.style.color = "var(--color-text-faint)";
                 }
               }}
             >
@@ -195,8 +195,8 @@ export default function LeftRail() {
                   fontSize: 12,
                   letterSpacing: "0.5px",
                   color: isActive
-                    ? "rgba(255,255,255,0.50)"
-                    : "rgba(255,255,255,0.40)",
+                    ? "var(--color-text-faint)"
+                    : "var(--color-text-ghost)",
                 }}
               >
                 {item.label}
@@ -220,7 +220,7 @@ export default function LeftRail() {
           style={{
             width: 1,
             height: 20,
-            background: "rgba(255,255,255,0.06)",
+            background: "var(--color-border-medium)",
             marginBottom: 4,
           }}
         />
@@ -229,7 +229,7 @@ export default function LeftRail() {
             width: 40,
             height: 40,
             borderRadius: "50%",
-            background: "rgb(198,40,40)",
+            background: "var(--color-scarlet)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",

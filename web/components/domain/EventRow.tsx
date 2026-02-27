@@ -23,7 +23,7 @@ export default function EventRow({
         display: "flex",
         gap: 16,
         padding: "16px 0",
-        borderBottom: "1px dashed rgba(255,255,255,0.04)",
+        borderBottom: "1px dashed var(--color-border)",
         alignItems: "flex-start",
       }}
     >
@@ -33,8 +33,8 @@ export default function EventRow({
           width: 48,
           height: 48,
           borderRadius: 8,
-          background: "rgba(255,255,255,0.04)",
-          border: "1px solid rgba(255,255,255,0.06)",
+          background: "var(--color-border)",
+          border: "1px solid var(--color-border-medium)",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -47,7 +47,7 @@ export default function EventRow({
             fontFamily: "var(--font-outfit)",
             fontWeight: 200,
             fontSize: 24,
-            color: "rgba(255,255,255,0.85)",
+            color: "var(--color-text-primary)",
             lineHeight: 1,
           }}
         >
@@ -58,7 +58,7 @@ export default function EventRow({
             fontFamily: "var(--font-space-mono)",
             fontWeight: 400,
             fontSize: 13,
-            color: "rgba(255,255,255,0.45)",
+            color: "var(--color-text-label)",
             letterSpacing: "1px",
             textTransform: "lowercase",
           }}
@@ -74,7 +74,7 @@ export default function EventRow({
             fontFamily: "var(--font-outfit)",
             fontWeight: 300,
             fontSize: 16,
-            color: "rgba(255,255,255,0.80)",
+            color: "var(--color-text-heading)",
             marginBottom: 4,
           }}
         >
@@ -85,7 +85,7 @@ export default function EventRow({
             fontFamily: "var(--font-space-mono)",
             fontWeight: 400,
             fontSize: 13,
-            color: "rgba(255,255,255,0.50)",
+            color: "var(--color-text-faint)",
             marginBottom: description ? 4 : 0,
           }}
         >
@@ -97,7 +97,7 @@ export default function EventRow({
               fontFamily: "var(--font-space-mono)",
               fontWeight: 400,
               fontSize: 12,
-              color: "rgba(255,255,255,0.40)",
+              color: "var(--color-text-ghost)",
             }}
           >
             {description}

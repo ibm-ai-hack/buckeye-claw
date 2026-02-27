@@ -1,15 +1,178 @@
 @import "tailwindcss";
 
+@layer base {
 :root {
   --background: #0a0a0a;
   --foreground: #ededed;
+
+  /* ── Colors: Brand ─────────────────────────────── */
+  --color-bg: #0a0a0a;
+  --color-scarlet: rgb(198, 40, 40);
+  --color-scarlet-light: rgb(220, 60, 60);
+  --color-scarlet-bg: rgba(198, 40, 40, 0.08);
+  --color-scarlet-bg-hover: rgba(198, 40, 40, 0.15);
+  --color-scarlet-border: rgba(198, 40, 40, 0.25);
+  --color-scarlet-border-strong: rgba(198, 40, 40, 0.30);
+  --color-scarlet-glow: rgba(198, 40, 40, 0.3);
+  --color-scarlet-glow-strong: rgba(198, 40, 40, 0.4);
+
+  /* ── Colors: Surfaces ──────────────────────────── */
+  --color-surface-1: rgba(255, 255, 255, 0.02);
+  --color-surface-2: rgba(255, 255, 255, 0.03);
+  --color-surface-3: rgba(255, 255, 255, 0.05);
+  --color-surface-hover: rgba(255, 255, 255, 0.10);
+
+  /* ── Colors: Borders ───────────────────────────── */
+  --color-border-subtle: rgba(255, 255, 255, 0.03);
+  --color-border: rgba(255, 255, 255, 0.04);
+  --color-border-medium: rgba(255, 255, 255, 0.06);
+  --color-border-strong: rgba(255, 255, 255, 0.08);
+  --color-border-bright: rgba(255, 255, 255, 0.10);
+  --color-border-hover: rgba(255, 255, 255, 0.12);
+  --color-border-focus: rgba(255, 255, 255, 0.15);
+  --color-border-active: rgba(255, 255, 255, 0.18);
+  --color-border-emphasis: rgba(255, 255, 255, 0.20);
+
+  /* ── Colors: Text ──────────────────────────────── */
+  --color-text-primary: rgba(255, 255, 255, 0.85);
+  --color-text-bright: rgba(255, 255, 255, 0.90);
+  --color-text-heading: rgba(255, 255, 255, 0.80);
+  --color-text-secondary: rgba(255, 255, 255, 0.75);
+  --color-text-tertiary: rgba(255, 255, 255, 0.70);
+  --color-text-muted: rgba(255, 255, 255, 0.60);
+  --color-text-subtle: rgba(255, 255, 255, 0.55);
+  --color-text-faint: rgba(255, 255, 255, 0.50);
+  --color-text-label: rgba(255, 255, 255, 0.45);
+  --color-text-ghost: rgba(255, 255, 255, 0.40);
+  --color-text-placeholder: rgba(255, 255, 255, 0.35);
+  --color-text-disabled: rgba(255, 255, 255, 0.25);
+
+  /* ── Colors: Overlay / Glass ───────────────────── */
+  --color-overlay: rgba(0, 0, 0, 0.25);
+  --color-overlay-heavy: rgba(0, 0, 0, 0.4);
+  --color-overlay-strong: rgba(0, 0, 0, 0.5);
+  --color-specular: rgba(255, 255, 255, 0.15);
+  --color-glass-highlight: rgba(255, 255, 255, 0.08);
+  --color-glass-mid: rgba(255, 255, 255, 0.04);
+
+  /* ── Colors: Status ────────────────────────────── */
+  --color-success: #22c55e;
+  --color-warning: #eab308;
+  --color-error: #ef4444;
+  --color-grade-mid: rgb(220, 170, 50);
+
+  /* ── Colors: Domain accents ────────────────────── */
+  --color-accent-campus: rgb(140, 90, 180);
+  --color-accent-transit: rgb(100, 130, 180);
+  --color-accent-food: rgb(80, 160, 80);
+  --color-accent-academics: rgb(220, 170, 50);
+
+  /* ── Colors: Schedule course blocks ────────────── */
+  --color-scarlet-course-1: rgba(198, 40, 40, 0.25);
+  --color-scarlet-course-2: rgba(198, 40, 40, 0.20);
+  --color-scarlet-course-3: rgba(198, 40, 40, 0.15);
+  --color-scarlet-course-4: rgba(198, 40, 40, 0.12);
+  --color-scarlet-course-5: rgba(198, 40, 40, 0.10);
+
+  /* ── Spacing (4px base) ────────────────────────── */
+  --space-0-5: 2px;
+  --space-1: 4px;
+  --space-1-5: 6px;
+  --space-2: 8px;
+  --space-2-5: 10px;
+  --space-3: 12px;
+  --space-3-5: 14px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-9: 36px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-14: 56px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* ── Typography: Font Sizes ────────────────────── */
+  --text-2xs: 10px;
+  --text-xs: 11px;
+  --text-sm: 12px;
+  --text-base-sm: 13px;
+  --text-base: 14px;
+  --text-md: 15px;
+  --text-lg: 16px;
+  --text-xl: 18px;
+  --text-2xl: 20px;
+  --text-3xl: 24px;
+  --text-4xl: 28px;
+  --text-5xl: 36px;
+
+  /* ── Typography: Weights ───────────────────────── */
+  --weight-thin: 200;
+  --weight-light: 300;
+  --weight-regular: 400;
+
+  /* ── Typography: Letter Spacing ────────────────── */
+  --tracking-tight: 0.5px;
+  --tracking-normal: 1px;
+  --tracking-wide: 1.5px;
+  --tracking-wider: 2px;
+  --tracking-widest: 2.5px;
+  --tracking-ultra: 3px;
+  --tracking-title: 0.15em;
+  --tracking-hero: 0.25em;
+  --tracking-mega: 0.3em;
+
+  /* ── Border Radii ──────────────────────────────── */
+  --radius-xs: 1px;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-xl: 8px;
+  --radius-2xl: 10px;
+  --radius-3xl: 12px;
+  --radius-4xl: 14px;
+  --radius-5xl: 16px;
+  --radius-6xl: 20px;
+  --radius-full: 50%;
+
+  /* ── Shadows ───────────────────────────────────── */
+  --shadow-glass: 0 0 25px rgba(255, 255, 255, 0.15);
+  --shadow-browser: 0 8px 40px rgba(0, 0, 0, 0.4), 0 2px 12px rgba(0, 0, 0, 0.3);
+  --shadow-browser-focus: 0 8px 40px rgba(0, 0, 0, 0.4), 0 2px 12px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --shadow-specular: inset 1px 1px 1px rgba(255, 255, 255, 0.15);
+  --shadow-scarlet-text: 0 0 40px rgba(198, 40, 40, 0.3);
+  --shadow-scarlet-icon: 0 0 8px rgba(198, 40, 40, 0.4);
+  --shadow-scarlet-btn: 0 0 6px rgba(198, 40, 40, 0.3);
+
+  /* ── Animation: Durations ──────────────────────── */
+  --duration-fast: 0.15s;
+  --duration-normal: 0.2s;
+  --duration-medium: 0.3s;
+  --duration-slow: 0.5s;
+  --duration-enter: 0.6s;
+  --duration-glass: 1.5s;
+
+  /* ── Animation: Easings ────────────────────────── */
+  --ease-default: ease;
+  --ease-out: ease-out;
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ── Animation: Blurs ──────────────────────────── */
+  --blur-sm: 4px;
+  --blur-md: 8px;
+  --blur-lg: 12px;
+  --blur-xl: 16px;
 }
+} /* end @layer base */
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 }
 
+@layer base {
 body {
   background: var(--background);
   color: var(--foreground);
@@ -17,7 +180,8 @@ body {
   padding: 0;
 }
 
-/* Global animations */
+/* ── Global Keyframes ──────────────────────────────── */
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -41,7 +205,60 @@ body {
   }
 }
 
-/* Scrollbar */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0.5);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes gradeBarFill {
+  from {
+    width: 0;
+  }
+}
+
+@keyframes scanLine {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(350%);
+  }
+}
+
+@keyframes blinkCursor {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ── Scrollbar ─────────────────────────────────────── */
+
 ::-webkit-scrollbar {
   width: 4px;
 }
@@ -49,9 +266,10 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--color-border-medium);
   border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--color-border-hover);
 }
+} /* end @layer base */

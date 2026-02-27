@@ -50,7 +50,7 @@ export default function CampusPage() {
         style={{
           display: "flex",
           gap: 0,
-          borderBottom: "1px solid rgba(255,255,255,0.04)",
+          borderBottom: "1px solid var(--color-border)",
           padding: "0 32px",
           flexShrink: 0,
         }}
@@ -64,11 +64,11 @@ export default function CampusPage() {
               fontWeight: 400,
               fontSize: 14,
               letterSpacing: "1px",
-              color: activeTab === tab ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.45)",
+              color: activeTab === tab ? "var(--color-text-primary)" : "var(--color-text-label)",
               padding: "12px 24px",
               background: "transparent",
               border: "none",
-              borderBottom: activeTab === tab ? "2px solid rgb(198,40,40)" : "2px solid transparent",
+              borderBottom: activeTab === tab ? "2px solid var(--color-scarlet)" : "2px solid transparent",
               cursor: "pointer",
               transition: "color 0.2s ease, border-color 0.2s ease",
               textTransform: "lowercase",
@@ -107,7 +107,7 @@ export default function CampusPage() {
                   alignItems: "center",
                   justifyContent: "space-between",
                   padding: "14px 0",
-                  borderBottom: i < DEMO_ORGS.length - 1 ? "1px solid rgba(255,255,255,0.03)" : "none",
+                  borderBottom: i < DEMO_ORGS.length - 1 ? "1px solid var(--color-border-subtle)" : "none",
                 }}
               >
                 <div>
@@ -116,7 +116,7 @@ export default function CampusPage() {
                       fontFamily: "var(--font-outfit)",
                       fontWeight: 300,
                       fontSize: 16,
-                      color: "rgba(255,255,255,0.80)",
+                      color: "var(--color-text-heading)",
                       marginBottom: 4,
                     }}
                   >
@@ -127,7 +127,7 @@ export default function CampusPage() {
                       fontFamily: "var(--font-space-mono)",
                       fontWeight: 400,
                       fontSize: 12,
-                      color: "rgba(255,255,255,0.45)",
+                      color: "var(--color-text-label)",
                       letterSpacing: "1px",
                     }}
                   >
@@ -139,7 +139,7 @@ export default function CampusPage() {
                     fontFamily: "var(--font-space-mono)",
                     fontWeight: 400,
                     fontSize: 13,
-                    color: "rgba(255,255,255,0.45)",
+                    color: "var(--color-text-label)",
                   }}
                 >
                   {org.members} members

@@ -16,7 +16,13 @@ const DAYS = ["mon", "tue", "wed", "thu", "fri"];
 const START_HOUR = 8;
 const END_HOUR = 18;
 const HOUR_HEIGHT = 48;
-const OPACITIES = [0.25, 0.20, 0.15, 0.12, 0.10];
+const COURSE_COLORS = [
+  "var(--color-scarlet-course-1)",
+  "var(--color-scarlet-course-2)",
+  "var(--color-scarlet-course-3)",
+  "var(--color-scarlet-course-4)",
+  "var(--color-scarlet-course-5)",
+];
 
 const DAY_MAP: Record<string, string> = {
   M: "mon", Mo: "mon", Mon: "mon", Monday: "mon",
@@ -52,7 +58,7 @@ export default function ScheduleGrid({ courses }: ScheduleGridProps) {
               fontFamily: "var(--font-space-mono)",
               fontWeight: 400,
               fontSize: 12,
-              color: "rgba(255,255,255,0.45)",
+              color: "var(--color-text-label)",
               letterSpacing: "1px",
               textAlign: "center",
               padding: "4px 0",
@@ -89,7 +95,7 @@ export default function ScheduleGrid({ courses }: ScheduleGridProps) {
                 display: "grid",
                 gridTemplateColumns: "48px repeat(5, 1fr)",
                 height: HOUR_HEIGHT,
-                borderTop: "1px solid rgba(255,255,255,0.02)",
+                borderTop: "1px solid var(--color-surface-1)",
               }}
             >
               <div
@@ -97,7 +103,7 @@ export default function ScheduleGrid({ courses }: ScheduleGridProps) {
                   fontFamily: "var(--font-space-mono)",
                   fontWeight: 400,
                   fontSize: 11,
-                  color: "rgba(255,255,255,0.35)",
+                  color: "var(--color-text-placeholder)",
                   paddingRight: 8,
                   textAlign: "right",
                   lineHeight: 1,
@@ -112,7 +118,7 @@ export default function ScheduleGrid({ courses }: ScheduleGridProps) {
         {/* Course blocks */}
         {courses.map((course, ci) => {
           const normalDays = normalizeDays(course.days);
-          const opacity = OPACITIES[ci % OPACITIES.length];
+          const bgColor = COURSE_COLORS[ci % COURSE_COLORS.length];
           return normalDays.map((day) => {
             const dayIndex = DAYS.indexOf(day);
             if (dayIndex === -1) return null;
@@ -129,8 +135,8 @@ export default function ScheduleGrid({ courses }: ScheduleGridProps) {
                   width: `calc((100% - 48px) / 5 - 4px)`,
                   top: top + 28, // offset for header
                   height,
-                  background: `rgba(198,40,40,${opacity})`,
-                  border: "1px solid rgba(198,40,40,0.30)",
+                  background: bgColor,
+                  border: "1px solid var(--color-scarlet-border-strong)",
                   borderRadius: 6,
                   padding: "6px 8px",
                   display: "flex",
@@ -145,7 +151,7 @@ export default function ScheduleGrid({ courses }: ScheduleGridProps) {
                     fontFamily: "var(--font-space-mono)",
                     fontWeight: 400,
                     fontSize: 12,
-                    color: "rgba(255,255,255,0.80)",
+                    color: "var(--color-text-heading)",
                     lineHeight: 1.3,
                   }}
                 >

@@ -46,8 +46,8 @@ export default function TransitPage() {
             width: "100%",
             height: 320,
             borderRadius: 14,
-            background: "rgba(255,255,255,0.02)",
-            border: "1px solid rgba(255,255,255,0.04)",
+            background: "var(--color-surface-1)",
+            border: "1px solid var(--color-border)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -75,12 +75,12 @@ export default function TransitPage() {
           >
             <path
               d="M100,200 C200,100 350,300 500,180 C600,100 700,250 750,200"
-              stroke="rgba(255,255,255,0.08)"
+              style={{ stroke: "var(--color-border-strong)" }}
               strokeWidth="3"
               fill="none"
             />
             {/* Bus dots */}
-            <circle cx="250" cy="160" r="5" fill="rgb(198,40,40)">
+            <circle cx="250" cy="160" r="5" style={{ fill: "var(--color-scarlet)" }}>
               <animate
                 attributeName="opacity"
                 values="1;0.5;1"
@@ -88,7 +88,7 @@ export default function TransitPage() {
                 repeatCount="indefinite"
               />
             </circle>
-            <circle cx="480" cy="190" r="5" fill="rgb(198,40,40)">
+            <circle cx="480" cy="190" r="5" style={{ fill: "var(--color-scarlet)" }}>
               <animate
                 attributeName="opacity"
                 values="1;0.5;1"
@@ -97,7 +97,7 @@ export default function TransitPage() {
                 repeatCount="indefinite"
               />
             </circle>
-            <circle cx="680" cy="220" r="5" fill="rgb(198,40,40)">
+            <circle cx="680" cy="220" r="5" style={{ fill: "var(--color-scarlet)" }}>
               <animate
                 attributeName="opacity"
                 values="1;0.5;1"
@@ -112,7 +112,7 @@ export default function TransitPage() {
               fontFamily: "var(--font-space-mono)",
               fontWeight: 400,
               fontSize: 14,
-              color: "rgba(255,255,255,0.35)",
+              color: "var(--color-text-placeholder)",
               letterSpacing: "2px",
               zIndex: 1,
             }}
@@ -129,7 +129,7 @@ export default function TransitPage() {
               fontWeight: 200,
               fontSize: 18,
               letterSpacing: "0.15em",
-              color: "rgba(255,255,255,0.75)",
+              color: "var(--color-text-secondary)",
               margin: 0,
             }}
           >
@@ -140,7 +140,7 @@ export default function TransitPage() {
               fontFamily: "var(--font-space-mono)",
               fontWeight: 400,
               fontSize: 11,
-              color: "rgba(255,255,255,0.40)",
+              color: "var(--color-text-ghost)",
               letterSpacing: "1px",
             }}
           >
@@ -150,8 +150,8 @@ export default function TransitPage() {
 
         <div
           style={{
-            background: "rgba(255,255,255,0.02)",
-            border: "1px solid rgba(255,255,255,0.04)",
+            background: "var(--color-surface-1)",
+            border: "1px solid var(--color-border)",
             borderRadius: 12,
             padding: "4px 16px",
             marginBottom: 40,
@@ -167,12 +167,12 @@ export default function TransitPage() {
                 gap: 12,
                 borderBottom:
                   i < DEMO_ROUTES.length - 1
-                    ? "1px solid rgba(255,255,255,0.03)"
+                    ? "1px solid var(--color-border-subtle)"
                     : "none",
               }}
             >
               <PulseDot
-                color={route.active ? "rgb(198,40,40)" : "rgba(255,255,255,0.35)"}
+                color={route.active ? "var(--color-scarlet)" : "var(--color-text-placeholder)"}
                 size={6}
                 pulse={route.active}
               />
@@ -181,7 +181,7 @@ export default function TransitPage() {
                   fontFamily: "var(--font-space-mono)",
                   fontWeight: 400,
                   fontSize: 13,
-                  color: "rgba(255,255,255,0.65)",
+                  color: "var(--color-text-muted)",
                   flex: 1,
                 }}
               >
@@ -192,7 +192,7 @@ export default function TransitPage() {
                   fontFamily: "var(--font-space-mono)",
                   fontWeight: 400,
                   fontSize: 14,
-                  color: "rgba(255,255,255,0.45)",
+                  color: "var(--color-text-label)",
                   width: 120,
                 }}
               >
@@ -205,8 +205,8 @@ export default function TransitPage() {
                   fontSize: 14,
                   color:
                     route.eta !== "---" && parseInt(route.eta) <= 5
-                      ? "rgb(198,40,40)"
-                      : "rgba(255,255,255,0.60)",
+                      ? "var(--color-scarlet)"
+                      : "var(--color-text-muted)",
                   width: 60,
                   textAlign: "right",
                 }}
@@ -224,7 +224,7 @@ export default function TransitPage() {
             fontWeight: 200,
             fontSize: 18,
             letterSpacing: "0.15em",
-            color: "rgba(255,255,255,0.75)",
+            color: "var(--color-text-secondary)",
             margin: 0,
             marginBottom: 16,
           }}

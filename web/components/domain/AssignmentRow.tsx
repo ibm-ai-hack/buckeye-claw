@@ -14,17 +14,17 @@ export default function AssignmentRow({
   urgency,
 }: AssignmentRowProps) {
   const borderColor = {
-    normal: "rgba(255,255,255,0.06)",
-    soon: "rgba(255,255,255,0.15)",
-    tomorrow: "#eab308",
-    overdue: "rgb(198,40,40)",
+    normal: "var(--color-border-medium)",
+    soon: "var(--color-border-focus)",
+    tomorrow: "var(--color-warning)",
+    overdue: "var(--color-scarlet)",
   }[urgency];
 
   const dueColor = {
-    normal: "rgba(255,255,255,0.45)",
-    soon: "rgba(255,255,255,0.70)",
-    tomorrow: "#eab308",
-    overdue: "rgb(198,40,40)",
+    normal: "var(--color-text-label)",
+    soon: "var(--color-text-tertiary)",
+    tomorrow: "var(--color-warning)",
+    overdue: "var(--color-scarlet)",
   }[urgency];
 
   return (
@@ -43,7 +43,7 @@ export default function AssignmentRow({
           fontFamily: "var(--font-space-mono)",
           fontWeight: 400,
           fontSize: 14,
-          color: "rgba(255,255,255,0.75)",
+          color: "var(--color-text-secondary)",
         }}
       >
         {course} — {title}

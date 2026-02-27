@@ -47,22 +47,22 @@ export default function FoodPage() {
               width: "100%",
               maxWidth: 500,
               padding: "12px 16px",
-              background: "rgba(255,255,255,0.03)",
-              border: "1px solid rgba(255,255,255,0.06)",
+              background: "var(--color-surface-2)",
+              border: "1px solid var(--color-border-medium)",
               borderRadius: 10,
               fontFamily: "var(--font-space-mono)",
               fontWeight: 400,
               fontSize: 15,
-              color: "rgba(255,255,255,0.85)",
+              color: "var(--color-text-primary)",
               outline: "none",
-              caretColor: "rgb(198,40,40)",
+              caretColor: "var(--color-scarlet)",
               transition: "border-color 0.2s ease",
             }}
             onFocus={(e) => {
-              e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)";
+              e.currentTarget.style.borderColor = "var(--color-border-focus)";
             }}
             onBlur={(e) => {
-              e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)";
+              e.currentTarget.style.borderColor = "var(--color-border-medium)";
             }}
           />
         </div>
@@ -79,20 +79,20 @@ export default function FoodPage() {
             <div
               key={restaurant.name}
               style={{
-                background: "rgba(255,255,255,0.02)",
-                border: "1px solid rgba(255,255,255,0.05)",
+                background: "var(--color-surface-1)",
+                border: "1px solid var(--color-surface-3)",
                 borderRadius: 14,
                 padding: 20,
                 cursor: "pointer",
                 transition: "border-color 0.15s ease, background 0.15s ease",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "rgba(255,255,255,0.10)";
-                e.currentTarget.style.background = "rgba(255,255,255,0.03)";
+                e.currentTarget.style.borderColor = "var(--color-border-bright)";
+                e.currentTarget.style.background = "var(--color-surface-2)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "rgba(255,255,255,0.05)";
-                e.currentTarget.style.background = "rgba(255,255,255,0.02)";
+                e.currentTarget.style.borderColor = "var(--color-surface-3)";
+                e.currentTarget.style.background = "var(--color-surface-1)";
               }}
             >
               <div
@@ -100,7 +100,7 @@ export default function FoodPage() {
                   fontFamily: "var(--font-outfit)",
                   fontWeight: 300,
                   fontSize: 18,
-                  color: "rgba(255,255,255,0.80)",
+                  color: "var(--color-text-heading)",
                   marginBottom: 8,
                 }}
               >
@@ -118,7 +118,7 @@ export default function FoodPage() {
                     fontFamily: "var(--font-space-mono)",
                     fontWeight: 400,
                     fontSize: 12,
-                    color: "rgba(255,255,255,0.45)",
+                    color: "var(--color-text-label)",
                     letterSpacing: "1px",
                   }}
                 >
@@ -129,7 +129,7 @@ export default function FoodPage() {
                     fontFamily: "var(--font-space-mono)",
                     fontWeight: 400,
                     fontSize: 12,
-                    color: "rgba(255,255,255,0.50)",
+                    color: "var(--color-text-faint)",
                   }}
                 >
                   {restaurant.rating} · {restaurant.eta}
@@ -147,7 +147,7 @@ export default function FoodPage() {
 
       <style jsx>{`
         input::placeholder {
-          color: rgba(255, 255, 255, 0.35);
+          color: var(--color-text-placeholder);
           font-family: var(--font-space-mono);
         }
       `}</style>

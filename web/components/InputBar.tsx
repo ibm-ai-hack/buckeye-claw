@@ -28,8 +28,8 @@ export default function InputBar({
         bottom: 0,
         width: "100%",
         height: 56,
-        background: "rgba(255,255,255,0.02)",
-        borderTop: "1px solid rgba(255,255,255,0.04)",
+        background: "var(--color-surface-1)",
+        borderTop: "1px solid var(--color-border)",
         display: "flex",
         alignItems: "center",
         padding: "0 24px",
@@ -43,7 +43,7 @@ export default function InputBar({
         style={{
           width: 2,
           height: 18,
-          background: "rgb(198,40,40)",
+          background: "var(--color-scarlet)",
           borderRadius: 1,
           animation: "blinkCursor 1s step-end infinite",
           flexShrink: 0,
@@ -69,8 +69,8 @@ export default function InputBar({
           fontWeight: 400,
           fontSize: 16,
           letterSpacing: "0.5px",
-          color: "rgba(255,255,255,0.85)",
-          caretColor: "rgb(198,40,40)",
+          color: "var(--color-text-primary)",
+          caretColor: "var(--color-scarlet)",
         }}
       />
       <button
@@ -96,12 +96,12 @@ export default function InputBar({
           viewBox="0 0 16 16"
           fill="none"
           style={{
-            filter: "drop-shadow(0 0 8px rgba(198,40,40,0.4))",
+            filter: "drop-shadow(0 0 8px var(--color-scarlet-glow-strong))",
           }}
         >
           <path
             d="M2 8H14M14 8L9 3M14 8L9 13"
-            stroke="rgb(198,40,40)"
+            style={{ stroke: "var(--color-scarlet)" }}
             strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -109,17 +109,8 @@ export default function InputBar({
         </svg>
       </button>
       <style jsx>{`
-        @keyframes blinkCursor {
-          0%,
-          100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0;
-          }
-        }
         input::placeholder {
-          color: rgba(255, 255, 255, 0.35);
+          color: var(--color-text-placeholder);
           font-family: var(--font-space-mono);
         }
       `}</style>
