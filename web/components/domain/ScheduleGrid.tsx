@@ -51,8 +51,8 @@ export default function ScheduleGrid({ courses }: ScheduleGridProps) {
             style={{
               fontFamily: "var(--font-space-mono)",
               fontWeight: 400,
-              fontSize: 10,
-              color: "rgba(255,255,255,0.25)",
+              fontSize: 12,
+              color: "rgba(255,255,255,0.45)",
               letterSpacing: "1px",
               textAlign: "center",
               padding: "4px 0",
@@ -96,8 +96,8 @@ export default function ScheduleGrid({ courses }: ScheduleGridProps) {
                 style={{
                   fontFamily: "var(--font-space-mono)",
                   fontWeight: 400,
-                  fontSize: 9,
-                  color: "rgba(255,255,255,0.15)",
+                  fontSize: 11,
+                  color: "rgba(255,255,255,0.35)",
                   paddingRight: 8,
                   textAlign: "right",
                   lineHeight: 1,
@@ -144,7 +144,7 @@ export default function ScheduleGrid({ courses }: ScheduleGridProps) {
                   style={{
                     fontFamily: "var(--font-space-mono)",
                     fontWeight: 400,
-                    fontSize: 10,
+                    fontSize: 12,
                     color: "rgba(255,255,255,0.80)",
                     lineHeight: 1.3,
                   }}

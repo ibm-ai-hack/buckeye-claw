@@ -322,9 +322,9 @@ export default function ConnectPage() {
           style={{
             fontFamily: "var(--font-space-mono)",
             fontWeight: 400,
-            fontSize: 11,
+            fontSize: 13,
             letterSpacing: "2px",
-            color: "rgba(255,255,255,0.3)",
+            color: "rgba(255,255,255,0.5)",
             margin: 0,
             marginTop: 10,
           }}
@@ -371,7 +371,7 @@ export default function ConnectPage() {
                   width: 20,
                   height: 20,
                   border: "1.5px solid rgba(255,255,255,0.1)",
-                  borderTopColor: "rgba(255,255,255,0.4)",
+                  borderTopColor: "rgba(255,255,255,0.6)",
                   borderRadius: "50%",
                   display: "inline-block",
                   animation: "spin 0.9s linear infinite",
@@ -380,9 +380,9 @@ export default function ConnectPage() {
               <span
                 style={{
                   fontFamily: "var(--font-space-mono)",
-                  fontSize: 11,
+                  fontSize: 13,
                   letterSpacing: "3px",
-                  color: "rgba(255,255,255,0.2)",
+                  color: "rgba(255,255,255,0.6)",
                   textTransform: "lowercase",
                   animation: "pulse 2s ease infinite",
                 }}
@@ -510,9 +510,9 @@ export default function ConnectPage() {
               left: "50%",
               transform: "translateX(-50%) translateY(100%)",
               fontFamily: "var(--font-space-mono)",
-              fontSize: 10,
+              fontSize: 12,
               letterSpacing: "1.5px",
-              color: "rgba(255,255,255,0.2)",
+              color: "rgba(255,255,255,0.6)",
               marginTop: 8,
               whiteSpace: "nowrap",
             }}
@@ -536,9 +536,9 @@ export default function ConnectPage() {
           <span
             style={{
               fontFamily: "var(--font-space-mono)",
-              fontSize: 11,
+              fontSize: 13,
               letterSpacing: "2px",
-              color: "rgba(255,255,255,0.4)",
+              color: "rgba(255,255,255,0.6)",
               textTransform: "lowercase",
             }}
           >
@@ -549,7 +549,7 @@ export default function ConnectPage() {
               onClick={handleRetry}
               style={{
                 fontFamily: "var(--font-space-mono)",
-                fontSize: 10,
+                fontSize: 12,
                 letterSpacing: "2px",
                 textTransform: "lowercase",
                 color: "rgba(255,255,255,0.5)",
@@ -591,7 +591,7 @@ export default function ConnectPage() {
             style={{
               fontFamily: "var(--font-outfit)",
               fontWeight: 200,
-              fontSize: 20,
+              fontSize: 24,
               letterSpacing: "0.15em",
               color: "rgba(255,255,255,0.7)",
               textTransform: "lowercase",
@@ -620,7 +620,7 @@ export default function ConnectPage() {
                 <span
                   style={{
                     fontFamily: "var(--font-space-mono)",
-                    fontSize: 13,
+                    fontSize: 15,
                     fontWeight: 400,
                     color: "rgba(255,255,255,0.8)",
                     letterSpacing: "1px",
@@ -632,9 +632,9 @@ export default function ConnectPage() {
                 <span
                   style={{
                     fontFamily: "var(--font-outfit)",
-                    fontSize: 14,
+                    fontSize: 16,
                     fontWeight: 300,
-                    color: "rgba(255,255,255,0.55)",
+                    color: "rgba(255,255,255,0.75)",
                     flex: 1,
                     minWidth: 180,
                   }}
@@ -644,8 +644,8 @@ export default function ConnectPage() {
                 <span
                   style={{
                     fontFamily: "var(--font-space-mono)",
-                    fontSize: 11,
-                    color: "rgba(255,255,255,0.35)",
+                    fontSize: 13,
+                    color: "rgba(255,255,255,0.75)",
                     letterSpacing: "1px",
                   }}
                 >
@@ -654,8 +654,8 @@ export default function ConnectPage() {
                 <span
                   style={{
                     fontFamily: "var(--font-space-mono)",
-                    fontSize: 11,
-                    color: "rgba(255,255,255,0.35)",
+                    fontSize: 13,
+                    color: "rgba(255,255,255,0.75)",
                     letterSpacing: "1px",
                   }}
                 >
@@ -666,8 +666,8 @@ export default function ConnectPage() {
                 <span
                   style={{
                     fontFamily: "var(--font-space-mono)",
-                    fontSize: 11,
-                    color: "rgba(255,255,255,0.25)",
+                    fontSize: 13,
+                    color: "rgba(255,255,255,0.45)",
                     letterSpacing: "1px",
                   }}
                 >
@@ -707,7 +707,7 @@ export default function ConnectPage() {
               onMouseEnter={(e) => {
                 const t = e.currentTarget;
                 t.style.background = "rgba(255,255,255,0.1)";
-                t.style.borderColor = "rgba(255,255,255,0.2)";
+                t.style.borderColor = "rgba(255,255,255,0.6)";
                 t.style.color = "white";
               }}
               onMouseLeave={(e) => {
@@ -774,7 +774,7 @@ function StatusIndicator({ status }: { status: SessionStatus }) {
           width: 12,
           height: 12,
           border: "1.5px solid rgba(255,255,255,0.1)",
-          borderTopColor: "rgba(255,255,255,0.4)",
+          borderTopColor: "rgba(255,255,255,0.6)",
           borderRadius: "50%",
           display: "inline-block",
           animation: "spin 0.9s linear infinite",

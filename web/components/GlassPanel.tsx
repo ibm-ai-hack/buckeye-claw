@@ -131,11 +131,11 @@ export default function GlassPanel() {
               style={{
                 fontFamily: "var(--font-space-mono)",
                 fontWeight: 400,
-                fontSize: 11,
-                letterSpacing: "3px",
-                color: "rgba(255,255,255,0.35)",
+                fontSize: 16,
+                letterSpacing: "3.5px",
+                color: "rgba(255,255,255,0.45)",
                 margin: 0,
-                marginTop: 8,
+                marginTop: 14,
               }}
             >
               your entire campus, one text away.
@@ -144,8 +144,8 @@ export default function GlassPanel() {
             <div
               style={{
                 display: "flex",
-                gap: 16,
-                marginTop: 40,
+                gap: 24,
+                marginTop: 56,
                 pointerEvents: "auto",
               }}
             >
@@ -162,15 +162,15 @@ export default function GlassPanel() {
                 style={{
                   fontFamily: "var(--font-space-mono)",
                   fontWeight: 400,
-                  fontSize: 12,
-                  letterSpacing: "3px",
-                  color: "rgba(255,255,255,0.5)",
-                  padding: "14px 36px",
+                  fontSize: 18,
+                  letterSpacing: "2.5px",
+                  color: "rgba(255,255,255,0.55)",
+                  padding: "22px 60px",
                   background: "rgba(255,255,255,0.05)",
                   backdropFilter: "blur(16px)",
                   WebkitBackdropFilter: "blur(16px)",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  borderRadius: 12,
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  borderRadius: 16,
                   cursor: "pointer",
                   transition: "all 0.3s ease",
                 }}
@@ -183,8 +183,8 @@ export default function GlassPanel() {
                 onMouseLeave={(e) => {
                   const t = e.currentTarget;
                   t.style.background = "rgba(255,255,255,0.05)";
-                  t.style.borderColor = "rgba(255,255,255,0.1)";
-                  t.style.color = "rgba(255,255,255,0.5)";
+                  t.style.borderColor = "rgba(255,255,255,0.12)";
+                  t.style.color = "rgba(255,255,255,0.55)";
                 }}
               >
                 text me
@@ -194,15 +194,15 @@ export default function GlassPanel() {
                 style={{
                   fontFamily: "var(--font-space-mono)",
                   fontWeight: 400,
-                  fontSize: 12,
-                  letterSpacing: "3px",
+                  fontSize: 18,
+                  letterSpacing: "2.5px",
                   color: "rgb(198,40,40)",
-                  padding: "14px 36px",
+                  padding: "22px 60px",
                   background: "rgba(198,40,40,0.08)",
                   backdropFilter: "blur(16px)",
                   WebkitBackdropFilter: "blur(16px)",
                   border: "1px solid rgba(198,40,40,0.25)",
-                  borderRadius: 12,
+                  borderRadius: 16,
                   cursor: "pointer",
                   transition: "all 0.3s ease",
                 }}

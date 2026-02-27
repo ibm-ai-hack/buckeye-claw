@@ -54,8 +54,8 @@ export default function ToolCallCard({
           style={{
             fontFamily: "var(--font-space-mono)",
             fontWeight: 400,
-            fontSize: 12,
-            color: "rgba(255,255,255,0.40)",
+            fontSize: 14,
+            color: "rgba(255,255,255,0.60)",
             letterSpacing: "1px",
           }}
         >
@@ -73,8 +73,8 @@ export default function ToolCallCard({
               style={{
                 fontFamily: "var(--font-space-mono)",
                 fontWeight: 400,
-                fontSize: 10,
-                color: "rgba(255,255,255,0.15)",
+                fontSize: 12,
+                color: "rgba(255,255,255,0.35)",
                 letterSpacing: "1px",
               }}
             >
@@ -90,8 +90,8 @@ export default function ToolCallCard({
               style={{
                 fontFamily: "var(--font-space-mono)",
                 fontWeight: 400,
-                fontSize: 10,
-                color: "rgba(255,255,255,0.15)",
+                fontSize: 12,
+                color: "rgba(255,255,255,0.35)",
                 letterSpacing: "1px",
                 background: "none",
                 border: "none",
@@ -101,10 +101,10 @@ export default function ToolCallCard({
                 transition: "color 0.15s ease",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = "rgba(255,255,255,0.40)";
+                e.currentTarget.style.color = "rgba(255,255,255,0.60)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.color = "rgba(255,255,255,0.15)";
+                e.currentTarget.style.color = "rgba(255,255,255,0.35)";
               }}
             >
               expand
@@ -119,8 +119,8 @@ export default function ToolCallCard({
           style={{
             fontFamily: "var(--font-space-mono)",
             fontWeight: 400,
-            fontSize: 11,
-            color: "rgba(255,255,255,0.25)",
+            fontSize: 13,
+            color: "rgba(255,255,255,0.45)",
             marginTop: 4,
             display: "block",
           }}

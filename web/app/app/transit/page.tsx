@@ -111,8 +111,8 @@ export default function TransitPage() {
             style={{
               fontFamily: "var(--font-space-mono)",
               fontWeight: 400,
-              fontSize: 10,
-              color: "rgba(255,255,255,0.15)",
+              fontSize: 14,
+              color: "rgba(255,255,255,0.35)",
               letterSpacing: "2px",
               zIndex: 1,
             }}
@@ -127,9 +127,9 @@ export default function TransitPage() {
             style={{
               fontFamily: "var(--font-outfit)",
               fontWeight: 200,
-              fontSize: 16,
+              fontSize: 18,
               letterSpacing: "0.15em",
-              color: "rgba(255,255,255,0.55)",
+              color: "rgba(255,255,255,0.75)",
               margin: 0,
             }}
           >
@@ -139,8 +139,8 @@ export default function TransitPage() {
             style={{
               fontFamily: "var(--font-space-mono)",
               fontWeight: 400,
-              fontSize: 9,
-              color: "rgba(255,255,255,0.20)",
+              fontSize: 11,
+              color: "rgba(255,255,255,0.40)",
               letterSpacing: "1px",
             }}
           >
@@ -172,7 +172,7 @@ export default function TransitPage() {
               }}
             >
               <PulseDot
-                color={route.active ? "rgb(198,40,40)" : "rgba(255,255,255,0.15)"}
+                color={route.active ? "rgb(198,40,40)" : "rgba(255,255,255,0.35)"}
                 size={6}
                 pulse={route.active}
               />
@@ -180,8 +180,8 @@ export default function TransitPage() {
                 style={{
                   fontFamily: "var(--font-space-mono)",
                   fontWeight: 400,
-                  fontSize: 11,
-                  color: "rgba(255,255,255,0.45)",
+                  fontSize: 13,
+                  color: "rgba(255,255,255,0.65)",
                   flex: 1,
                 }}
               >
@@ -191,8 +191,8 @@ export default function TransitPage() {
                 style={{
                   fontFamily: "var(--font-space-mono)",
                   fontWeight: 400,
-                  fontSize: 10,
-                  color: "rgba(255,255,255,0.25)",
+                  fontSize: 14,
+                  color: "rgba(255,255,255,0.45)",
                   width: 120,
                 }}
               >
@@ -202,11 +202,11 @@ export default function TransitPage() {
                 style={{
                   fontFamily: "var(--font-space-mono)",
                   fontWeight: 400,
-                  fontSize: 12,
+                  fontSize: 14,
                   color:
                     route.eta !== "---" && parseInt(route.eta) <= 5
                       ? "rgb(198,40,40)"
-                      : "rgba(255,255,255,0.40)",
+                      : "rgba(255,255,255,0.60)",
                   width: 60,
                   textAlign: "right",
                 }}
@@ -222,9 +222,9 @@ export default function TransitPage() {
           style={{
             fontFamily: "var(--font-outfit)",
             fontWeight: 200,
-            fontSize: 16,
+            fontSize: 18,
             letterSpacing: "0.15em",
-            color: "rgba(255,255,255,0.55)",
+            color: "rgba(255,255,255,0.75)",
             margin: 0,
             marginBottom: 16,
           }}

@@ -65,12 +65,12 @@ export default function AcademicsPage() {
             style={{
               fontFamily: "var(--font-space-mono)",
               fontWeight: 400,
-              fontSize: 12,
+              fontSize: 14,
               letterSpacing: "1px",
               color:
                 activeTab === tab
-                  ? "rgba(255,255,255,0.70)"
-                  : "rgba(255,255,255,0.25)",
+                  ? "rgba(255,255,255,0.85)"
+                  : "rgba(255,255,255,0.45)",
               padding: "12px 24px",
               background: "transparent",
               border: "none",
