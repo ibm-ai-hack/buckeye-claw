@@ -50,9 +50,9 @@ export default function DomainHero({ title, accentColor }: DomainHeroProps) {
           left: 32,
           fontFamily: "var(--font-outfit)",
           fontWeight: 200,
-          fontSize: 24,
+          fontSize: 28,
           letterSpacing: "0.2em",
-          color: "rgba(255,255,255,0.70)",
+          color: "rgba(255,255,255,0.85)",
           textTransform: "lowercase",
           margin: 0,
         }}

@@ -52,8 +52,8 @@ export default function FoodPage() {
               borderRadius: 10,
               fontFamily: "var(--font-space-mono)",
               fontWeight: 400,
-              fontSize: 13,
-              color: "rgba(255,255,255,0.70)",
+              fontSize: 15,
+              color: "rgba(255,255,255,0.85)",
               outline: "none",
               caretColor: "rgb(198,40,40)",
               transition: "border-color 0.2s ease",
@@ -99,8 +99,8 @@ export default function FoodPage() {
                 style={{
                   fontFamily: "var(--font-outfit)",
                   fontWeight: 300,
-                  fontSize: 16,
-                  color: "rgba(255,255,255,0.65)",
+                  fontSize: 18,
+                  color: "rgba(255,255,255,0.80)",
                   marginBottom: 8,
                 }}
               >
@@ -117,8 +117,8 @@ export default function FoodPage() {
                   style={{
                     fontFamily: "var(--font-space-mono)",
                     fontWeight: 400,
-                    fontSize: 10,
-                    color: "rgba(255,255,255,0.25)",
+                    fontSize: 12,
+                    color: "rgba(255,255,255,0.45)",
                     letterSpacing: "1px",
                   }}
                 >
@@ -128,8 +128,8 @@ export default function FoodPage() {
                   style={{
                     fontFamily: "var(--font-space-mono)",
                     fontWeight: 400,
-                    fontSize: 10,
-                    color: "rgba(255,255,255,0.30)",
+                    fontSize: 12,
+                    color: "rgba(255,255,255,0.50)",
                   }}
                 >
                   {restaurant.rating} · {restaurant.eta}
@@ -147,7 +147,7 @@ export default function FoodPage() {
 
       <style jsx>{`
         input::placeholder {
-          color: rgba(255, 255, 255, 0.15);
+          color: rgba(255, 255, 255, 0.35);
           font-family: var(--font-space-mono);
         }
       `}</style>

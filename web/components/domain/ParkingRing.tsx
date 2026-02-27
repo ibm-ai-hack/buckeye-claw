@@ -85,7 +85,7 @@ export default function ParkingRing({ name, available, total }: ParkingRingProps
             style={{
               fontFamily: "var(--font-outfit)",
               fontWeight: 200,
-              fontSize: available === 0 ? 18 : 24,
+              fontSize: available === 0 ? 20 : 28,
               color: "rgba(255,255,255,0.80)",
               lineHeight: 1,
             }}
@@ -98,8 +98,8 @@ export default function ParkingRing({ name, available, total }: ParkingRingProps
         style={{
           fontFamily: "var(--font-space-mono)",
           fontWeight: 400,
-          fontSize: 10,
-          color: "rgba(255,255,255,0.30)",
+          fontSize: 12,
+          color: "rgba(255,255,255,0.50)",
           letterSpacing: "0.5px",
           textAlign: "center",
         }}

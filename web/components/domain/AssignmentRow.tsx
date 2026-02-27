@@ -21,8 +21,8 @@ export default function AssignmentRow({
   }[urgency];
 
   const dueColor = {
-    normal: "rgba(255,255,255,0.25)",
-    soon: "rgba(255,255,255,0.50)",
+    normal: "rgba(255,255,255,0.45)",
+    soon: "rgba(255,255,255,0.70)",
     tomorrow: "#eab308",
     overdue: "rgb(198,40,40)",
   }[urgency];
@@ -42,8 +42,8 @@ export default function AssignmentRow({
         style={{
           fontFamily: "var(--font-space-mono)",
           fontWeight: 400,
-          fontSize: 12,
-          color: "rgba(255,255,255,0.55)",
+          fontSize: 14,
+          color: "rgba(255,255,255,0.75)",
         }}
       >
         {course} — {title}
@@ -52,7 +52,7 @@ export default function AssignmentRow({
         style={{
           fontFamily: "var(--font-space-mono)",
           fontWeight: 400,
-          fontSize: 11,
+          fontSize: 13,
           color: dueColor,
           textTransform: urgency === "overdue" ? "uppercase" : "lowercase",
           letterSpacing: urgency === "overdue" ? "1px" : "0.5px",

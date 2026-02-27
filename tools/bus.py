@@ -20,7 +20,7 @@ BUS_ROUTES = {
 @tool
 async def get_bus_routes() -> StringToolOutput:
     """Get all OSU CABS bus routes and their codes. Available routes: ACK, BE, CC, CLS, ER, MC, MM, NWC, WMC."""
-    data = await fetch_json(f"{BASE_URL}/routes/")
+    data = await fetch_json(f"{BASE_URL}/routes")
     return StringToolOutput(format_response(data, "Bus Routes"))
 
 

@@ -1,0 +1,48 @@
+name: Deploy to IBM Cloud Code Engine
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Install IBM Cloud CLI
+        run: |
+          curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
+          ibmcloud plugin install code-engine -f
+          ibmcloud plugin install container-registry -f
+
+      - name: Login to IBM Cloud
+        run: |
+          ibmcloud login --apikey "${{ secrets.IBM_API_KEY }}" -r us-east -g Default
+          ibmcloud cr login
+
+      - name: Delete old image to free quota before push
+        run: |
+          ibmcloud cr image-rm icr.io/buckeyeclaw/buckeyeclaw:latest || true
+          ibmcloud cr image-prune-untagged --restrict buckeyeclaw --force || true
+
+      - name: Build and push image (linux/amd64)
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: icr.io/buckeyeclaw/buckeyeclaw:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Deploy to Code Engine
+        run: |
+          ibmcloud ce project select --name buckeyeclaw
+          ibmcloud ce app update --name buckeyeclaw --image icr.io/buckeyeclaw/buckeyeclaw:latest

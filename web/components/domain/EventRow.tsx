@@ -46,8 +46,8 @@ export default function EventRow({
           style={{
             fontFamily: "var(--font-outfit)",
             fontWeight: 200,
-            fontSize: 20,
-            color: "rgba(255,255,255,0.70)",
+            fontSize: 24,
+            color: "rgba(255,255,255,0.85)",
             lineHeight: 1,
           }}
         >
@@ -57,8 +57,8 @@ export default function EventRow({
           style={{
             fontFamily: "var(--font-space-mono)",
             fontWeight: 400,
-            fontSize: 9,
-            color: "rgba(255,255,255,0.25)",
+            fontSize: 13,
+            color: "rgba(255,255,255,0.45)",
             letterSpacing: "1px",
             textTransform: "lowercase",
           }}
@@ -73,8 +73,8 @@ export default function EventRow({
           style={{
             fontFamily: "var(--font-outfit)",
             fontWeight: 300,
-            fontSize: 14,
-            color: "rgba(255,255,255,0.65)",
+            fontSize: 16,
+            color: "rgba(255,255,255,0.80)",
             marginBottom: 4,
           }}
         >
@@ -84,8 +84,8 @@ export default function EventRow({
           style={{
             fontFamily: "var(--font-space-mono)",
             fontWeight: 400,
-            fontSize: 11,
-            color: "rgba(255,255,255,0.30)",
+            fontSize: 13,
+            color: "rgba(255,255,255,0.50)",
             marginBottom: description ? 4 : 0,
           }}
         >
@@ -96,8 +96,8 @@ export default function EventRow({
             style={{
               fontFamily: "var(--font-space-mono)",
               fontWeight: 400,
-              fontSize: 10,
-              color: "rgba(255,255,255,0.20)",
+              fontSize: 12,
+              color: "rgba(255,255,255,0.40)",
             }}
           >
             {description}
