@@ -30,7 +30,10 @@ from canvas.tools import (
 )
 
 # Grubhub tools
-from grubhub.tools import search_grubhub_restaurants, get_restaurant_menu, place_grubhub_order
+from grubhub.tools import (
+    search_grubhub_restaurants, get_restaurant_menu, place_grubhub_order,
+    schedule_grubhub_order, list_scheduled_grubhub_orders, cancel_scheduled_grubhub_order,
+)
 
 # BuckeyeLink tools
 from buckeyelink.tools import (
@@ -75,6 +78,7 @@ ALL_TOOLS = [
     get_course_grades, get_course_announcements, get_canvas_todos, get_course_syllabus,
     # Grubhub
     search_grubhub_restaurants, get_restaurant_menu, place_grubhub_order,
+    schedule_grubhub_order, list_scheduled_grubhub_orders, cancel_scheduled_grubhub_order,
     # BuckeyeLink
     get_class_schedule, get_grades, get_financial_aid_status,
     get_holds_and_todos, get_enrollment_info, get_buckeyelink_dashboard,
@@ -93,6 +97,8 @@ def create_granite_agent(tools=None) -> RequirementAgent:
         instructions=[
             "You help OSU students via text message. Write like a friend texting back — short, natural, no markdown formatting (no **, no ##, no bullet points with *).",
             "Keep responses concise (under 800 characters). Use plain text, line breaks, and dashes for lists.",
+            "Each message starts with [caller: +1...] — this is the user's phone number. When scheduling Grubhub orders, pass it as from_number.",
+            "When a user asks to order food at a specific future time (e.g. 'at 6pm', 'in 2 hours'), use schedule_grubhub_order instead of place_grubhub_order. For immediate orders with no time specified, use place_grubhub_order.",
             "When presenting data, pick out the most relevant info rather than dumping everything.",
             "If a tool returns an error, explain the issue simply and suggest alternatives.",
         ],

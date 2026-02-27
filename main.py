@@ -18,9 +18,13 @@ async def async_main():
     from messaging.webhook import app, set_agent_handler, set_main_loop
     from messaging import chat_store
     from agents import run_pipeline
+    from grubhub import scheduler
 
     # Load persisted chat-ID mappings
     chat_store.load()
+
+    # Start the order scheduler (persisted jobs resume automatically)
+    scheduler.start()
 
     # Register the orchestrator pipeline as the message handler
     async def handle_message(text: str, from_number: str) -> str:
@@ -52,6 +56,8 @@ async def async_main():
             await asyncio.sleep(3600)
     except KeyboardInterrupt:
         logger.info("Shutting down...")
+    finally:
+        scheduler.shutdown()
 
 
 def main():
