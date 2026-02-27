@@ -41,3 +41,7 @@ jobs:
         run: |
           ibmcloud ce project select --name buckeyeclaw
           ibmcloud ce app update --name buckeyeclaw --image icr.io/buckeyeclaw/buckeyeclaw:latest
+
+      - name: Clean up old images
+        run: |
+          ibmcloud cr image-prune-untagged --restrict buckeyeclaw --force

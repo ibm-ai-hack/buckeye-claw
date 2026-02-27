@@ -1,0 +1,9 @@
+.git
+.github
+.env
+*.egg-info
+__pycache__
+.venv
+current-buckeyelinkautomation
+*.md
+.gitignore
