@@ -18,6 +18,8 @@ grubhub = [
 ]
 buckeyelink = [
     "playwright",
+    "browser-use",
+    "beeai-framework[anthropic]",
 ]
 dev = [
     "pytest",

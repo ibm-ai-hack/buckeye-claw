@@ -36,6 +36,7 @@ from grubhub.tools import search_grubhub_restaurants, get_restaurant_menu, place
 from buckeyelink.tools import (
     get_class_schedule, get_grades, get_financial_aid_status,
     get_holds_and_todos, get_enrollment_info, get_buckeyelink_dashboard,
+    query_buckeyelink,
 )
 
 
@@ -77,6 +78,7 @@ ALL_TOOLS = [
     # BuckeyeLink
     get_class_schedule, get_grades, get_financial_aid_status,
     get_holds_and_todos, get_enrollment_info, get_buckeyelink_dashboard,
+    query_buckeyelink,
 ]
 
 
@@ -94,6 +96,7 @@ def create_agent() -> RequirementAgent:
             "Use Canvas tools to check courses, assignments, grades, announcements, and to-do items.",
             "Use Grubhub tools to help order food from nearby restaurants.",
             "Use BuckeyeLink tools to check class schedules, grades, financial aid, holds/to-dos, enrollment info, and the dashboard overview.",
+            "Use query_buckeyelink for BuckeyeLink requests not covered by specific tools — tuition, billing, degree audit, transfer credits, 1098-T, direct deposit, addresses, exam schedules, advisor info, transcripts, and more.",
             "When presenting data, summarize the most relevant results rather than dumping raw JSON.",
             "If a tool returns an error, explain the issue simply and suggest alternatives.",
         ],
