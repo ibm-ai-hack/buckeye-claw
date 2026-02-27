@@ -9,6 +9,7 @@ dependencies = [
     "httpx",
     "python-dotenv",
     "canvasapi",
+    "apscheduler>=3.10,<4",
 ]
 
 [project.optional-dependencies]

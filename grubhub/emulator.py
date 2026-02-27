@@ -69,6 +69,6 @@ def install_grubhub(apk_path: str) -> None:
 def launch_grubhub() -> None:
     subprocess.run(
         ["adb", "shell", "am", "start", "-n",
-         f"{GRUBHUB_PACKAGE}/{GRUBHUB_PACKAGE}.ui.LaunchActivity"],
+         f"{GRUBHUB_PACKAGE}/com.grubhub.dinerapp.android.splash.SplashActivity"],
         check=True, timeout=10,
     )

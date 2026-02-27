@@ -18,15 +18,21 @@ def main():
     from agent import create_agent
     from messaging.webhook import app, set_agent_handler
     from messaging import chat_store
+    from grubhub import scheduler
 
     chat_store.load()
+
+    # Start the order scheduler (persisted jobs resume automatically)
+    scheduler.start()
 
     agent = create_agent()
     logger.info("BuckeyeBot agent initialized")
 
     async def handle_message(text: str, from_number: str) -> str:
         try:
-            response = await agent.run(text)
+            # Prefix caller identity so the agent can pass it to scheduling tools
+            prompt = f"[caller: {from_number}] {text}"
+            response = await agent.run(prompt)
             return response.last_message.text
         except Exception as e:
             logger.exception("Agent error")
@@ -38,7 +44,10 @@ def main():
     logger.info("Starting BuckeyeBot on port %d", port)
     logger.info("Configure your Linq webhook to POST to: http://<your-host>:%d/webhook", port)
 
-    app.run(host="0.0.0.0", port=port, debug=False)
+    try:
+        app.run(host="0.0.0.0", port=port, debug=False)
+    finally:
+        scheduler.shutdown()
 
 
 if __name__ == "__main__":
