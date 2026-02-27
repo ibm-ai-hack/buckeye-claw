@@ -30,7 +30,7 @@ dev = [
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["canvas*", "grubhub*", "messaging*", "buckeyelink*", "tools*"]
+include = ["agents*", "canvas*", "grubhub*", "messaging*", "buckeyelink*", "tools*"]
 
 [build-system]
 requires = ["setuptools>=68.0"]

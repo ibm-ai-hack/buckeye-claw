@@ -4,8 +4,8 @@ import logging
 from beeai_framework.errors import FrameworkError
 from beeai_framework.workflows import Workflow
 
-from agent import create_granite_agent, create_claude_agent
-from models import PipelineState
+from agents.factories import create_granite_agent, create_claude_agent, ALL_TOOLS
+from agents.models import PipelineState
 
 logger = logging.getLogger(__name__)
 
@@ -149,7 +149,6 @@ async def run_pipeline(text: str, from_number: str) -> str:
 
     # Last-resort fallback: try Granite alone with tools
     try:
-        from agent import ALL_TOOLS
         agent = create_granite_agent(tools=ALL_TOOLS)
         response = await agent.run(text)
         return response.result.text[:1500]

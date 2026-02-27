@@ -17,7 +17,7 @@ logger = logging.getLogger("buckeyebot")
 async def async_main():
     from messaging.webhook import app, set_agent_handler, set_main_loop
     from messaging import chat_store
-    from orchestrator import run_pipeline
+    from agents import run_pipeline
 
     # Load persisted chat-ID mappings
     chat_store.load()
