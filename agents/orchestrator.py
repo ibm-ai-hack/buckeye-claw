@@ -58,7 +58,7 @@ def _build_workflow() -> Workflow:
         )
         try:
             response = await agent.run(prompt)
-            parsed = _parse_json(response.result.text)
+            parsed = _parse_json(response.last_message.text)
             state.intent = parsed.get("intent", "unknown")
             state.extracted_params = parsed.get("params", {})
             state.is_simple = parsed.get("is_simple", False)
@@ -86,7 +86,7 @@ def _build_workflow() -> Workflow:
         )
         try:
             response = await agent.run(prompt)
-            state.draft_response = response.result.text
+            state.draft_response = response.last_message.text
         except FrameworkError as e:
             logger.error("Claude execution error: %s", e.explain())
             state.draft_response = ""
@@ -101,7 +101,7 @@ def _build_workflow() -> Workflow:
         if state.is_simple:
             try:
                 response = await agent.run(state.user_text)
-                state.final_response = response.result.text[:1500]
+                state.final_response = response.last_message.text[:1500]
             except FrameworkError as e:
                 logger.error("Granite simple response error: %s", e.explain())
                 state.final_response = "Hey! How can I help you today?"
@@ -119,7 +119,7 @@ def _build_workflow() -> Workflow:
         )
         try:
             response = await agent.run(prompt)
-            state.final_response = response.result.text[:1500]
+            state.final_response = response.last_message.text[:1500]
         except FrameworkError as e:
             logger.error("Granite format error: %s", e.explain())
             state.final_response = state.draft_response[:1500]
@@ -157,7 +157,7 @@ async def run_pipeline(text: str, from_number: str) -> str:
     try:
         agent = create_granite_agent(tools=ALL_TOOLS)
         response = await agent.run(text)
-        return response.result.text[:1500]
+        return response.last_message.text[:1500]
     except Exception as e:
         logger.exception("Fallback agent also failed")
         if debug:
