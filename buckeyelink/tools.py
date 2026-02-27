@@ -188,3 +188,27 @@ async def get_buckeyelink_dashboard() -> StringToolOutput:
     except Exception as e:
         logger.exception("BuckeyeLink dashboard error")
         return StringToolOutput(f"BuckeyeLink unavailable: {type(e).__name__}.")
+
+
+@tool
+async def query_buckeyelink(request: str) -> StringToolOutput:
+    """Query BuckeyeLink for any student account information.
+
+    Handles tuition, billing, degree audit, transfer credits, 1098-T,
+    direct deposit, addresses, exam schedules, advisor info, unofficial
+    transcripts, and more. Use this for BuckeyeLink requests not covered
+    by the specific schedule/grades/financial-aid/holds/enrollment tools.
+    """
+    try:
+        from buckeyelink.enhancer import enhance_prompt
+        from buckeyelink.browser_agent import run_browser_use_task
+
+        enhanced = await enhance_prompt(request)
+        result = await run_browser_use_task(enhanced)
+        return StringToolOutput(_truncate(result))
+    except Exception as e:
+        logger.exception("BuckeyeLink query error")
+        return StringToolOutput(
+            f"BuckeyeLink query failed: {type(e).__name__}. "
+            "Make sure OSU_USERNAME, OSU_PASSWORD, and BROWSER_USE_API_KEY are set in .env."
+        )

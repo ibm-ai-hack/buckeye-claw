@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import os
-import sys
+import threading
 
 from dotenv import load_dotenv
 
@@ -14,31 +14,48 @@ logging.basicConfig(
 logger = logging.getLogger("buckeyebot")
 
 
-def main():
-    from agent import create_agent
-    from messaging.webhook import app, set_agent_handler
+async def async_main():
+    from messaging.webhook import app, set_agent_handler, set_main_loop
     from messaging import chat_store
+    from agents import run_pipeline
 
+    # Load persisted chat-ID mappings
     chat_store.load()
 
-    agent = create_agent()
-    logger.info("BuckeyeBot agent initialized")
-
+    # Register the orchestrator pipeline as the message handler
     async def handle_message(text: str, from_number: str) -> str:
         try:
-            response = await agent.run(text)
-            return response.last_message.text
+            return await run_pipeline(text, from_number)
         except Exception as e:
-            logger.exception("Agent error")
+            logger.exception("Pipeline error")
             return f"Sorry, I ran into an error: {type(e).__name__}. Please try again."
 
     set_agent_handler(handle_message)
 
+    # Share the main asyncio loop with webhook threads
+    set_main_loop(asyncio.get_running_loop())
+
+    # Run Flask in a daemon thread
     port = int(os.environ.get("PORT", 5000))
-    logger.info("Starting BuckeyeBot on port %d", port)
+    flask_thread = threading.Thread(
+        target=lambda: app.run(host="0.0.0.0", port=port, debug=False, use_reloader=False),
+        daemon=True,
+    )
+    flask_thread.start()
+
+    logger.info("BuckeyeBot started on port %d", port)
     logger.info("Configure your Linq webhook to POST to: http://<your-host>:%d/webhook", port)
 
-    app.run(host="0.0.0.0", port=port, debug=False)
+    # Keep the asyncio loop alive
+    try:
+        while True:
+            await asyncio.sleep(3600)
+    except KeyboardInterrupt:
+        logger.info("Shutting down...")
+
+
+def main():
+    asyncio.run(async_main())
 
 
 if __name__ == "__main__":

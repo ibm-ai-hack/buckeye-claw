@@ -1,16 +1,19 @@
 [project]
-name = "buckeyebot"
+name = "buckeyeclaw"
 version = "0.1.0"
 description = "Unified AI agent for Ohio State University students via iMessage, RCS, and SMS"
 requires-python = ">=3.11"
 dependencies = [
-    "beeai-framework[watsonx]",
+    "beeai-framework",
+    "ibm-watsonx-ai",
+    "anthropic",
     "flask",
     "httpx",
     "python-dotenv",
     "canvasapi",
     "supabase",
     "openai",
+    "pydantic>=2.0",
 ]
 
 [project.optional-dependencies]
@@ -19,20 +22,14 @@ grubhub = [
 ]
 buckeyelink = [
     "playwright",
+    "browser-use",
+    "beeai-framework[anthropic]",
 ]
 dev = [
     "pytest",
     "pytest-asyncio",
 ]
 
-[tool.pytest.ini_options]
-asyncio_mode = "strict"
-markers = [
-    "integration: requires SUPABASE_URL and SUPABASE_API_KEY",
-    "semantic: requires Supabase + OPENAI_API_KEY for pgvector ranking tests",
-    "llm: requires Supabase + WATSONX credentials for Granite LLM quality tests",
-]
-
 [build-system]
 requires = ["setuptools>=68.0"]
-build-backend = "setuptools.backends._legacy:_Backend"
+build-backend = "setuptools.build_meta"
