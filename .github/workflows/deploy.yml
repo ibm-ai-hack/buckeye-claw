@@ -27,6 +27,11 @@ jobs:
           ibmcloud login --apikey "${{ secrets.IBM_API_KEY }}" -r us-east -g Default
           ibmcloud cr login
 
+      - name: Delete old image to free quota before push
+        run: |
+          ibmcloud cr image-rm icr.io/buckeyeclaw/buckeyeclaw:latest || true
+          ibmcloud cr image-prune-untagged --restrict buckeyeclaw --force || true
+
       - name: Build and push image (linux/amd64)
         uses: docker/build-push-action@v5
         with:
@@ -41,7 +46,3 @@ jobs:
         run: |
           ibmcloud ce project select --name buckeyeclaw
           ibmcloud ce app update --name buckeyeclaw --image icr.io/buckeyeclaw/buckeyeclaw:latest
-
-      - name: Clean up old images
-        run: |
-          ibmcloud cr image-prune-untagged --restrict buckeyeclaw --force
