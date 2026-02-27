@@ -1,0 +1,28 @@
+[project]
+name = "buckeyebot"
+version = "0.1.0"
+description = "Unified AI agent for Ohio State University students via iMessage, RCS, and SMS"
+requires-python = ">=3.11"
+dependencies = [
+    "beeai-framework[watsonx]",
+    "flask",
+    "httpx",
+    "python-dotenv",
+    "canvasapi",
+]
+
+[project.optional-dependencies]
+grubhub = [
+    "Appium-Python-Client",
+]
+buckeyelink = [
+    "playwright",
+]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+]
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.backends._legacy:_Backend"
