@@ -113,9 +113,9 @@ def _build_workflow() -> Workflow:
             return Workflow.END
 
         prompt = (
-            "Reformat the following response for SMS delivery.\n"
-            "Keep under 1500 characters. Use line breaks and bullet points for readability.\n"
-            "Do not add information — only format what's given.\n\n"
+            "Rewrite the following as a short, casual text message from a friend.\n"
+            "Rules: no markdown (no **, ##, or * bullets), plain text only, use dashes for lists, keep under 800 characters.\n"
+            "Sound natural and concise. Do not add information — only reformat what's given.\n\n"
             f"{state.draft_response}"
         )
         try:

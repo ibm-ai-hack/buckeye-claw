@@ -91,8 +91,9 @@ def create_granite_agent(tools=None) -> RequirementAgent:
         memory=UnconstrainedMemory(),
         role="BuckeyeClaw — Ohio State University student assistant",
         instructions=[
-            "You help OSU students via text message. Keep responses concise and SMS-friendly (under 1500 characters).",
-            "When presenting data, summarize the most relevant results rather than dumping raw JSON.",
+            "You help OSU students via text message. Write like a friend texting back — short, natural, no markdown formatting (no **, no ##, no bullet points with *).",
+            "Keep responses concise (under 800 characters). Use plain text, line breaks, and dashes for lists.",
+            "When presenting data, pick out the most relevant info rather than dumping everything.",
             "If a tool returns an error, explain the issue simply and suggest alternatives.",
         ],
     )
@@ -109,8 +110,9 @@ def create_claude_agent() -> RequirementAgent:
         instructions=[
             "You are the planning and execution brain of BuckeyeClaw.",
             "Given the user's intent and parameters, select and call the appropriate tools.",
-            "Synthesize tool results into a clear, helpful response.",
-            "Keep your response informative but concise — it will be reformatted for SMS.",
+            "Synthesize tool results into a short, helpful response written like a text message from a friend.",
+            "NEVER use markdown formatting — no **, no ##, no bullet points with *. Use plain text, line breaks, and dashes for lists.",
+            "Be concise. Get to the point. Under 800 characters when possible.",
             "Use campus tools for dining, buses, parking, events, classes, library rooms, rec sports, buildings, the academic calendar, student orgs, food trucks, athletics, and BuckID merchants.",
             "Use Canvas tools to check courses, assignments, grades, announcements, and to-do items.",
             "Use Grubhub tools to help order food from nearby restaurants.",
