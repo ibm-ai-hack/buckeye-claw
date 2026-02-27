@@ -62,9 +62,9 @@ export default function CampusPage() {
             style={{
               fontFamily: "var(--font-space-mono)",
               fontWeight: 400,
-              fontSize: 12,
+              fontSize: 14,
               letterSpacing: "1px",
-              color: activeTab === tab ? "rgba(255,255,255,0.70)" : "rgba(255,255,255,0.25)",
+              color: activeTab === tab ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.45)",
               padding: "12px 24px",
               background: "transparent",
               border: "none",
@@ -115,8 +115,8 @@ export default function CampusPage() {
                     style={{
                       fontFamily: "var(--font-outfit)",
                       fontWeight: 300,
-                      fontSize: 14,
-                      color: "rgba(255,255,255,0.60)",
+                      fontSize: 16,
+                      color: "rgba(255,255,255,0.80)",
                       marginBottom: 4,
                     }}
                   >
@@ -126,8 +126,8 @@ export default function CampusPage() {
                     style={{
                       fontFamily: "var(--font-space-mono)",
                       fontWeight: 400,
-                      fontSize: 10,
-                      color: "rgba(255,255,255,0.25)",
+                      fontSize: 12,
+                      color: "rgba(255,255,255,0.45)",
                       letterSpacing: "1px",
                     }}
                   >
@@ -138,8 +138,8 @@ export default function CampusPage() {
                   style={{
                     fontFamily: "var(--font-space-mono)",
                     fontWeight: 400,
-                    fontSize: 11,
-                    color: "rgba(255,255,255,0.25)",
+                    fontSize: 13,
+                    color: "rgba(255,255,255,0.45)",
                   }}
                 >
                   {org.members} members

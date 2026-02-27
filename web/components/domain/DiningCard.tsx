@@ -52,8 +52,8 @@ export default function DiningCard({
             style={{
               fontFamily: "var(--font-outfit)",
               fontWeight: 300,
-              fontSize: 16,
-              color: "rgba(255,255,255,0.65)",
+              fontSize: 18,
+              color: "rgba(255,255,255,0.80)",
             }}
           >
             {hallName}
@@ -70,8 +70,8 @@ export default function DiningCard({
         style={{
           fontFamily: "var(--font-space-mono)",
           fontWeight: 400,
-          fontSize: 11,
-          color: "rgba(255,255,255,0.35)",
+          fontSize: 13,
+          color: "rgba(255,255,255,0.55)",
           marginBottom: 4,
         }}
       >
@@ -81,8 +81,8 @@ export default function DiningCard({
         style={{
           fontFamily: "var(--font-space-mono)",
           fontWeight: 400,
-          fontSize: 11,
-          color: "rgba(255,255,255,0.25)",
+          fontSize: 13,
+          color: "rgba(255,255,255,0.45)",
           marginBottom: 14,
         }}
       >
@@ -95,8 +95,8 @@ export default function DiningCard({
           style={{
             fontFamily: "var(--font-space-mono)",
             fontWeight: 400,
-            fontSize: 11,
-            color: expanded ? "rgba(255,255,255,0.40)" : "rgba(255,255,255,0.20)",
+            fontSize: 13,
+            color: expanded ? "rgba(255,255,255,0.60)" : "rgba(255,255,255,0.60)",
             background: "none",
             border: "none",
             cursor: "pointer",
@@ -151,8 +151,8 @@ export default function DiningCard({
                     style={{
                       fontFamily: "var(--font-outfit)",
                       fontWeight: 300,
-                      fontSize: 13,
-                      color: "rgba(255,255,255,0.65)",
+                      fontSize: 15,
+                      color: "rgba(255,255,255,0.80)",
                       marginBottom: 8,
                     }}
                   >
@@ -164,8 +164,8 @@ export default function DiningCard({
                       style={{
                         fontFamily: "var(--font-space-mono)",
                         fontWeight: 400,
-                        fontSize: 10,
-                        color: "rgba(255,255,255,0.30)",
+                        fontSize: 12,
+                        color: "rgba(255,255,255,0.50)",
                         lineHeight: 1.8,
                       }}
                     >

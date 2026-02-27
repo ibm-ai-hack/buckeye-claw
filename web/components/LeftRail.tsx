@@ -171,19 +171,19 @@ export default function LeftRail() {
                 borderRadius: 0,
                 color: isActive
                   ? "rgba(255,255,255,0.85)"
-                  : "rgba(255,255,255,0.30)",
+                  : "rgba(255,255,255,0.50)",
                 filter: isActive
                   ? "drop-shadow(0 0 6px rgba(198,40,40,0.3))"
                   : "none",
               }}
               onMouseEnter={(e) => {
                 if (!isActive) {
-                  e.currentTarget.style.color = "rgba(255,255,255,0.55)";
+                  e.currentTarget.style.color = "rgba(255,255,255,0.70)";
                 }
               }}
               onMouseLeave={(e) => {
                 if (!isActive) {
-                  e.currentTarget.style.color = "rgba(255,255,255,0.30)";
+                  e.currentTarget.style.color = "rgba(255,255,255,0.50)";
                 }
               }}
             >
@@ -192,11 +192,11 @@ export default function LeftRail() {
                 style={{
                   fontFamily: "var(--font-space-mono)",
                   fontWeight: 400,
-                  fontSize: 10,
+                  fontSize: 12,
                   letterSpacing: "0.5px",
                   color: isActive
                     ? "rgba(255,255,255,0.50)"
-                    : "rgba(255,255,255,0.20)",
+                    : "rgba(255,255,255,0.40)",
                 }}
               >
                 {item.label}
@@ -240,7 +240,7 @@ export default function LeftRail() {
             style={{
               fontFamily: "var(--font-outfit)",
               fontWeight: 300,
-              fontSize: 14,
+              fontSize: 16,
               color: "white",
               letterSpacing: "0.5px",
             }}

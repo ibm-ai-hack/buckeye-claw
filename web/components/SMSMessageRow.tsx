@@ -32,12 +32,12 @@ export default function SMSMessageRow({
         style={{
           fontFamily: "var(--font-space-mono)",
           fontWeight: 400,
-          fontSize: 13,
+          fontSize: 15,
           lineHeight: 1.6,
           color:
             role === "agent"
-              ? "rgba(255,255,255,0.70)"
-              : "rgba(255,255,255,0.50)",
+              ? "rgba(255,255,255,0.85)"
+              : "rgba(255,255,255,0.85)",
           margin: 0,
           flex: 1,
           whiteSpace: "pre-wrap",
@@ -49,8 +49,8 @@ export default function SMSMessageRow({
         style={{
           fontFamily: "var(--font-space-mono)",
           fontWeight: 400,
-          fontSize: 10,
-          color: "rgba(255,255,255,0.15)",
+          fontSize: 12,
+          color: "rgba(255,255,255,0.35)",
           letterSpacing: "1px",
           flexShrink: 0,
           marginTop: 2,

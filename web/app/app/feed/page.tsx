@@ -148,8 +148,8 @@ function DiningResult({ data }: { data: Record<string, unknown> }) {
           style={{
             fontFamily: "var(--font-outfit)",
             fontWeight: 200,
-            fontSize: 16,
-            color: "rgba(255,255,255,0.70)",
+            fontSize: 18,
+            color: "rgba(255,255,255,0.85)",
             letterSpacing: "0.1em",
           }}
         >
@@ -187,8 +187,8 @@ function DiningResult({ data }: { data: Record<string, unknown> }) {
               style={{
                 fontFamily: "var(--font-outfit)",
                 fontWeight: 300,
-                fontSize: 13,
-                color: "rgba(255,255,255,0.65)",
+                fontSize: 15,
+                color: "rgba(255,255,255,0.80)",
                 marginBottom: 8,
               }}
             >
@@ -200,8 +200,8 @@ function DiningResult({ data }: { data: Record<string, unknown> }) {
                 style={{
                   fontFamily: "var(--font-space-mono)",
                   fontWeight: 400,
-                  fontSize: 10,
-                  color: "rgba(255,255,255,0.30)",
+                  fontSize: 14,
+                  color: "rgba(255,255,255,0.70)",
                   lineHeight: 1.8,
                 }}
               >
@@ -223,8 +223,8 @@ function BusResult({ data }: { data: Record<string, unknown> }) {
         style={{
           fontFamily: "var(--font-outfit)",
           fontWeight: 300,
-          fontSize: 14,
-          color: "rgba(255,255,255,0.60)",
+          fontSize: 16,
+          color: "rgba(255,255,255,0.75)",
           marginBottom: 12,
         }}
       >
@@ -251,8 +251,8 @@ function BusResult({ data }: { data: Record<string, unknown> }) {
             style={{
               fontFamily: "var(--font-space-mono)",
               fontWeight: 400,
-              fontSize: 11,
-              color: "rgba(255,255,255,0.35)",
+              fontSize: 15,
+              color: "rgba(255,255,255,0.75)",
               width: 60,
             }}
           >
@@ -262,8 +262,8 @@ function BusResult({ data }: { data: Record<string, unknown> }) {
             style={{
               fontFamily: "var(--font-space-mono)",
               fontWeight: 400,
-              fontSize: 11,
-              color: "rgba(255,255,255,0.35)",
+              fontSize: 15,
+              color: "rgba(255,255,255,0.75)",
               flex: 1,
             }}
           >
@@ -273,11 +273,11 @@ function BusResult({ data }: { data: Record<string, unknown> }) {
             style={{
               fontFamily: "var(--font-space-mono)",
               fontWeight: 400,
-              fontSize: 12,
+              fontSize: 14,
               color:
                 parseInt(v.eta) <= 5
                   ? "rgb(198,40,40)"
-                  : "rgba(255,255,255,0.50)",
+                  : "rgba(255,255,255,0.70)",
               letterSpacing: "0.5px",
             }}
           >
@@ -314,8 +314,8 @@ function GradeResult({ data }: { data: Record<string, unknown> }) {
           style={{
             fontFamily: "var(--font-space-mono)",
             fontWeight: 400,
-            fontSize: 12,
-            color: "rgba(255,255,255,0.55)",
+            fontSize: 14,
+            color: "rgba(255,255,255,0.75)",
             width: 120,
           }}
         >
@@ -344,8 +344,8 @@ function GradeResult({ data }: { data: Record<string, unknown> }) {
           style={{
             fontFamily: "var(--font-space-mono)",
             fontWeight: 400,
-            fontSize: 12,
-            color: "rgba(255,255,255,0.70)",
+            fontSize: 14,
+            color: "rgba(255,255,255,0.85)",
             width: 36,
             textAlign: "right",
           }}
@@ -356,8 +356,8 @@ function GradeResult({ data }: { data: Record<string, unknown> }) {
           style={{
             fontFamily: "var(--font-outfit)",
             fontWeight: 300,
-            fontSize: 13,
-            color: "rgba(255,255,255,0.50)",
+            fontSize: 15,
+            color: "rgba(255,255,255,0.70)",
             width: 28,
           }}
         >
@@ -482,9 +482,9 @@ export default function FeedPage() {
           style={{
             fontFamily: "var(--font-outfit)",
             fontWeight: 200,
-            fontSize: 14,
+            fontSize: 16,
             letterSpacing: "0.25em",
-            color: "rgba(255,255,255,0.70)",
+            color: "rgba(255,255,255,0.85)",
             textTransform: "lowercase",
             margin: 0,
           }}

@@ -67,7 +67,7 @@ export default function InputBar({
           outline: "none",
           fontFamily: "var(--font-space-mono)",
           fontWeight: 400,
-          fontSize: 14,
+          fontSize: 16,
           letterSpacing: "0.5px",
           color: "rgba(255,255,255,0.85)",
           caretColor: "rgb(198,40,40)",
@@ -119,7 +119,7 @@ export default function InputBar({
           }
         }
         input::placeholder {
-          color: rgba(255, 255, 255, 0.15);
+          color: rgba(255, 255, 255, 0.35);
           font-family: var(--font-space-mono);
         }
       `}</style>

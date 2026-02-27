@@ -44,8 +44,8 @@ export default function GradeBar({
         style={{
           fontFamily: "var(--font-space-mono)",
           fontWeight: 400,
-          fontSize: 12,
-          color: "rgba(255,255,255,0.55)",
+          fontSize: 14,
+          color: "rgba(255,255,255,0.75)",
           minWidth: 120,
           letterSpacing: "0.5px",
         }}
@@ -75,8 +75,8 @@ export default function GradeBar({
         style={{
           fontFamily: "var(--font-space-mono)",
           fontWeight: 400,
-          fontSize: 12,
-          color: "rgba(255,255,255,0.70)",
+          fontSize: 14,
+          color: "rgba(255,255,255,0.85)",
           width: 36,
           textAlign: "right",
         }}
@@ -87,8 +87,8 @@ export default function GradeBar({
         style={{
           fontFamily: "var(--font-outfit)",
           fontWeight: 300,
-          fontSize: 13,
-          color: "rgba(255,255,255,0.50)",
+          fontSize: 15,
+          color: "rgba(255,255,255,0.70)",
           width: 28,
         }}
       >
