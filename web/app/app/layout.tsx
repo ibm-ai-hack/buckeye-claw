@@ -10,7 +10,7 @@ export default function AppLayout({
       <LeftRail />
       <main
         style={{
-          marginLeft: 64,
+          marginLeft: 80,
           flex: 1,
           minHeight: "100vh",
           display: "flex",
