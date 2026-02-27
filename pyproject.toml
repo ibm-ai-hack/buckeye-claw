@@ -4,7 +4,8 @@ version = "0.1.0"
 description = "Unified AI agent for Ohio State University students via iMessage, RCS, and SMS"
 requires-python = ">=3.11"
 dependencies = [
-    "beeai-framework[watsonx]",
+    "beeai-framework",
+    "anthropic",
     "flask",
     "httpx",
     "python-dotenv",
@@ -23,6 +24,10 @@ dev = [
     "pytest-asyncio",
 ]
 
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["canvas*", "grubhub*", "messaging*", "buckeyelink*", "tools*"]
+
 [build-system]
 requires = ["setuptools>=68.0"]
-build-backend = "setuptools.backends._legacy:_Backend"
+build-backend = "setuptools.build_meta"

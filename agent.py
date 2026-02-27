@@ -81,7 +81,7 @@ ALL_TOOLS = [
 
 
 def create_agent() -> RequirementAgent:
-    llm = ChatModel.from_name("watsonx:ibm/granite-3-8b-instruct")
+    llm = ChatModel.from_name("anthropic:claude-haiku-4-5-20251001")
 
     agent = RequirementAgent(
         llm=llm,
