@@ -138,20 +138,28 @@ _workflow = _build_workflow()
 
 async def run_pipeline(text: str, from_number: str) -> str:
     """Run the dual-model orchestration pipeline. Returns SMS-ready text."""
+    debug = True  # TODO: remove after debugging
+
     state = PipelineState(user_text=text, from_number=from_number)
     try:
         run = await _workflow.run(state).observe(lambda event: None)
         return run.state.final_response
     except FrameworkError as e:
         logger.error("Pipeline framework error: %s", e.explain())
-    except Exception:
+        if debug:
+            return f"[DEBUG] Pipeline error: {e.explain()[:500]}"
+    except Exception as e:
         logger.exception("Unexpected pipeline error")
+        if debug:
+            return f"[DEBUG] Pipeline exception: {type(e).__name__}: {e}"[:600]
 
     # Last-resort fallback: try Granite alone with tools
     try:
         agent = create_granite_agent(tools=ALL_TOOLS)
         response = await agent.run(text)
         return response.result.text[:1500]
-    except Exception:
+    except Exception as e:
         logger.exception("Fallback agent also failed")
+        if debug:
+            return f"[DEBUG] Fallback also failed: {type(e).__name__}: {e}"[:600]
         return "Sorry, I'm having technical difficulties. Please try again in a moment."
