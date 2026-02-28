@@ -9,16 +9,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Token is required" }, { status: 400 });
   }
 
-  // Validate the token against Canvas
-  const canvasUrl = process.env.CANVAS_URL ?? "https://osu.instructure.com";
-  const verifyRes = await fetch(`${canvasUrl}/api/v1/users/self`, {
-    headers: { Authorization: `Bearer ${token.trim()}` },
-  });
-
-  if (!verifyRes.ok) {
-    return NextResponse.json({ error: "Invalid Canvas token — make sure you copied it correctly" }, { status: 401 });
-  }
-
   // Get the authenticated user from session
   const sessionClient = await createSessionClient();
   const { data: { user } } = await sessionClient.auth.getUser();
