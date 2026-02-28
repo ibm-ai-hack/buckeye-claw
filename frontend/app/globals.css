@@ -10,8 +10,8 @@
   --text-primary: #ede8e3;
   --text-secondary: rgba(237, 232, 227, 0.60);
   --text-muted: rgba(237, 232, 227, 0.35);
-  --accent: rgb(198, 50, 45);
-  --accent-soft: rgba(198, 50, 45, 0.12);
+  --accent: rgb(220, 220, 230);
+  --accent-soft: rgba(220, 220, 230, 0.10);
 }
 
 @theme inline {

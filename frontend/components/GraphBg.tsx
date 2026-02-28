@@ -91,7 +91,7 @@ export default function GraphBg() {
         if (node.brightness > 0.4) {
           const gradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, node.r * 8);
           const isAccent = node.brightness > 0.7;
-          const glowColor = isAccent ? "168,50,50" : "180,180,190";
+          const glowColor = isAccent ? "200,200,220" : "180,180,190";
           gradient.addColorStop(0, `rgba(${glowColor},${node.brightness * 0.25})`);
           gradient.addColorStop(1, "rgba(0,0,0,0)");
           ctx.beginPath();
@@ -103,7 +103,7 @@ export default function GraphBg() {
         // dot
         const isAccent = node.brightness > 0.7;
         const dotColor = isAccent
-          ? `rgba(198,60,60,${node.brightness})`
+          ? `rgba(220,220,240,${node.brightness})`
           : `rgba(200,200,210,${node.brightness})`;
         ctx.beginPath();
         ctx.arc(node.x, node.y, node.r, 0, Math.PI * 2);

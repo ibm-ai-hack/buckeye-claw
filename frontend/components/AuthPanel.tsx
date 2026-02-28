@@ -23,8 +23,8 @@ function Spinner() {
       style={{
         width: 14,
         height: 14,
-        border: "1.5px solid rgba(198,40,40,0.2)",
-        borderTopColor: "rgb(198,40,40)",
+        border: "1.5px solid rgba(255,255,255,0.15)",
+        borderTopColor: "rgba(255,255,255,0.7)",
         borderRadius: "50%",
         display: "inline-block",
         animation: "authSpin 0.8s linear infinite",
@@ -75,13 +75,13 @@ function PrimaryButton({
         width: "100%",
         padding: "14px 0",
         background:
-          loading || disabled ? "rgba(198,40,40,0.04)" : "rgba(198,40,40,0.1)",
-        border: `1px solid ${loading || disabled ? "rgba(198,40,40,0.12)" : "rgba(198,40,40,0.28)"}`,
+          loading || disabled ? "rgba(255,255,255,0.02)" : "rgba(255,255,255,0.06)",
+        border: `1px solid ${loading || disabled ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.18)"}`,
         borderRadius: 10,
         fontFamily: "var(--font-jakarta)",
         fontSize: 12,
         letterSpacing: "2.5px",
-        color: loading || disabled ? "rgba(198,40,40,0.35)" : "rgb(198,40,40)",
+        color: loading || disabled ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.75)",
         cursor: loading || disabled ? "not-allowed" : "pointer",
         display: "flex",
         alignItems: "center",
@@ -393,20 +393,32 @@ export default function AuthPanel() {
           {/* Content */}
           <div style={{ position: "relative", zIndex: 4, padding: "48px 40px 44px" }}>
             <div style={{ textAlign: "center", marginBottom: 32 }}>
+              <img
+                src="/chud.png"
+                alt="buckeyeclaw"
+                style={{
+                  width: 56,
+                  height: 56,
+                  objectFit: "contain",
+                  margin: "0 auto 14px",
+                  display: "block",
+                  borderRadius: 12,
+                }}
+              />
               <h1
                 style={{
                   fontFamily: "var(--font-jakarta)",
                   fontWeight: 200,
-                  fontSize: 36,
-                  letterSpacing: "0.28em",
+                  fontSize: 28,
+                  letterSpacing: "0.22em",
                   textTransform: "lowercase",
                   color: "rgba(255,255,255,0.9)",
-                  textShadow: "0 0 40px rgba(198,40,40,0.25)",
+                  textShadow: "0 0 40px rgba(255,255,255,0.08)",
                   margin: 0,
                   lineHeight: 1,
                 }}
               >
-                scarlet
+                buckeyeclaw
               </h1>
               <p
                 style={{
