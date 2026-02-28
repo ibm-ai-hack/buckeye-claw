@@ -196,8 +196,44 @@ async def run_pipeline(text: str, from_number: str) -> str:
         try:
             supabase = get_client()
             user_id = get_or_create_user(supabase, from_number)
+            logger.debug("[MEMORY] Resolved %s → user_id=%s", from_number, user_id)
+
+            # Fetch stored task history for this user (recent tasks across all categories)
+            all_tasks = (
+                supabase.table("memory_tasks")
+                .select("task, category, created_at")
+                .eq("user_id", user_id)
+                .order("created_at", desc=True)
+                .limit(10)
+                .execute()
+            )
+            if all_tasks.data:
+                logger.info("[MEMORY] Recent task history for user %s:", user_id)
+                for t in all_tasks.data:
+                    logger.info("  [%s] %s  (%s)", t["category"], t["task"], t["created_at"])
+            else:
+                logger.info("[MEMORY] No task history for user %s (new user)", user_id)
+
+            # Fetch all stored facts for debug comparison
+            all_facts = _memory.db.get_all_facts(user_id)
+            if all_facts:
+                logger.info("[MEMORY] Stored facts for user %s:", user_id)
+                for f in all_facts:
+                    logger.info("  %s = %s", f["key"], f["value"])
+            else:
+                logger.info("[MEMORY] No stored facts for user %s", user_id)
+
+            # Fetch scheduled jobs
+            all_jobs = _memory.db.get_jobs(user_id)
+            if all_jobs:
+                logger.info("[MEMORY] Scheduled jobs for user %s:", user_id)
+                for j in all_jobs:
+                    logger.info("  %s (%s) — occurrences: %s", j["task_name"], j.get("schedule", "none"), j.get("occurrence_count", 0))
+
+            # Now get the semantic context (top-k relevant facts via pgvector)
             memory_context = await _memory.get_context(user_id, text)
-            logger.info("Memory context for user %s (%d chars)", user_id, len(memory_context))
+            logger.info("[MEMORY] Current task: %r", text)
+            logger.info("[MEMORY] Injected context (%d chars): %s", len(memory_context), memory_context or "(empty)")
         except Exception:
             logger.exception("Memory context fetch failed; continuing without it")
 
@@ -223,6 +259,7 @@ async def run_pipeline(text: str, from_number: str) -> str:
 
     # --- Memory: background update (fire and forget) ---
     if _memory is not None and user_id:
+        logger.info("[MEMORY] Firing background update for user %s with task: %r", user_id, text)
         _memory.update_background(user_id, text)
 
     if response_text:

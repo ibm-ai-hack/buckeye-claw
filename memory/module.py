@@ -93,31 +93,43 @@ class MemoryModule:
         thread.start()
 
     def _run_update(self, user_id: str, task: str) -> None:
-        """Synchronous entry point for the background thread."""
+        """Synchronous entry point for the background thread.
+
+        Creates a fresh ChatModel to avoid aiohttp cross-loop errors — the main
+        loop's ClientSession cannot be reused inside asyncio.run()'s new loop.
+        """
         try:
-            asyncio.run(self._update(user_id, task))
+            bg_llm = ChatModel.from_name("watsonx:ibm/granite-3-8b-instruct")
+            asyncio.run(self._update(user_id, task, llm_override=bg_llm))
         except Exception:
             logger.exception("Memory update failed for user %s", user_id)
 
-    async def _update(self, user_id: str, task: str) -> None:
+    async def _update(self, user_id: str, task: str, llm_override: ChatModel | None = None) -> None:
         """Full async update pipeline: categorize → store → check repeat → extract facts."""
+        llm = llm_override or self.llm
+        logger.info("[MEMORY-UPDATE] Starting update for user %s | task: %r", user_id, task)
+
         # Step 1: categorize the task (Granite call)
         try:
-            category = await categorize_task(self.llm, task)
+            category = await categorize_task(llm, task)
         except Exception:
             logger.warning("Categorization failed for task %r; using 'general'", task)
             category = "general"
+        logger.info("[MEMORY-UPDATE] Categorized as: %s", category)
 
         # Step 2: push to task cache (auto-prunes >30 days)
         self.db.push_task(user_id, task, category)
+        logger.info("[MEMORY-UPDATE] Pushed to memory_tasks (category=%s)", category)
 
         # Step 3: check for repetition within same category (Granite call)
         same_cat_tasks = self.db.get_tasks_by_category(user_id, category)
+        logger.info("[MEMORY-UPDATE] Same-category task count: %d (need %d for repeat check)", len(same_cat_tasks), _MIN_TASKS_FOR_REPETITION_CHECK)
         if len(same_cat_tasks) >= _MIN_TASKS_FOR_REPETITION_CHECK:
-            await self._handle_repetition(user_id, task, category, same_cat_tasks)
+            logger.info("[MEMORY-UPDATE] Running repetition check against: %s", same_cat_tasks)
+            await self._handle_repetition(user_id, task, category, same_cat_tasks, llm)
 
-        # Step 4: extract personal facts and embed + upsert each one (Granite + OpenAI)
-        await self._handle_fact_extraction(user_id, task)
+        # Step 4: extract personal facts and embed + upsert each one (Granite + Voyage)
+        await self._handle_fact_extraction(user_id, task, llm)
 
     async def _handle_repetition(
         self,
@@ -125,9 +137,10 @@ class MemoryModule:
         task: str,
         category: str,
         same_cat_tasks: list[str],
+        llm: ChatModel | None = None,
     ) -> None:
         try:
-            result = await check_repetition(self.llm, task, same_cat_tasks)
+            result = await check_repetition(llm or self.llm, task, same_cat_tasks)
         except Exception:
             logger.warning("Repetition check failed for user %s", user_id)
             return
@@ -160,18 +173,25 @@ class MemoryModule:
                 task_name,
             )
 
-    async def _handle_fact_extraction(self, user_id: str, task: str) -> None:
+    async def _handle_fact_extraction(self, user_id: str, task: str, llm: ChatModel | None = None) -> None:
         try:
-            facts = await extract_facts(self.llm, task)
+            facts = await extract_facts(llm or self.llm, task)
         except Exception:
             logger.warning("Fact extraction failed for user %s", user_id)
             return
+
+        if facts:
+            logger.info("[MEMORY-UPDATE] Extracted %d fact(s) from task:", len(facts))
+            for f in facts:
+                logger.info("  %s = %s", f.get("key", "?"), f.get("value", "?"))
+        else:
+            logger.info("[MEMORY-UPDATE] No facts extracted from task")
 
         for fact in facts:
             try:
                 fact_text = f"{fact['key']}: {fact['value']}"
                 embedding = await embed(fact_text)
                 self.db.upsert_fact(user_id, fact["key"], fact["value"], embedding)
-                logger.debug("Upserted fact for %s: %s=%s", user_id, fact["key"], fact["value"])
+                logger.info("[MEMORY-UPDATE] Upserted fact: %s = %s", fact["key"], fact["value"])
             except Exception:
                 logger.warning("Failed to upsert fact %r for user %s", fact, user_id)
