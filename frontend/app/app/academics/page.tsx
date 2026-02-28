@@ -1,40 +1,97 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DomainHero from "@/components/DomainHero";
 import GradeBar from "@/components/domain/GradeBar";
 import ScheduleGrid from "@/components/domain/ScheduleGrid";
 import AssignmentRow from "@/components/domain/AssignmentRow";
 
-const DEMO_GRADES = [
-  { course: "CSE 2421", percentage: 92, letter: "A-" },
-  { course: "ENGLISH 1110", percentage: 78, letter: "B+" },
-  { course: "MATH 2153", percentage: 96, letter: "A" },
-  { course: "PHYSICS 1251", percentage: 65, letter: "C+" },
-  { course: "HISTORY 1212", percentage: 87, letter: "B+" },
-];
+interface Course {
+  id: number;
+  name: string;
+  code: string;
+  percentage: number | null;
+  letter: string;
+}
 
-const DEMO_SCHEDULE = [
-  { code: "CSE 2421", days: ["Mon", "Wed"], startHour: 9, endHour: 10.5 },
-  { code: "ENG 1110", days: ["Tue", "Thu"], startHour: 11, endHour: 12.25 },
-  { code: "MATH 2153", days: ["Mon", "Wed", "Fri"], startHour: 13, endHour: 14 },
-  { code: "PHYS 1251", days: ["Fri"], startHour: 10, endHour: 12 },
-  { code: "HIST 1212", days: ["Tue", "Thu"], startHour: 14, endHour: 15.25 },
-];
+interface Assignment {
+  course: string;
+  title: string;
+  dueLabel: string;
+  urgency: "normal" | "soon" | "tomorrow" | "overdue";
+}
 
-const DEMO_ASSIGNMENTS = [
-  { course: "CSE 2421", title: "lab 5: linked lists", dueLabel: "due in 2d 4h", urgency: "normal" as const },
-  { course: "ENGLISH 1110", title: "essay 3 draft", dueLabel: "due in 5d", urgency: "normal" as const },
-  { course: "MATH 2153", title: "homework 8", dueLabel: "due tomorrow", urgency: "tomorrow" as const },
-  { course: "PHYSICS 1251", title: "prelab 6", dueLabel: "overdue 2d", urgency: "overdue" as const },
-  { course: "HISTORY 1212", title: "reading response 4", dueLabel: "due in 1d 8h", urgency: "soon" as const },
-];
+interface ScheduleBlock {
+  code: string;
+  days: string[];
+  startHour: number;
+  endHour: number;
+}
 
 const TABS = ["schedule", "grades", "assignments"] as const;
 type Tab = (typeof TABS)[number];
 
 export default function AcademicsPage() {
   const [activeTab, setActiveTab] = useState<Tab>("schedule");
+
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [assignments, setAssignments] = useState<Assignment[]>([]);
+  const [schedule, setSchedule] = useState<ScheduleBlock[]>([]);
+
+  const [loadingCourses, setLoadingCourses] = useState(true);
+  const [loadingAssignments, setLoadingAssignments] = useState(true);
+  const [loadingSchedule, setLoadingSchedule] = useState(true);
+
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Fetch all three in parallel
+    fetch("/api/canvas/courses")
+      .then((r) => {
+        if (!r.ok) throw new Error(`${r.status}`);
+        return r.json();
+      })
+      .then((data) => {
+        if (data.error) throw new Error(data.error);
+        setCourses(data);
+      })
+      .catch((e) => setError(e.message))
+      .finally(() => setLoadingCourses(false));
+
+    fetch("/api/canvas/assignments")
+      .then((r) => {
+        if (!r.ok) throw new Error(`${r.status}`);
+        return r.json();
+      })
+      .then((data) => {
+        if (data.error) throw new Error(data.error);
+        setAssignments(data);
+      })
+      .catch(() => {})
+      .finally(() => setLoadingAssignments(false));
+
+    fetch("/api/canvas/schedule")
+      .then((r) => {
+        if (!r.ok) throw new Error(`${r.status}`);
+        return r.json();
+      })
+      .then((data) => {
+        if (data.error) throw new Error(data.error);
+        setSchedule(data);
+      })
+      .catch(() => {})
+      .finally(() => setLoadingSchedule(false));
+  }, []);
+
+  const isLoading =
+    (activeTab === "grades" && loadingCourses) ||
+    (activeTab === "assignments" && loadingAssignments) ||
+    (activeTab === "schedule" && loadingSchedule);
+
+  // Filter courses that have grade data
+  const gradedCourses = courses.filter(
+    (c) => c.percentage !== null && c.percentage !== undefined,
+  );
 
   return (
     <div
@@ -88,40 +145,107 @@ export default function AcademicsPage() {
           padding: "20px 32px",
         }}
       >
-        {activeTab === "schedule" && (
+        {/* Error banner */}
+        {error && (
+          <div
+            style={{
+              fontFamily: "var(--font-jakarta)",
+              fontSize: 13,
+              color: "rgba(255,255,255,0.5)",
+              padding: "12px 16px",
+              background: "rgba(198,40,40,0.08)",
+              border: "1px solid rgba(198,40,40,0.15)",
+              borderRadius: 8,
+              marginBottom: 16,
+            }}
+          >
+            Could not connect to Canvas. Make sure your CANVAS_API_TOKEN is set in the backend.
+          </div>
+        )}
+
+        {/* Loading indicator */}
+        {isLoading && (
+          <div
+            style={{
+              fontFamily: "var(--font-jakarta)",
+              fontSize: 14,
+              color: "rgba(255,255,255,0.35)",
+              padding: "40px 0",
+              textAlign: "center",
+              letterSpacing: "0.5px",
+            }}
+          >
+            loading from carmen...
+          </div>
+        )}
+
+        {/* Schedule tab */}
+        {activeTab === "schedule" && !isLoading && (
           <div>
-            <ScheduleGrid courses={DEMO_SCHEDULE} />
+            {schedule.length > 0 ? (
+              <ScheduleGrid courses={schedule} />
+            ) : (
+              <EmptyState message="no calendar events found in carmen" />
+            )}
           </div>
         )}
 
-        {activeTab === "grades" && (
-          <div style={{}}>
-            {DEMO_GRADES.map((g, i) => (
-              <GradeBar
-                key={g.course}
-                course={g.course}
-                percentage={g.percentage}
-                letter={g.letter}
-                delay={i * 80}
-              />
-            ))}
+        {/* Grades tab */}
+        {activeTab === "grades" && !isLoading && (
+          <div>
+            {gradedCourses.length > 0 ? (
+              gradedCourses.map((g, i) => (
+                <GradeBar
+                  key={g.id}
+                  course={g.code}
+                  percentage={g.percentage!}
+                  letter={g.letter}
+                  delay={i * 80}
+                />
+              ))
+            ) : (
+              <EmptyState message={error ? "could not load grades" : "no grade data available yet"} />
+            )}
           </div>
         )}
 
-        {activeTab === "assignments" && (
+        {/* Assignments tab */}
+        {activeTab === "assignments" && !isLoading && (
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            {DEMO_ASSIGNMENTS.map((a) => (
-              <AssignmentRow
-                key={`${a.course}-${a.title}`}
-                course={a.course}
-                title={a.title}
-                dueLabel={a.dueLabel}
-                urgency={a.urgency}
-              />
-            ))}
+            {assignments.length > 0 ? (
+              assignments.map((a) => (
+                <AssignmentRow
+                  key={`${a.course}-${a.title}`}
+                  course={a.course}
+                  title={a.title}
+                  dueLabel={a.dueLabel}
+                  urgency={a.urgency}
+                />
+              ))
+            ) : (
+              <EmptyState message={error ? "could not load assignments" : "no upcoming assignments"} />
+            )}
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function EmptyState({ message }: { message: string }) {
+  return (
+    <div
+      style={{
+        fontFamily: "var(--font-jakarta)",
+        fontWeight: 400,
+        fontSize: 14,
+        color: "rgba(255,255,255,0.3)",
+        padding: "48px 0",
+        textAlign: "center",
+        letterSpacing: "0.5px",
+      }}
+    >
+      {message}
     </div>
   );
 }

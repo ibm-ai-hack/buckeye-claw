@@ -16,6 +16,10 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
+# Canvas dashboard API
+from backend.integrations.canvas.api import canvas_api
+app.register_blueprint(canvas_api)
+
 # Set by main.py before starting the server
 _agent_handler = None
 _main_loop: asyncio.AbstractEventLoop | None = None

@@ -22,6 +22,8 @@ dependencies = [
 [project.optional-dependencies]
 grubhub = [
     "Appium-Python-Client",
+    "fastapi>=0.110",
+    "uvicorn[standard]",
 ]
 buckeyelink = [
     "playwright",
