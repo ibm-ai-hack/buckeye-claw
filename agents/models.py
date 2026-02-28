@@ -11,6 +11,7 @@ class PipelineState(BaseModel):
     # Memory — resolved before workflow starts
     user_id: str = ""
     memory_context: str = ""
+    last_reply: str = ""  # Last message the agent sent to this user (for follow-up detection)
 
     # After Granite intake
     intent: str = ""

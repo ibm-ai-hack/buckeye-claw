@@ -201,3 +201,38 @@ class TestJobsIntegration:
 
         assert db.job_exists(test_user, "check_grades_daily") is True
         assert db.job_exists(test_user, "this_job_does_not_exist") is False
+
+
+# ---------------------------------------------------------------------------
+# Migration 003 — last_reply column on profiles
+# ---------------------------------------------------------------------------
+
+class TestLastReplyColumn:
+    """Verify migration 003: last_reply TEXT column on the profiles table."""
+
+    def test_column_exists_and_is_nullable(self, supabase_client: Client, test_user: str):
+        """A freshly created profile should have last_reply as NULL."""
+        row = (
+            supabase_client.table("profiles")
+            .select("last_reply")
+            .eq("id", test_user)
+            .maybe_single()
+            .execute()
+        )
+        assert row is not None and row.data is not None
+        assert row.data.get("last_reply") is None
+
+    def test_last_reply_round_trip(self, supabase_client: Client, test_user: str):
+        """Writing last_reply and reading it back should return the exact value."""
+        value = "South Green is open until 8pm."
+        supabase_client.table("profiles").update({"last_reply": value}).eq("id", test_user).execute()
+
+        row = (
+            supabase_client.table("profiles")
+            .select("last_reply")
+            .eq("id", test_user)
+            .maybe_single()
+            .execute()
+        )
+        assert row is not None and row.data is not None
+        assert row.data["last_reply"] == value
