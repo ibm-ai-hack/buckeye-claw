@@ -65,7 +65,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 const CENTER_COLOR = "#c24848";
 const FACT_COLOR = "#8a8f98";
 const JOB_COLOR = "#e8a84c";
-const BG = "#141417";
+const BG = "#181614";
 
 function catColor(cat: string) {
   return CATEGORY_COLORS[cat] ?? "#6b7280";

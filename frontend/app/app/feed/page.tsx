@@ -9,6 +9,7 @@ import {
   useMessages,
   useAgentRuns,
   useAgentEvents,
+  type Message,
   type AgentRun,
   type AgentEvent,
 } from "@/lib/supabase/hooks";
@@ -16,11 +17,10 @@ import {
 // ── Message thread (left panel) ──────────────────────────
 
 function MessageThread({
-  phone,
+  messages,
 }: {
-  phone: string;
+  messages: Message[];
 }) {
-  const messages = useMessages(phone);
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -374,14 +374,22 @@ function StepMarker({
 function RunBlock({
   run,
   events,
+  hasAgentReply,
 }: {
   run: AgentRun;
   events: AgentEvent[];
+  hasAgentReply: boolean;
 }) {
+  // If we already see an agent reply message for this run, treat it as done
+  const effectiveStatus =
+    run.status === "running" && (hasAgentReply || run.final_response)
+      ? "completed"
+      : run.status;
+
   const statusColor =
-    run.status === "running"
+    effectiveStatus === "running"
       ? "rgb(198, 50, 45)"
-      : run.status === "completed"
+      : effectiveStatus === "completed"
         ? "#22c55e"
         : "#ef4444";
 
@@ -396,18 +404,18 @@ function RunBlock({
     if (evt.event_type === "step_start" && evt.step) activeSteps.add(evt.step);
     if (evt.event_type === "step_end" && evt.step) activeSteps.delete(evt.step);
   }
-  const isThinking = run.status === "running" && activeSteps.size > 0;
+  const isThinking = effectiveStatus === "running" && activeSteps.size > 0;
 
   return (
     <div
       style={{
         padding: "14px 14px",
         marginBottom: 6,
-        background: run.status === "running"
+        background: effectiveStatus === "running"
           ? "rgba(198, 50, 45, 0.03)"
           : "rgba(255, 240, 220, 0.02)",
         borderRadius: 10,
-        border: run.status === "running"
+        border: effectiveStatus === "running"
           ? "1px solid rgba(198, 50, 45, 0.08)"
           : "1px solid rgba(255, 240, 220, 0.04)",
         animation: "fadeInUp 300ms ease-out forwards",
@@ -426,19 +434,19 @@ function RunBlock({
         <PulseDot
           color={statusColor}
           size={6}
-          pulse={run.status === "running"}
+          pulse={effectiveStatus === "running"}
         />
         <span
           style={{
             fontFamily: "var(--font-jakarta)",
             fontWeight: 500,
             fontSize: 13,
-            color: run.status === "running"
+            color: effectiveStatus === "running"
               ? "rgba(237, 232, 227, 0.75)"
               : "rgba(237, 232, 227, 0.60)",
           }}
         >
-          {run.status}
+          {effectiveStatus}
         </span>
         {run.intent && <IntentBadge intent={run.intent} />}
         <span
@@ -628,20 +636,20 @@ function RunBlock({
           );
         })}
         {isThinking && <ThinkingIndicator />}
-        {events.length === 0 && run.status === "running" && (
+        {events.length === 0 && effectiveStatus === "running" && (
           <ThinkingIndicator />
         )}
       </div>
 
       {/* Final response */}
-      {run.final_response && run.status === "completed" && (
+      {run.final_response && effectiveStatus !== "running" && (
         <FinalResponseBlock response={run.final_response} />
       )}
     </div>
   );
 }
 
-function ReasoningTimeline({ phone }: { phone: string }) {
+function ReasoningTimeline({ phone, messages }: { phone: string; messages: Message[] }) {
   const runs = useAgentRuns(phone);
   const runIds = useMemo(() => runs.map((r) => r.id), [runs]);
   const events = useAgentEvents(runIds);
@@ -661,6 +669,15 @@ function ReasoningTimeline({ phone }: { phone: string }) {
     }
     return map;
   }, [events]);
+
+  // Track which run_ids have an agent reply in messages
+  const runIdsWithReply = useMemo(() => {
+    const set = new Set<string>();
+    for (const msg of messages) {
+      if (msg.role === "agent" && msg.run_id) set.add(msg.run_id);
+    }
+    return set;
+  }, [messages]);
 
   return (
     <div
@@ -737,6 +754,7 @@ function ReasoningTimeline({ phone }: { phone: string }) {
             key={run.id}
             run={run}
             events={eventsByRun.get(run.id) ?? []}
+            hasAgentReply={runIdsWithReply.has(run.id)}
           />
         ))}
         <div ref={endRef} />
@@ -749,6 +767,7 @@ function ReasoningTimeline({ phone }: { phone: string }) {
 
 export default function FeedPage() {
   const { phone, loading } = useUserPhone();
+  const messages = useMessages(phone);
   const runs = useAgentRuns(phone);
   const hasActiveRun = runs.some((r) => r.status === "running");
 
@@ -835,7 +854,7 @@ export default function FeedPage() {
             margin: 0,
           }}
         >
-          nerve center
+          live feed
         </h1>
         <span
           style={{
@@ -885,7 +904,7 @@ export default function FeedPage() {
             overflow: "hidden",
           }}
         >
-          <MessageThread phone={phone} />
+          <MessageThread messages={messages} />
         </div>
 
         {/* Right: reasoning */}
@@ -897,7 +916,7 @@ export default function FeedPage() {
             overflow: "hidden",
           }}
         >
-          <ReasoningTimeline phone={phone} />
+          <ReasoningTimeline phone={phone} messages={messages} />
         </div>
       </div>
 

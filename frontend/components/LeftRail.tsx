@@ -115,8 +115,8 @@ export default function LeftRail() {
           src="/chud.png"
           alt="buckeyeclaw"
           style={{
-            width: 52,
-            height: 52,
+            width: 72,
+            height: 72,
             borderRadius: 14,
             objectFit: "contain",
           }}
@@ -130,7 +130,7 @@ export default function LeftRail() {
             letterSpacing: "-0.3px",
           }}
         >
-          buckeyeclaw
+          BuckeyeClaw
         </span>
       </div>
 
