@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
 interface NavItem {
   path: string;
@@ -226,6 +227,9 @@ export default function LeftRail() {
           borderTop: "1px solid rgba(255, 240, 220, 0.06)",
           paddingTop: 14,
           marginTop: 8,
+          display: "flex",
+          flexDirection: "column",
+          gap: 6,
         }}
       >
         <div
@@ -290,6 +294,45 @@ export default function LeftRail() {
             </div>
           </div>
         </div>
+
+        {/* Logout button */}
+        <button
+          onClick={async () => {
+            const supabase = createClient();
+            await supabase.auth.signOut();
+            router.push("/");
+          }}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            padding: "8px 14px",
+            background: "transparent",
+            border: "none",
+            borderRadius: 10,
+            cursor: "pointer",
+            transition: "all 0.2s ease",
+            color: "rgba(237, 232, 227, 0.35)",
+            fontFamily: "var(--font-jakarta)",
+            fontSize: 12,
+            width: "100%",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "rgba(239, 68, 68, 0.08)";
+            e.currentTarget.style.color = "rgba(239, 68, 68, 0.7)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "transparent";
+            e.currentTarget.style.color = "rgba(237, 232, 227, 0.35)";
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+          log out
+        </button>
       </div>
     </nav>
   );
