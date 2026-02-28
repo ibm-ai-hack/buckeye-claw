@@ -109,7 +109,7 @@ export default function TransitPage() {
           </svg>
           <span
             style={{
-              fontFamily: "var(--font-space-mono)",
+              fontFamily: "var(--font-jakarta)",
               fontWeight: 400,
               fontSize: 14,
               color: "rgba(255,255,255,0.35)",
@@ -125,7 +125,7 @@ export default function TransitPage() {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
           <h2
             style={{
-              fontFamily: "var(--font-outfit)",
+              fontFamily: "var(--font-jakarta)",
               fontWeight: 200,
               fontSize: 18,
               letterSpacing: "0.15em",
@@ -137,7 +137,7 @@ export default function TransitPage() {
           </h2>
           <span
             style={{
-              fontFamily: "var(--font-space-mono)",
+              fontFamily: "var(--font-jakarta)",
               fontWeight: 400,
               fontSize: 11,
               color: "rgba(255,255,255,0.40)",
@@ -178,7 +178,7 @@ export default function TransitPage() {
               />
               <span
                 style={{
-                  fontFamily: "var(--font-space-mono)",
+                  fontFamily: "var(--font-jakarta)",
                   fontWeight: 400,
                   fontSize: 13,
                   color: "rgba(255,255,255,0.65)",
@@ -189,7 +189,7 @@ export default function TransitPage() {
               </span>
               <span
                 style={{
-                  fontFamily: "var(--font-space-mono)",
+                  fontFamily: "var(--font-jakarta)",
                   fontWeight: 400,
                   fontSize: 14,
                   color: "rgba(255,255,255,0.45)",
@@ -200,7 +200,7 @@ export default function TransitPage() {
               </span>
               <span
                 style={{
-                  fontFamily: "var(--font-space-mono)",
+                  fontFamily: "var(--font-jakarta)",
                   fontWeight: 400,
                   fontSize: 14,
                   color:
@@ -220,7 +220,7 @@ export default function TransitPage() {
         {/* Parking */}
         <h2
           style={{
-            fontFamily: "var(--font-outfit)",
+            fontFamily: "var(--font-jakarta)",
             fontWeight: 200,
             fontSize: 18,
             letterSpacing: "0.15em",

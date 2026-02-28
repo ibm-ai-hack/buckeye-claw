@@ -1,24 +1,28 @@
 """BeeAI tool wrappers for BuckeyeMail (Microsoft Graph email)."""
 
+import os
 import re
 
 from beeai_framework.tools import StringToolOutput, tool
 
-from backend.integrations.buckeyemail.auth import build_auth_url, get_access_token
+from backend.integrations.buckeyemail.auth import get_access_token
 from backend.integrations.buckeyemail.client import (
     get_email_detail as _get_detail,
     get_inbox as _get_inbox,
     get_unread_count as _get_unread,
     search_emails as _search,
 )
+from backend.integrations.buckeyemail.token_store import create_auth_link
 
 
 def _onboarding_message(phone: str) -> str:
-    url = build_auth_url(phone)
+    code = create_auth_link(phone)
+    base_url = os.environ.get("BASE_URL", "http://localhost:5000")
+    short_url = f"{base_url}/auth/buckeyemail/go/{code}"
     return (
         "Your BuckeyeMail isn't connected yet. "
         "Tap this link to sign in with your OSU Microsoft account and "
-        f"you'll be all set:\n{url}"
+        f"you'll be all set:\n{short_url}"
     )
 
 

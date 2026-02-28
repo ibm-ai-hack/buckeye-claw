@@ -30,7 +30,7 @@ export default function SMSMessageRow({
     >
       <p
         style={{
-          fontFamily: "var(--font-space-mono)",
+          fontFamily: "var(--font-jakarta)",
           fontWeight: 400,
           fontSize: 15,
           lineHeight: 1.6,
@@ -47,7 +47,7 @@ export default function SMSMessageRow({
       </p>
       <span
         style={{
-          fontFamily: "var(--font-space-mono)",
+          fontFamily: "var(--font-jakarta)",
           fontWeight: 400,
           fontSize: 12,
           color: "rgba(255,255,255,0.35)",

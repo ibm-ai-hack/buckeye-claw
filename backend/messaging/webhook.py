@@ -4,7 +4,7 @@ import logging
 import os
 import threading
 
-from urllib.parse import unquote
+from urllib.parse import quote, unquote
 
 from flask import Flask, redirect, request, jsonify
 
@@ -52,6 +52,17 @@ def buckeyemail_start():
     return redirect(auth_url)
 
 
+@app.route("/auth/buckeyemail/go/<code_>")
+def buckeyemail_short_link(code_):
+    """Resolve a short auth link and redirect to the real OAuth start."""
+    from backend.integrations.buckeyemail.token_store import consume_auth_link
+
+    phone = consume_auth_link(code_)
+    if not phone:
+        return "This link has expired or already been used.", 410
+    return redirect(f"/auth/buckeyemail/start?phone={quote(phone, safe='')}")
+
+
 @app.route("/auth/buckeyemail/callback")
 def buckeyemail_callback():
     """Handle the OAuth callback from Microsoft and store tokens."""
@@ -69,11 +80,75 @@ def buckeyemail_callback():
         logger.error("BuckeyeMail token exchange failed: %s", result)
         return "Authorization failed. Please try again.", 500
 
+    # Send SMS confirmation in background
+    thread = threading.Thread(
+        target=_send_oauth_confirmation, args=(phone,), daemon=True
+    )
+    thread.start()
+
+    return _render_callback_success_page()
+
+
+@app.route("/api/buckeyemail/status")
+def buckeyemail_status():
+    """Check if a phone number has connected BuckeyeMail."""
+    from backend.integrations.buckeyemail.auth import get_access_token
+
+    phone = request.args.get("phone", "")
+    if not phone:
+        return jsonify({"error": "Missing phone parameter"}), 400
+    token = get_access_token(phone)
+    return jsonify({"connected": token is not None})
+
+
+def _send_oauth_confirmation(phone: str):
+    """Send SMS confirmation that BuckeyeMail is now connected."""
+    msg = (
+        "BuckeyeMail is connected! You can now text me to "
+        "check your inbox, search emails, or get your unread count."
+    )
+    if _main_loop is None or _main_loop.is_closed():
+        loop = asyncio.new_event_loop()
+        try:
+            loop.run_until_complete(sender.send_message(phone, msg))
+        except Exception:
+            logger.exception("Failed to send BuckeyeMail confirmation to %s", phone)
+        finally:
+            loop.close()
+    else:
+        future = asyncio.run_coroutine_threadsafe(
+            sender.send_message(phone, msg), _main_loop
+        )
+        try:
+            future.result(timeout=15)
+        except Exception:
+            logger.exception("Failed to send BuckeyeMail confirmation to %s", phone)
+
+
+def _render_callback_success_page() -> str:
+    """Branded success page shown after BuckeyeMail OAuth completes."""
     return (
-        "<html><body style='font-family:system-ui;text-align:center;padding:80px'>"
-        "<h2>BuckeyeMail connected!</h2>"
-        "<p>You can close this tab and go back to texting.</p>"
-        "</body></html>"
+        '<!DOCTYPE html>'
+        '<html lang="en"><head>'
+        '<meta charset="utf-8">'
+        '<meta name="viewport" content="width=device-width,initial-scale=1">'
+        '<title>BuckeyeMail Connected</title>'
+        '<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300&family=Space+Mono&display=swap" rel="stylesheet">'
+        '<style>'
+        '*{margin:0;padding:0;box-sizing:border-box}'
+        'body{min-height:100vh;background:#0a0a0a;display:flex;align-items:center;justify-content:center;font-family:"Space Mono",monospace}'
+        '.card{text-align:center;padding:64px 48px;border-radius:20px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);max-width:440px}'
+        '.check{width:56px;height:56px;border-radius:50%;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);display:inline-flex;align-items:center;justify-content:center;font-size:24px;color:#22c55e;margin-bottom:24px}'
+        'h1{font-family:"Outfit",sans-serif;font-weight:200;font-size:28px;letter-spacing:0.15em;text-transform:lowercase;color:rgba(255,255,255,0.85);margin-bottom:12px}'
+        'p{font-size:13px;color:rgba(255,255,255,0.4);line-height:1.7;letter-spacing:0.5px}'
+        '.hint{margin-top:32px;font-size:11px;color:rgba(255,255,255,0.2);letter-spacing:1px}'
+        '</style></head><body>'
+        '<div class="card">'
+        '<div class="check">&#10003;</div>'
+        '<h1>buckeyemail connected</h1>'
+        '<p>your osu email is linked. head back to your texts<br>and say "check my email" anytime.</p>'
+        '<p class="hint">you can close this tab now</p>'
+        '</div></body></html>'
     )
 
 

@@ -42,7 +42,7 @@ export default function GradeBar({
     >
       <span
         style={{
-          fontFamily: "var(--font-space-mono)",
+          fontFamily: "var(--font-jakarta)",
           fontWeight: 400,
           fontSize: 14,
           color: "rgba(255,255,255,0.75)",
@@ -73,7 +73,7 @@ export default function GradeBar({
       </div>
       <span
         style={{
-          fontFamily: "var(--font-space-mono)",
+          fontFamily: "var(--font-jakarta)",
           fontWeight: 400,
           fontSize: 14,
           color: "rgba(255,255,255,0.85)",
@@ -85,7 +85,7 @@ export default function GradeBar({
       </span>
       <span
         style={{
-          fontFamily: "var(--font-outfit)",
+          fontFamily: "var(--font-jakarta)",
           fontWeight: 300,
           fontSize: 15,
           color: "rgba(255,255,255,0.70)",

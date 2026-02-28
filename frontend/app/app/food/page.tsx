@@ -50,7 +50,7 @@ export default function FoodPage() {
               background: "rgba(255,255,255,0.03)",
               border: "1px solid rgba(255,255,255,0.06)",
               borderRadius: 10,
-              fontFamily: "var(--font-space-mono)",
+              fontFamily: "var(--font-jakarta)",
               fontWeight: 400,
               fontSize: 15,
               color: "rgba(255,255,255,0.85)",
@@ -97,7 +97,7 @@ export default function FoodPage() {
             >
               <div
                 style={{
-                  fontFamily: "var(--font-outfit)",
+                  fontFamily: "var(--font-jakarta)",
                   fontWeight: 300,
                   fontSize: 18,
                   color: "rgba(255,255,255,0.80)",
@@ -115,7 +115,7 @@ export default function FoodPage() {
               >
                 <span
                   style={{
-                    fontFamily: "var(--font-space-mono)",
+                    fontFamily: "var(--font-jakarta)",
                     fontWeight: 400,
                     fontSize: 12,
                     color: "rgba(255,255,255,0.45)",
@@ -126,7 +126,7 @@ export default function FoodPage() {
                 </span>
                 <span
                   style={{
-                    fontFamily: "var(--font-space-mono)",
+                    fontFamily: "var(--font-jakarta)",
                     fontWeight: 400,
                     fontSize: 12,
                     color: "rgba(255,255,255,0.50)",
@@ -148,7 +148,7 @@ export default function FoodPage() {
       <style jsx>{`
         input::placeholder {
           color: rgba(255, 255, 255, 0.35);
-          font-family: var(--font-space-mono);
+          font-family: var(--font-jakarta);
         }
       `}</style>
     </div>

@@ -1,21 +1,15 @@
 import type { Metadata } from "next";
-import { Outfit, Space_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
-const outfit = Outfit({
-  variable: "--font-outfit",
+const jakarta = Plus_Jakarta_Sans({
+  variable: "--font-jakarta",
   subsets: ["latin"],
-  weight: ["200", "300"],
-});
-
-const spaceMono = Space_Mono({
-  variable: "--font-space-mono",
-  subsets: ["latin"],
-  weight: "400",
+  weight: ["300", "400", "500", "600"],
 });
 
 export const metadata: Metadata = {
-  title: "BuckeyeClaw",
+  title: "buckeyeclaw",
   description: "Your entire campus, one text away.",
 };
 
@@ -26,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${outfit.variable} ${spaceMono.variable} antialiased`}>
+      <body className={`${jakarta.variable} antialiased`} style={{ fontFamily: "var(--font-jakarta)" }}>
         {children}
       </body>
     </html>

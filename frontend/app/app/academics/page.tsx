@@ -5,7 +5,6 @@ import DomainHero from "@/components/DomainHero";
 import GradeBar from "@/components/domain/GradeBar";
 import ScheduleGrid from "@/components/domain/ScheduleGrid";
 import AssignmentRow from "@/components/domain/AssignmentRow";
-import InputBar from "@/components/InputBar";
 
 const DEMO_GRADES = [
   { course: "CSE 2421", percentage: 92, letter: "A-" },
@@ -52,9 +51,9 @@ export default function AcademicsPage() {
       <div
         style={{
           display: "flex",
-          gap: 0,
-          borderBottom: "1px solid rgba(255,255,255,0.04)",
-          padding: "0 32px",
+          gap: 4,
+          borderBottom: "1px solid rgba(255, 240, 220, 0.06)",
+          padding: "0 40px",
           flexShrink: 0,
         }}
       >
@@ -63,24 +62,17 @@ export default function AcademicsPage() {
             key={tab}
             onClick={() => setActiveTab(tab)}
             style={{
-              fontFamily: "var(--font-space-mono)",
-              fontWeight: 400,
-              fontSize: 14,
-              letterSpacing: "1px",
-              color:
-                activeTab === tab
-                  ? "rgba(255,255,255,0.85)"
-                  : "rgba(255,255,255,0.45)",
-              padding: "12px 24px",
-              background: "transparent",
+              fontFamily: "var(--font-jakarta)",
+              fontWeight: activeTab === tab ? 500 : 400,
+              fontSize: 15,
+              color: activeTab === tab ? "#ede8e3" : "rgba(237, 232, 227, 0.45)",
+              padding: "14px 20px",
+              background: activeTab === tab ? "rgba(255, 240, 220, 0.05)" : "transparent",
               border: "none",
-              borderBottom:
-                activeTab === tab
-                  ? "2px solid rgb(198,40,40)"
-                  : "2px solid transparent",
+              borderBottom: activeTab === tab ? "2px solid rgb(198, 50, 45)" : "2px solid transparent",
+              borderRadius: "8px 8px 0 0",
               cursor: "pointer",
-              transition: "color 0.2s ease, border-color 0.2s ease",
-              textTransform: "lowercase",
+              transition: "all 0.2s ease",
             }}
           >
             {tab}
@@ -93,17 +85,17 @@ export default function AcademicsPage() {
         style={{
           flex: 1,
           overflowY: "auto",
-          padding: "24px 32px",
+          padding: "24px 40px",
         }}
       >
         {activeTab === "schedule" && (
-          <div style={{ maxWidth: 800 }}>
+          <div style={{ maxWidth: 840 }}>
             <ScheduleGrid courses={DEMO_SCHEDULE} />
           </div>
         )}
 
         {activeTab === "grades" && (
-          <div style={{ maxWidth: 700 }}>
+          <div style={{ maxWidth: 720 }}>
             {DEMO_GRADES.map((g, i) => (
               <GradeBar
                 key={g.course}
@@ -117,7 +109,7 @@ export default function AcademicsPage() {
         )}
 
         {activeTab === "assignments" && (
-          <div style={{ maxWidth: 700, display: "flex", flexDirection: "column", gap: 2 }}>
+          <div style={{ maxWidth: 720, display: "flex", flexDirection: "column", gap: 6 }}>
             {DEMO_ASSIGNMENTS.map((a) => (
               <AssignmentRow
                 key={`${a.course}-${a.title}`}
@@ -130,11 +122,6 @@ export default function AcademicsPage() {
           </div>
         )}
       </div>
-
-      <InputBar
-        placeholder="ask about academics..."
-        onSubmit={(msg) => console.log("academics:", msg)}
-      />
     </div>
   );
 }

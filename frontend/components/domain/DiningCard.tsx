@@ -50,7 +50,7 @@ export default function DiningCard({
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <span
             style={{
-              fontFamily: "var(--font-outfit)",
+              fontFamily: "var(--font-jakarta)",
               fontWeight: 300,
               fontSize: 18,
               color: "rgba(255,255,255,0.80)",
@@ -68,7 +68,7 @@ export default function DiningCard({
 
       <div
         style={{
-          fontFamily: "var(--font-space-mono)",
+          fontFamily: "var(--font-jakarta)",
           fontWeight: 400,
           fontSize: 13,
           color: "rgba(255,255,255,0.55)",
@@ -79,7 +79,7 @@ export default function DiningCard({
       </div>
       <div
         style={{
-          fontFamily: "var(--font-space-mono)",
+          fontFamily: "var(--font-jakarta)",
           fontWeight: 400,
           fontSize: 13,
           color: "rgba(255,255,255,0.45)",
@@ -93,7 +93,7 @@ export default function DiningCard({
         <button
           onClick={() => setExpanded(!expanded)}
           style={{
-            fontFamily: "var(--font-space-mono)",
+            fontFamily: "var(--font-jakarta)",
             fontWeight: 400,
             fontSize: 13,
             color: expanded ? "rgba(255,255,255,0.60)" : "rgba(255,255,255,0.60)",
@@ -149,7 +149,7 @@ export default function DiningCard({
                 >
                   <div
                     style={{
-                      fontFamily: "var(--font-outfit)",
+                      fontFamily: "var(--font-jakarta)",
                       fontWeight: 300,
                       fontSize: 15,
                       color: "rgba(255,255,255,0.80)",
@@ -162,7 +162,7 @@ export default function DiningCard({
                     <div
                       key={item}
                       style={{
-                        fontFamily: "var(--font-space-mono)",
+                        fontFamily: "var(--font-jakarta)",
                         fontWeight: 400,
                         fontSize: 12,
                         color: "rgba(255,255,255,0.50)",

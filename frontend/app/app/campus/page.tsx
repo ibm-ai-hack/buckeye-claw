@@ -3,7 +3,6 @@
 import { useState } from "react";
 import DomainHero from "@/components/DomainHero";
 import EventRow from "@/components/domain/EventRow";
-import InputBar from "@/components/InputBar";
 
 const DEMO_EVENTS = [
   { day: 15, month: "mar", title: "spring concert", venue: "schottenstein center", time: "7:00 pm — 10:00 pm", description: "free with buckid" },
@@ -49,9 +48,9 @@ export default function CampusPage() {
       <div
         style={{
           display: "flex",
-          gap: 0,
-          borderBottom: "1px solid rgba(255,255,255,0.04)",
-          padding: "0 32px",
+          gap: 4,
+          borderBottom: "1px solid rgba(255, 240, 220, 0.06)",
+          padding: "0 40px",
           flexShrink: 0,
         }}
       >
@@ -60,18 +59,17 @@ export default function CampusPage() {
             key={tab}
             onClick={() => setActiveTab(tab)}
             style={{
-              fontFamily: "var(--font-space-mono)",
-              fontWeight: 400,
-              fontSize: 14,
-              letterSpacing: "1px",
-              color: activeTab === tab ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.45)",
-              padding: "12px 24px",
-              background: "transparent",
+              fontFamily: "var(--font-jakarta)",
+              fontWeight: activeTab === tab ? 500 : 400,
+              fontSize: 15,
+              color: activeTab === tab ? "#ede8e3" : "rgba(237, 232, 227, 0.45)",
+              padding: "14px 20px",
+              background: activeTab === tab ? "rgba(255, 240, 220, 0.05)" : "transparent",
               border: "none",
-              borderBottom: activeTab === tab ? "2px solid rgb(198,40,40)" : "2px solid transparent",
+              borderBottom: activeTab === tab ? "2px solid rgb(198, 50, 45)" : "2px solid transparent",
+              borderRadius: "8px 8px 0 0",
               cursor: "pointer",
-              transition: "color 0.2s ease, border-color 0.2s ease",
-              textTransform: "lowercase",
+              transition: "all 0.2s ease",
             }}
           >
             {tab}
@@ -80,9 +78,9 @@ export default function CampusPage() {
       </div>
 
       {/* Content */}
-      <div style={{ flex: 1, overflowY: "auto", padding: "16px 32px" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "24px 40px" }}>
         {activeTab === "events" && (
-          <div style={{ maxWidth: 700 }}>
+          <div style={{ maxWidth: 720 }}>
             {DEMO_EVENTS.map((e) => (
               <EventRow key={`${e.day}-${e.title}`} {...e} />
             ))}
@@ -90,7 +88,7 @@ export default function CampusPage() {
         )}
 
         {activeTab === "athletics" && (
-          <div style={{ maxWidth: 700 }}>
+          <div style={{ maxWidth: 720 }}>
             {DEMO_ATHLETICS.map((e) => (
               <EventRow key={`${e.day}-${e.title}`} {...e} />
             ))}
@@ -98,7 +96,7 @@ export default function CampusPage() {
         )}
 
         {activeTab === "organizations" && (
-          <div style={{ maxWidth: 700 }}>
+          <div style={{ maxWidth: 720 }}>
             {DEMO_ORGS.map((org, i) => (
               <div
                 key={org.name}
@@ -106,17 +104,21 @@ export default function CampusPage() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  padding: "14px 0",
-                  borderBottom: i < DEMO_ORGS.length - 1 ? "1px solid rgba(255,255,255,0.03)" : "none",
+                  padding: "18px 16px",
+                  marginBottom: 6,
+                  background: "rgba(255, 240, 220, 0.02)",
+                  borderRadius: 12,
+                  border: "1px solid rgba(255, 240, 220, 0.04)",
+                  transition: "background 0.15s ease",
                 }}
               >
                 <div>
                   <div
                     style={{
-                      fontFamily: "var(--font-outfit)",
-                      fontWeight: 300,
+                      fontFamily: "var(--font-jakarta)",
+                      fontWeight: 500,
                       fontSize: 16,
-                      color: "rgba(255,255,255,0.80)",
+                      color: "#ede8e3",
                       marginBottom: 4,
                     }}
                   >
@@ -124,11 +126,10 @@ export default function CampusPage() {
                   </div>
                   <div
                     style={{
-                      fontFamily: "var(--font-space-mono)",
+                      fontFamily: "var(--font-jakarta)",
                       fontWeight: 400,
-                      fontSize: 12,
-                      color: "rgba(255,255,255,0.45)",
-                      letterSpacing: "1px",
+                      fontSize: 13,
+                      color: "rgba(237, 232, 227, 0.45)",
                     }}
                   >
                     {org.type}
@@ -136,10 +137,10 @@ export default function CampusPage() {
                 </div>
                 <span
                   style={{
-                    fontFamily: "var(--font-space-mono)",
+                    fontFamily: "var(--font-jakarta)",
                     fontWeight: 400,
-                    fontSize: 13,
-                    color: "rgba(255,255,255,0.45)",
+                    fontSize: 14,
+                    color: "rgba(237, 232, 227, 0.40)",
                   }}
                 >
                   {org.members} members
@@ -149,8 +150,6 @@ export default function CampusPage() {
           </div>
         )}
       </div>
-
-      <InputBar placeholder="ask about campus..." onSubmit={(msg) => console.log("campus:", msg)} />
     </div>
   );
 }

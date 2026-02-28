@@ -40,7 +40,7 @@ export default function AssignmentRow({
     >
       <span
         style={{
-          fontFamily: "var(--font-space-mono)",
+          fontFamily: "var(--font-jakarta)",
           fontWeight: 400,
           fontSize: 14,
           color: "rgba(255,255,255,0.75)",
@@ -50,7 +50,7 @@ export default function AssignmentRow({
       </span>
       <span
         style={{
-          fontFamily: "var(--font-space-mono)",
+          fontFamily: "var(--font-jakarta)",
           fontWeight: 400,
           fontSize: 13,
           color: dueColor,

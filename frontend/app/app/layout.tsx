@@ -15,11 +15,11 @@ export default async function AppLayout({
   if (!user) redirect("/");
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "#0a0a0a" }}>
+    <div style={{ display: "flex", minHeight: "100vh", background: "#181614" }}>
       <LeftRail />
       <main
         style={{
-          marginLeft: 80,
+          marginLeft: 220,
           flex: 1,
           minHeight: "100vh",
           display: "flex",

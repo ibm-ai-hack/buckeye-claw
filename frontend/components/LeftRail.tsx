@@ -13,81 +13,37 @@ const NAV_ITEMS: NavItem[] = [
     path: "/app/feed",
     label: "feed",
     icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="2" />
         <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
       </svg>
     ),
   },
   {
-    path: "/app/dining",
-    label: "dine",
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z" />
-        <line x1="6" y1="1" x2="6" y2="4" />
-        <line x1="10" y1="1" x2="10" y2="4" />
-        <line x1="14" y1="1" x2="14" y2="4" />
-      </svg>
-    ),
-  },
-  {
-    path: "/app/transit",
-    label: "bus",
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M8 6v6M15 6v6M2 12h19.6M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 00-2 2v10h3" />
-        <circle cx="7" cy="18" r="2" />
-        <path d="M9 18h5" />
-        <circle cx="16" cy="18" r="2" />
-      </svg>
-    ),
-  },
-  {
     path: "/app/academics",
-    label: "acad",
+    label: "academics",
     icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
         <path d="M6 12v5c0 1.1 2.7 3 6 3s6-1.9 6-3v-5" />
       </svg>
     ),
   },
   {
-    path: "/app/food",
-    label: "food",
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M15 11h.01M11 15h.01M16 16a5 5 0 10-6.5-6.5" />
-        <path d="M8 2a5 5 0 00-2.65 9.25L2 21l9.75-3.35A5 5 0 008 2z" />
-      </svg>
-    ),
-  },
-  {
     path: "/app/campus",
-    label: "camp",
+    label: "campus",
     icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <rect x="4" y="2" width="16" height="20" rx="2" />
         <path d="M9 22v-4h6v4M8 6h.01M16 6h.01M12 6h.01M12 10h.01M8 10h.01M16 10h.01M12 14h.01M8 14h.01M16 14h.01" />
       </svg>
     ),
   },
   {
-    path: "/app/mail",
-    label: "mail",
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="2" y="4" width="20" height="16" rx="2" />
-        <path d="M22 7l-10 6L2 7" />
-      </svg>
-    ),
-  },
-  {
     path: "/app/connect",
-    label: "link",
+    label: "connect",
     icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <rect x="2" y="3" width="20" height="14" rx="2" />
         <line x1="8" y1="21" x2="16" y2="21" />
         <line x1="12" y1="17" x2="12" y2="21" />
@@ -96,9 +52,9 @@ const NAV_ITEMS: NavItem[] = [
   },
   {
     path: "/app/memory",
-    label: "mem",
+    label: "memory",
     icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="2" />
         <circle cx="4"  cy="6"  r="1.5" />
         <circle cx="20" cy="6"  r="1.5" />
@@ -120,49 +76,54 @@ export default function LeftRail() {
   return (
     <nav
       style={{
-        width: 80,
+        width: 220,
         height: "100vh",
         position: "fixed",
         top: 0,
         left: 0,
-        background: "#0a0a0a",
-        borderRight: "1px solid rgba(255,255,255,0.04)",
+        background: "#1a1715",
+        borderRight: "1px solid rgba(255, 240, 220, 0.06)",
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
-        paddingTop: 20,
-        paddingBottom: 20,
+        padding: "24px 16px 20px",
         zIndex: 50,
         overflowY: "auto",
         overflowX: "hidden",
       }}
     >
-      {/* Logo mark */}
+      {/* Logo + brand */}
       <div
+        onClick={() => router.push("/")}
         style={{
-          width: 36,
-          height: 36,
-          borderRadius: 10,
-          background: "rgba(198,40,40,0.15)",
-          border: "1px solid rgba(198,40,40,0.25)",
           display: "flex",
           alignItems: "center",
-          justifyContent: "center",
-          marginBottom: 28,
+          gap: 12,
           cursor: "pointer",
+          padding: "4px 8px",
+          marginBottom: 32,
         }}
-        onClick={() => router.push("/")}
-        title="BuckeyeClaw"
       >
-        {/* Claw mark logo */}
-        <svg width="18" height="22" viewBox="0 0 18 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-          {/* Left claw — fans left as it descends */}
-          <path d="M4.5 1.5 C4 4.5 3 8 2 20" stroke="rgb(198,40,40)" strokeWidth="2.2" strokeLinecap="round"/>
-          {/* Center claw — near-straight */}
-          <path d="M9 1 C8.8 4.5 8.8 8.5 9.5 20" stroke="rgb(198,40,40)" strokeWidth="2.2" strokeLinecap="round"/>
-          {/* Right claw — fans right as it descends */}
-          <path d="M13.5 1.5 C14 4.5 15 8 16 20" stroke="rgb(198,40,40)" strokeWidth="2.2" strokeLinecap="round"/>
-        </svg>
+        <img
+          src="/chud.png"
+          alt="buckeyeclaw"
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: 10,
+            objectFit: "contain",
+          }}
+        />
+        <span
+          style={{
+            fontFamily: "var(--font-jakarta)",
+            fontWeight: 600,
+            fontSize: 17,
+            color: "#ede8e3",
+            letterSpacing: "-0.2px",
+          }}
+        >
+          buckeyeclaw
+        </span>
       </div>
 
       {/* Nav items */}
@@ -170,8 +131,7 @@ export default function LeftRail() {
         style={{
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
-          gap: 6,
+          gap: 2,
           flex: 1,
         }}
       >
@@ -182,98 +142,124 @@ export default function LeftRail() {
               key={item.path}
               onClick={() => router.push(item.path)}
               style={{
-                width: 70,
-                padding: "12px 0 8px",
                 display: "flex",
-                flexDirection: "column",
                 alignItems: "center",
-                gap: 5,
-                background: "transparent",
+                gap: 12,
+                padding: "11px 14px",
+                background: isActive
+                  ? "rgba(198, 50, 45, 0.10)"
+                  : "transparent",
                 border: "none",
-                borderLeft: isActive
-                  ? "2px solid rgb(198,40,40)"
-                  : "2px solid transparent",
+                borderRadius: 10,
                 cursor: "pointer",
                 transition: "all 0.15s ease",
-                borderRadius: 0,
                 color: isActive
-                  ? "rgba(255,255,255,0.85)"
-                  : "rgba(255,255,255,0.50)",
-                filter: isActive
-                  ? "drop-shadow(0 0 6px rgba(198,40,40,0.3))"
-                  : "none",
+                  ? "#ede8e3"
+                  : "rgba(237, 232, 227, 0.50)",
               }}
               onMouseEnter={(e) => {
                 if (!isActive) {
-                  e.currentTarget.style.color = "rgba(255,255,255,0.70)";
+                  e.currentTarget.style.background = "rgba(255, 240, 220, 0.05)";
+                  e.currentTarget.style.color = "rgba(237, 232, 227, 0.75)";
                 }
               }}
               onMouseLeave={(e) => {
                 if (!isActive) {
-                  e.currentTarget.style.color = "rgba(255,255,255,0.50)";
+                  e.currentTarget.style.background = "transparent";
+                  e.currentTarget.style.color = "rgba(237, 232, 227, 0.50)";
                 }
               }}
             >
               {item.icon}
               <span
                 style={{
-                  fontFamily: "var(--font-space-mono)",
-                  fontWeight: 400,
-                  fontSize: 12,
-                  letterSpacing: "0.5px",
-                  color: isActive
-                    ? "rgba(255,255,255,0.50)"
-                    : "rgba(255,255,255,0.40)",
+                  fontFamily: "var(--font-jakarta)",
+                  fontWeight: isActive ? 500 : 400,
+                  fontSize: 14,
+                  letterSpacing: "0.1px",
                 }}
               >
                 {item.label}
               </span>
+              {isActive && (
+                <div
+                  style={{
+                    width: 5,
+                    height: 5,
+                    borderRadius: "50%",
+                    background: "rgb(198, 50, 45)",
+                    marginLeft: "auto",
+                    boxShadow: "0 0 8px rgba(198, 50, 45, 0.4)",
+                  }}
+                />
+              )}
             </button>
           );
         })}
       </div>
 
-      {/* Bottom section */}
+      {/* Bottom user section */}
       <div
         style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 12,
-          marginTop: "auto",
+          borderTop: "1px solid rgba(255, 240, 220, 0.06)",
+          paddingTop: 16,
+          marginTop: 12,
         }}
       >
         <div
           style={{
-            width: 1,
-            height: 20,
-            background: "rgba(255,255,255,0.06)",
-            marginBottom: 4,
-          }}
-        />
-        <div
-          style={{
-            width: 40,
-            height: 40,
-            borderRadius: "50%",
-            background: "rgb(198,40,40)",
             display: "flex",
             alignItems: "center",
-            justifyContent: "center",
+            gap: 10,
+            padding: "8px 8px",
+            borderRadius: 10,
             cursor: "pointer",
           }}
         >
-          <span
+          <div
             style={{
-              fontFamily: "var(--font-outfit)",
-              fontWeight: 300,
-              fontSize: 16,
-              color: "white",
-              letterSpacing: "0.5px",
+              width: 34,
+              height: 34,
+              borderRadius: "50%",
+              background: "linear-gradient(135deg, rgb(198, 50, 45), rgb(168, 35, 35))",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            bu
-          </span>
+            <span
+              style={{
+                fontFamily: "var(--font-jakarta)",
+                fontWeight: 500,
+                fontSize: 13,
+                color: "white",
+              }}
+            >
+              bu
+            </span>
+          </div>
+          <div>
+            <div
+              style={{
+                fontFamily: "var(--font-jakarta)",
+                fontWeight: 500,
+                fontSize: 13,
+                color: "#ede8e3",
+              }}
+            >
+              buckeye
+            </div>
+            <div
+              style={{
+                fontFamily: "var(--font-jakarta)",
+                fontWeight: 400,
+                fontSize: 11,
+                color: "rgba(237, 232, 227, 0.35)",
+              }}
+            >
+              student
+            </div>
+          </div>
         </div>
       </div>
     </nav>

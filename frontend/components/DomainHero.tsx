@@ -10,50 +10,28 @@ export default function DomainHero({ title, accentColor }: DomainHeroProps) {
     <div
       style={{
         position: "relative",
-        height: 120,
+        padding: "48px 40px 28px",
         width: "100%",
-        overflow: "hidden",
         flexShrink: 0,
       }}
     >
-      {/* Gradient background mimicking dither strip */}
+      {/* Soft warm gradient */}
       <div
         style={{
           position: "absolute",
           inset: 0,
-          background: `radial-gradient(ellipse at 50% 80%, ${accentColor}15 0%, transparent 70%)`,
-          opacity: 0.6,
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background: `linear-gradient(180deg, transparent 0%, #0a0a0a 100%)`,
-        }}
-      />
-      {/* Animated noise texture */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          opacity: 0.03,
-          backgroundImage: `repeating-conic-gradient(rgba(255,255,255,0.1) 0% 25%, transparent 0% 50%)`,
-          backgroundSize: "4px 4px",
+          background: `radial-gradient(ellipse at 20% 80%, ${accentColor}12 0%, transparent 60%)`,
         }}
       />
       {/* Title */}
       <h1
         style={{
-          position: "absolute",
-          bottom: 20,
-          left: 32,
-          fontFamily: "var(--font-outfit)",
-          fontWeight: 200,
+          position: "relative",
+          fontFamily: "var(--font-jakarta)",
+          fontWeight: 600,
           fontSize: 28,
-          letterSpacing: "0.2em",
-          color: "rgba(255,255,255,0.85)",
-          textTransform: "lowercase",
+          letterSpacing: "-0.5px",
+          color: "#ede8e3",
           margin: 0,
         }}
       >

@@ -44,7 +44,7 @@ export default function EventRow({
       >
         <span
           style={{
-            fontFamily: "var(--font-outfit)",
+            fontFamily: "var(--font-jakarta)",
             fontWeight: 200,
             fontSize: 24,
             color: "rgba(255,255,255,0.85)",
@@ -55,7 +55,7 @@ export default function EventRow({
         </span>
         <span
           style={{
-            fontFamily: "var(--font-space-mono)",
+            fontFamily: "var(--font-jakarta)",
             fontWeight: 400,
             fontSize: 13,
             color: "rgba(255,255,255,0.45)",
@@ -71,7 +71,7 @@ export default function EventRow({
       <div style={{ flex: 1 }}>
         <div
           style={{
-            fontFamily: "var(--font-outfit)",
+            fontFamily: "var(--font-jakarta)",
             fontWeight: 300,
             fontSize: 16,
             color: "rgba(255,255,255,0.80)",
@@ -82,7 +82,7 @@ export default function EventRow({
         </div>
         <div
           style={{
-            fontFamily: "var(--font-space-mono)",
+            fontFamily: "var(--font-jakarta)",
             fontWeight: 400,
             fontSize: 13,
             color: "rgba(255,255,255,0.50)",
@@ -94,7 +94,7 @@ export default function EventRow({
         {description && (
           <div
             style={{
-              fontFamily: "var(--font-space-mono)",
+              fontFamily: "var(--font-jakarta)",
               fontWeight: 400,
               fontSize: 12,
               color: "rgba(255,255,255,0.40)",

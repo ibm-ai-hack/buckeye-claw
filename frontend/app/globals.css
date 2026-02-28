@@ -1,8 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
+  --background: #181614;
+  --foreground: #ede8e3;
+  --surface: #1f1c19;
+  --elevated: #282421;
+  --border: rgba(255, 240, 220, 0.07);
+  --border-strong: rgba(255, 240, 220, 0.12);
+  --text-primary: #ede8e3;
+  --text-secondary: rgba(237, 232, 227, 0.60);
+  --text-muted: rgba(237, 232, 227, 0.35);
+  --accent: rgb(198, 50, 45);
+  --accent-soft: rgba(198, 50, 45, 0.12);
 }
 
 @theme inline {
@@ -43,15 +52,15 @@ body {
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 4px;
+  width: 5px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 2px;
+  background: rgba(237, 232, 227, 0.08);
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(237, 232, 227, 0.15);
 }

@@ -83,7 +83,7 @@ export default function ParkingRing({ name, available, total }: ParkingRingProps
         >
           <span
             style={{
-              fontFamily: "var(--font-outfit)",
+              fontFamily: "var(--font-jakarta)",
               fontWeight: 200,
               fontSize: available === 0 ? 20 : 28,
               color: "rgba(255,255,255,0.80)",
@@ -96,7 +96,7 @@ export default function ParkingRing({ name, available, total }: ParkingRingProps
       </div>
       <span
         style={{
-          fontFamily: "var(--font-space-mono)",
+          fontFamily: "var(--font-jakarta)",
           fontWeight: 400,
           fontSize: 12,
           color: "rgba(255,255,255,0.50)",

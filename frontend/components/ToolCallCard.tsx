@@ -52,7 +52,7 @@ export default function ToolCallCard({
       >
         <span
           style={{
-            fontFamily: "var(--font-space-mono)",
+            fontFamily: "var(--font-jakarta)",
             fontWeight: 400,
             fontSize: 14,
             color: "rgba(255,255,255,0.60)",
@@ -71,7 +71,7 @@ export default function ToolCallCard({
           {durationMs !== undefined && state !== "invoked" && (
             <span
               style={{
-                fontFamily: "var(--font-space-mono)",
+                fontFamily: "var(--font-jakarta)",
                 fontWeight: 400,
                 fontSize: 12,
                 color: "rgba(255,255,255,0.35)",
@@ -88,7 +88,7 @@ export default function ToolCallCard({
                 onToggle?.();
               }}
               style={{
-                fontFamily: "var(--font-space-mono)",
+                fontFamily: "var(--font-jakarta)",
                 fontWeight: 400,
                 fontSize: 12,
                 color: "rgba(255,255,255,0.35)",
@@ -117,7 +117,7 @@ export default function ToolCallCard({
       {state === "collapsed" && !manualExpanded && summary && (
         <span
           style={{
-            fontFamily: "var(--font-space-mono)",
+            fontFamily: "var(--font-jakarta)",
             fontWeight: 400,
             fontSize: 13,
             color: "rgba(255,255,255,0.45)",

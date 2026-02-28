@@ -65,7 +65,7 @@ export default function InputBar({
           background: "transparent",
           border: "none",
           outline: "none",
-          fontFamily: "var(--font-space-mono)",
+          fontFamily: "var(--font-jakarta)",
           fontWeight: 400,
           fontSize: 16,
           letterSpacing: "0.5px",
@@ -120,7 +120,7 @@ export default function InputBar({
         }
         input::placeholder {
           color: rgba(255, 255, 255, 0.35);
-          font-family: var(--font-space-mono);
+          font-family: var(--font-jakarta);
         }
       `}</style>
     </div>

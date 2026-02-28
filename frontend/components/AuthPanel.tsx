@@ -41,7 +41,7 @@ function ErrorMsg({ msg }: { msg: string }) {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
       style={{
-        fontFamily: "var(--font-space-mono)",
+        fontFamily: "var(--font-jakarta)",
         fontSize: 11,
         letterSpacing: "0.5px",
         color: "#ef4444",
@@ -78,7 +78,7 @@ function PrimaryButton({
           loading || disabled ? "rgba(198,40,40,0.04)" : "rgba(198,40,40,0.1)",
         border: `1px solid ${loading || disabled ? "rgba(198,40,40,0.12)" : "rgba(198,40,40,0.28)"}`,
         borderRadius: 10,
-        fontFamily: "var(--font-space-mono)",
+        fontFamily: "var(--font-jakarta)",
         fontSize: 12,
         letterSpacing: "2.5px",
         color: loading || disabled ? "rgba(198,40,40,0.35)" : "rgb(198,40,40)",
@@ -143,7 +143,7 @@ function OsuEmailInput({
           padding: "13px 0 13px 16px",
           background: "transparent",
           border: "none",
-          fontFamily: "var(--font-space-mono)",
+          fontFamily: "var(--font-jakarta)",
           fontSize: 13,
           letterSpacing: "0.5px",
           color: "rgba(255,255,255,0.85)",
@@ -154,7 +154,7 @@ function OsuEmailInput({
       <span
         style={{
           padding: "13px 16px 13px 0",
-          fontFamily: "var(--font-space-mono)",
+          fontFamily: "var(--font-jakarta)",
           fontSize: 13,
           letterSpacing: "0.5px",
           color: "rgba(255,255,255,0.3)",
@@ -194,7 +194,7 @@ function PasswordInput({
         background: focused ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.03)",
         border: `1px solid ${focused ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.07)"}`,
         borderRadius: 10,
-        fontFamily: "var(--font-space-mono)",
+        fontFamily: "var(--font-jakarta)",
         fontSize: 13,
         letterSpacing: "0.5px",
         color: "rgba(255,255,255,0.85)",
@@ -259,7 +259,7 @@ function StepAuth({
       {isSignUp && confirm.length > 0 && !passwordsMatch && (
         <p
           style={{
-            fontFamily: "var(--font-space-mono)",
+            fontFamily: "var(--font-jakarta)",
             fontSize: 11,
             color: "#ef4444",
             margin: 0,
@@ -273,7 +273,7 @@ function StepAuth({
       {isSignUp && (
         <p
           style={{
-            fontFamily: "var(--font-space-mono)",
+            fontFamily: "var(--font-jakarta)",
             fontSize: 10,
             letterSpacing: "0.5px",
             color: "rgba(255,255,255,0.18)",
@@ -349,7 +349,7 @@ export default function AuthPanel() {
         @keyframes authSpin { to { transform: rotate(360deg); } }
         ::placeholder {
           color: rgba(255,255,255,0.18);
-          font-family: var(--font-space-mono);
+          font-family: var(--font-jakarta);
           letter-spacing: 0.5px;
         }
       `}</style>
@@ -395,7 +395,7 @@ export default function AuthPanel() {
             <div style={{ textAlign: "center", marginBottom: 32 }}>
               <h1
                 style={{
-                  fontFamily: "var(--font-outfit)",
+                  fontFamily: "var(--font-jakarta)",
                   fontWeight: 200,
                   fontSize: 36,
                   letterSpacing: "0.28em",
@@ -410,7 +410,7 @@ export default function AuthPanel() {
               </h1>
               <p
                 style={{
-                  fontFamily: "var(--font-space-mono)",
+                  fontFamily: "var(--font-jakarta)",
                   fontSize: 10,
                   letterSpacing: "2.5px",
                   color: "rgba(255,255,255,0.25)",
@@ -441,7 +441,7 @@ export default function AuthPanel() {
                     padding: "9px 0",
                     borderRadius: 8,
                     border: "none",
-                    fontFamily: "var(--font-space-mono)",
+                    fontFamily: "var(--font-jakarta)",
                     fontSize: 11,
                     letterSpacing: "1.5px",
                     cursor: "pointer",
@@ -472,7 +472,7 @@ export default function AuthPanel() {
             {/* Footer */}
             <p
               style={{
-                fontFamily: "var(--font-space-mono)",
+                fontFamily: "var(--font-jakarta)",
                 fontSize: 10,
                 letterSpacing: "0.5px",
                 color: "rgba(255,255,255,0.12)",

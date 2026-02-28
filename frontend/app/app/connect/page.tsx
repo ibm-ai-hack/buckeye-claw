@@ -306,7 +306,7 @@ export default function ConnectPage() {
       >
         <h1
           style={{
-            fontFamily: "var(--font-outfit)",
+            fontFamily: "var(--font-jakarta)",
             fontWeight: 200,
             fontSize: "clamp(24px, 4vw, 36px)",
             letterSpacing: "0.25em",
@@ -320,7 +320,7 @@ export default function ConnectPage() {
         </h1>
         <p
           style={{
-            fontFamily: "var(--font-space-mono)",
+            fontFamily: "var(--font-jakarta)",
             fontWeight: 400,
             fontSize: 13,
             letterSpacing: "2px",
@@ -379,7 +379,7 @@ export default function ConnectPage() {
               />
               <span
                 style={{
-                  fontFamily: "var(--font-space-mono)",
+                  fontFamily: "var(--font-jakarta)",
                   fontSize: 13,
                   letterSpacing: "3px",
                   color: "rgba(255,255,255,0.6)",
@@ -509,7 +509,7 @@ export default function ConnectPage() {
               bottom: -4,
               left: "50%",
               transform: "translateX(-50%) translateY(100%)",
-              fontFamily: "var(--font-space-mono)",
+              fontFamily: "var(--font-jakarta)",
               fontSize: 12,
               letterSpacing: "1.5px",
               color: "rgba(255,255,255,0.6)",
@@ -535,7 +535,7 @@ export default function ConnectPage() {
           <StatusIndicator status={status} />
           <span
             style={{
-              fontFamily: "var(--font-space-mono)",
+              fontFamily: "var(--font-jakarta)",
               fontSize: 13,
               letterSpacing: "2px",
               color: "rgba(255,255,255,0.6)",
@@ -548,7 +548,7 @@ export default function ConnectPage() {
             <button
               onClick={handleRetry}
               style={{
-                fontFamily: "var(--font-space-mono)",
+                fontFamily: "var(--font-jakarta)",
                 fontSize: 12,
                 letterSpacing: "2px",
                 textTransform: "lowercase",
@@ -589,7 +589,7 @@ export default function ConnectPage() {
         >
           <h2
             style={{
-              fontFamily: "var(--font-outfit)",
+              fontFamily: "var(--font-jakarta)",
               fontWeight: 200,
               fontSize: 24,
               letterSpacing: "0.15em",
@@ -619,7 +619,7 @@ export default function ConnectPage() {
               >
                 <span
                   style={{
-                    fontFamily: "var(--font-space-mono)",
+                    fontFamily: "var(--font-jakarta)",
                     fontSize: 15,
                     fontWeight: 400,
                     color: "rgba(255,255,255,0.8)",
@@ -631,7 +631,7 @@ export default function ConnectPage() {
                 </span>
                 <span
                   style={{
-                    fontFamily: "var(--font-outfit)",
+                    fontFamily: "var(--font-jakarta)",
                     fontSize: 16,
                     fontWeight: 300,
                     color: "rgba(255,255,255,0.75)",
@@ -643,7 +643,7 @@ export default function ConnectPage() {
                 </span>
                 <span
                   style={{
-                    fontFamily: "var(--font-space-mono)",
+                    fontFamily: "var(--font-jakarta)",
                     fontSize: 13,
                     color: "rgba(255,255,255,0.75)",
                     letterSpacing: "1px",
@@ -653,7 +653,7 @@ export default function ConnectPage() {
                 </span>
                 <span
                   style={{
-                    fontFamily: "var(--font-space-mono)",
+                    fontFamily: "var(--font-jakarta)",
                     fontSize: 13,
                     color: "rgba(255,255,255,0.75)",
                     letterSpacing: "1px",
@@ -665,7 +665,7 @@ export default function ConnectPage() {
                 </span>
                 <span
                   style={{
-                    fontFamily: "var(--font-space-mono)",
+                    fontFamily: "var(--font-jakarta)",
                     fontSize: 13,
                     color: "rgba(255,255,255,0.45)",
                     letterSpacing: "1px",
@@ -690,7 +690,7 @@ export default function ConnectPage() {
             <button
               onClick={() => alert("coming soon")}
               style={{
-                fontFamily: "var(--font-space-mono)",
+                fontFamily: "var(--font-jakarta)",
                 fontWeight: 400,
                 fontSize: 12,
                 letterSpacing: "3px",

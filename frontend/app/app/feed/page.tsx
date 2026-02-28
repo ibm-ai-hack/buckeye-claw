@@ -40,29 +40,27 @@ function MessageThread({
       {/* Panel header */}
       <div
         style={{
-          padding: "16px 24px 12px",
-          borderBottom: "1px solid rgba(255,255,255,0.04)",
+          padding: "18px 24px 14px",
+          borderBottom: "1px solid rgba(255, 240, 220, 0.06)",
           flexShrink: 0,
         }}
       >
         <span
           style={{
-            fontFamily: "var(--font-outfit)",
-            fontWeight: 200,
-            fontSize: 13,
-            letterSpacing: "0.2em",
-            color: "rgba(255,255,255,0.45)",
-            textTransform: "lowercase",
+            fontFamily: "var(--font-jakarta)",
+            fontWeight: 500,
+            fontSize: 14,
+            color: "rgba(237, 232, 227, 0.55)",
           }}
         >
           conversation
         </span>
         <span
           style={{
-            fontFamily: "var(--font-space-mono)",
+            fontFamily: "var(--font-jakarta)",
             fontWeight: 400,
-            fontSize: 11,
-            color: "rgba(255,255,255,0.25)",
+            fontSize: 12,
+            color: "rgba(237, 232, 227, 0.30)",
             marginLeft: 12,
           }}
         >
@@ -87,9 +85,9 @@ function MessageThread({
             style={{
               padding: 32,
               textAlign: "center",
-              fontFamily: "var(--font-space-mono)",
-              fontSize: 13,
-              color: "rgba(255,255,255,0.20)",
+              fontFamily: "var(--font-jakarta)",
+              fontSize: 14,
+              color: "rgba(237, 232, 227, 0.25)",
             }}
           >
             waiting for messages...
@@ -119,15 +117,14 @@ function IntentBadge({ intent }: { intent: string }) {
   return (
     <span
       style={{
-        fontFamily: "var(--font-space-mono)",
-        fontSize: 11,
-        fontWeight: 400,
-        color: "rgb(198,40,40)",
-        background: "rgba(198,40,40,0.08)",
-        border: "1px solid rgba(198,40,40,0.15)",
-        borderRadius: 4,
-        padding: "2px 8px",
-        letterSpacing: "0.5px",
+        fontFamily: "var(--font-jakarta)",
+        fontSize: 12,
+        fontWeight: 500,
+        color: "rgb(198, 50, 45)",
+        background: "rgba(198, 50, 45, 0.10)",
+        border: "1px solid rgba(198, 50, 45, 0.18)",
+        borderRadius: 6,
+        padding: "3px 10px",
       }}
     >
       {intent}
@@ -150,8 +147,8 @@ function StepMarker({
       style={{
         display: "flex",
         alignItems: "center",
-        gap: 8,
-        padding: "4px 0",
+        gap: 10,
+        padding: "5px 0",
       }}
     >
       <div
@@ -159,16 +156,15 @@ function StepMarker({
           width: 6,
           height: 6,
           borderRadius: "50%",
-          background: isEnd ? "rgba(255,255,255,0.15)" : "rgba(198,40,40,0.5)",
+          background: isEnd ? "rgba(237, 232, 227, 0.15)" : "rgba(198, 50, 45, 0.5)",
           flexShrink: 0,
         }}
       />
       <span
         style={{
-          fontFamily: "var(--font-space-mono)",
-          fontSize: 12,
-          color: "rgba(255,255,255,0.45)",
-          letterSpacing: "0.5px",
+          fontFamily: "var(--font-jakarta)",
+          fontSize: 13,
+          color: "rgba(237, 232, 227, 0.50)",
         }}
       >
         {event.step ?? "unknown"} {isEnd ? "done" : "started"}
@@ -176,9 +172,9 @@ function StepMarker({
       {duration != null && (
         <span
           style={{
-            fontFamily: "var(--font-space-mono)",
-            fontSize: 11,
-            color: "rgba(255,255,255,0.25)",
+            fontFamily: "var(--font-jakarta)",
+            fontSize: 12,
+            color: "rgba(237, 232, 227, 0.30)",
             marginLeft: "auto",
           }}
         >
@@ -198,7 +194,7 @@ function RunBlock({
 }) {
   const statusColor =
     run.status === "running"
-      ? "rgb(198,40,40)"
+      ? "rgb(198, 50, 45)"
       : run.status === "completed"
         ? "#22c55e"
         : "#ef4444";
@@ -206,8 +202,11 @@ function RunBlock({
   return (
     <div
       style={{
-        padding: "16px 0",
-        borderBottom: "1px solid rgba(255,255,255,0.03)",
+        padding: "18px 16px",
+        marginBottom: 8,
+        background: "rgba(255, 240, 220, 0.02)",
+        borderRadius: 12,
+        border: "1px solid rgba(255, 240, 220, 0.04)",
         animation: "fadeInUp 300ms ease-out forwards",
       }}
     >
@@ -216,7 +215,7 @@ function RunBlock({
         style={{
           display: "flex",
           alignItems: "center",
-          gap: 8,
+          gap: 10,
           marginBottom: 12,
         }}
       >
@@ -227,12 +226,10 @@ function RunBlock({
         />
         <span
           style={{
-            fontFamily: "var(--font-outfit)",
-            fontWeight: 200,
+            fontFamily: "var(--font-jakarta)",
+            fontWeight: 500,
             fontSize: 13,
-            color: "rgba(255,255,255,0.55)",
-            letterSpacing: "0.15em",
-            textTransform: "lowercase",
+            color: "rgba(237, 232, 227, 0.60)",
           }}
         >
           {run.status}
@@ -240,9 +237,9 @@ function RunBlock({
         {run.intent && <IntentBadge intent={run.intent} />}
         <span
           style={{
-            fontFamily: "var(--font-space-mono)",
-            fontSize: 10,
-            color: "rgba(255,255,255,0.15)",
+            fontFamily: "var(--font-jakarta)",
+            fontSize: 11,
+            color: "rgba(237, 232, 227, 0.20)",
             marginLeft: "auto",
           }}
         >
@@ -254,10 +251,10 @@ function RunBlock({
       {run.user_message && (
         <div
           style={{
-            fontFamily: "var(--font-space-mono)",
-            fontSize: 12,
-            color: "rgba(255,255,255,0.35)",
-            marginBottom: 10,
+            fontFamily: "var(--font-jakarta)",
+            fontSize: 13,
+            color: "rgba(237, 232, 227, 0.40)",
+            marginBottom: 12,
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -282,8 +279,8 @@ function RunBlock({
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: 8,
-                  padding: "4px 0",
+                  gap: 10,
+                  padding: "5px 0",
                 }}
               >
                 <div
@@ -291,15 +288,15 @@ function RunBlock({
                     width: 6,
                     height: 6,
                     borderRadius: "50%",
-                    background: "rgba(198,40,40,0.4)",
+                    background: "rgba(198, 50, 45, 0.4)",
                     flexShrink: 0,
                   }}
                 />
                 <span
                   style={{
-                    fontFamily: "var(--font-space-mono)",
-                    fontSize: 12,
-                    color: "rgba(255,255,255,0.45)",
+                    fontFamily: "var(--font-jakarta)",
+                    fontSize: 13,
+                    color: "rgba(237, 232, 227, 0.50)",
                   }}
                 >
                   intent:
@@ -310,9 +307,9 @@ function RunBlock({
                 {meta?.is_simple && (
                   <span
                     style={{
-                      fontFamily: "var(--font-space-mono)",
-                      fontSize: 11,
-                      color: "rgba(255,255,255,0.25)",
+                      fontFamily: "var(--font-jakarta)",
+                      fontSize: 12,
+                      color: "rgba(237, 232, 227, 0.30)",
                     }}
                   >
                     (simple)
@@ -352,8 +349,8 @@ function RunBlock({
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: 8,
-                  padding: "4px 0",
+                  gap: 10,
+                  padding: "5px 0",
                 }}
               >
                 <div
@@ -367,8 +364,8 @@ function RunBlock({
                 />
                 <span
                   style={{
-                    fontFamily: "var(--font-space-mono)",
-                    fontSize: 12,
+                    fontFamily: "var(--font-jakarta)",
+                    fontSize: 13,
                     color: "rgba(239,68,68,0.7)",
                   }}
                 >
@@ -382,11 +379,11 @@ function RunBlock({
             <div
               key={evt.id}
               style={{
-                fontFamily: "var(--font-space-mono)",
-                fontSize: 11,
-                color: "rgba(255,255,255,0.20)",
-                padding: "2px 0",
-                paddingLeft: 14,
+                fontFamily: "var(--font-jakarta)",
+                fontSize: 12,
+                color: "rgba(237, 232, 227, 0.25)",
+                padding: "3px 0",
+                paddingLeft: 16,
               }}
             >
               {evt.event_type}
@@ -396,11 +393,11 @@ function RunBlock({
         {events.length === 0 && run.status === "running" && (
           <div
             style={{
-              fontFamily: "var(--font-space-mono)",
-              fontSize: 12,
-              color: "rgba(255,255,255,0.15)",
-              padding: "4px 0",
-              paddingLeft: 14,
+              fontFamily: "var(--font-jakarta)",
+              fontSize: 13,
+              color: "rgba(237, 232, 227, 0.20)",
+              padding: "5px 0",
+              paddingLeft: 16,
             }}
           >
             processing...
@@ -445,29 +442,27 @@ function ReasoningTimeline({ phone }: { phone: string }) {
       {/* Panel header */}
       <div
         style={{
-          padding: "16px 24px 12px",
-          borderBottom: "1px solid rgba(255,255,255,0.04)",
+          padding: "18px 24px 14px",
+          borderBottom: "1px solid rgba(255, 240, 220, 0.06)",
           flexShrink: 0,
         }}
       >
         <span
           style={{
-            fontFamily: "var(--font-outfit)",
-            fontWeight: 200,
-            fontSize: 13,
-            letterSpacing: "0.2em",
-            color: "rgba(255,255,255,0.45)",
-            textTransform: "lowercase",
+            fontFamily: "var(--font-jakarta)",
+            fontWeight: 500,
+            fontSize: 14,
+            color: "rgba(237, 232, 227, 0.55)",
           }}
         >
           agent reasoning
         </span>
         <span
           style={{
-            fontFamily: "var(--font-space-mono)",
+            fontFamily: "var(--font-jakarta)",
             fontWeight: 400,
-            fontSize: 11,
-            color: "rgba(255,255,255,0.25)",
+            fontSize: 12,
+            color: "rgba(237, 232, 227, 0.30)",
             marginLeft: 12,
           }}
         >
@@ -481,7 +476,7 @@ function ReasoningTimeline({ phone }: { phone: string }) {
           flex: 1,
           overflowY: "auto",
           overflowX: "hidden",
-          padding: "0 24px",
+          padding: "12px 16px",
         }}
       >
         {runs.length === 0 && (
@@ -489,9 +484,9 @@ function ReasoningTimeline({ phone }: { phone: string }) {
             style={{
               padding: 32,
               textAlign: "center",
-              fontFamily: "var(--font-space-mono)",
-              fontSize: 13,
-              color: "rgba(255,255,255,0.20)",
+              fontFamily: "var(--font-jakarta)",
+              fontSize: 14,
+              color: "rgba(237, 232, 227, 0.25)",
             }}
           >
             waiting for agent runs...
@@ -525,9 +520,9 @@ export default function FeedPage() {
           alignItems: "center",
           justifyContent: "center",
           height: "100vh",
-          fontFamily: "var(--font-space-mono)",
-          fontSize: 13,
-          color: "rgba(255,255,255,0.25)",
+          fontFamily: "var(--font-jakarta)",
+          fontSize: 14,
+          color: "rgba(237, 232, 227, 0.30)",
         }}
       >
         connecting...
@@ -544,23 +539,24 @@ export default function FeedPage() {
           justifyContent: "center",
           height: "100vh",
           flexDirection: "column",
-          gap: 8,
+          gap: 10,
         }}
       >
         <span
           style={{
-            fontFamily: "var(--font-space-mono)",
-            fontSize: 13,
-            color: "rgba(255,255,255,0.35)",
+            fontFamily: "var(--font-jakarta)",
+            fontWeight: 500,
+            fontSize: 15,
+            color: "rgba(237, 232, 227, 0.45)",
           }}
         >
           no phone number linked to your account
         </span>
         <span
           style={{
-            fontFamily: "var(--font-space-mono)",
-            fontSize: 12,
-            color: "rgba(255,255,255,0.20)",
+            fontFamily: "var(--font-jakarta)",
+            fontSize: 13,
+            color: "rgba(237, 232, 227, 0.25)",
           }}
         >
           complete onboarding to connect your number
@@ -581,23 +577,21 @@ export default function FeedPage() {
       {/* Header */}
       <div
         style={{
-          padding: "24px 32px 16px",
+          padding: "28px 40px 18px",
           display: "flex",
           alignItems: "center",
-          gap: 8,
+          gap: 10,
           flexShrink: 0,
-          borderBottom: "1px solid rgba(255,255,255,0.04)",
+          borderBottom: "1px solid rgba(255, 240, 220, 0.06)",
         }}
       >
-        <PulseDot color="rgb(198,40,40)" size={6} pulse={hasActiveRun} />
+        <PulseDot color="rgb(198, 50, 45)" size={7} pulse={hasActiveRun} />
         <h1
           style={{
-            fontFamily: "var(--font-outfit)",
-            fontWeight: 200,
-            fontSize: 16,
-            letterSpacing: "0.25em",
-            color: "rgba(255,255,255,0.85)",
-            textTransform: "lowercase",
+            fontFamily: "var(--font-jakarta)",
+            fontWeight: 600,
+            fontSize: 20,
+            color: "#ede8e3",
             margin: 0,
           }}
         >
@@ -605,10 +599,10 @@ export default function FeedPage() {
         </h1>
         <span
           style={{
-            fontFamily: "var(--font-space-mono)",
+            fontFamily: "var(--font-jakarta)",
             fontWeight: 400,
-            fontSize: 12,
-            color: "rgba(255,255,255,0.25)",
+            fontSize: 13,
+            color: "rgba(237, 232, 227, 0.30)",
             marginLeft: 12,
           }}
         >
@@ -628,7 +622,7 @@ export default function FeedPage() {
         <div
           style={{
             flex: 1,
-            borderRight: "1px solid rgba(255,255,255,0.04)",
+            borderRight: "1px solid rgba(255, 240, 220, 0.06)",
             display: "flex",
             flexDirection: "column",
             overflow: "hidden",
@@ -672,21 +666,6 @@ export default function FeedPage() {
             transform: scale(1.4);
             opacity: 0.7;
           }
-        }
-
-        /* Hide scrollbar but keep scrollable */
-        ::-webkit-scrollbar {
-          width: 4px;
-        }
-        ::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-          background: rgba(255, 255, 255, 0.06);
-          border-radius: 2px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-          background: rgba(255, 255, 255, 0.12);
         }
       `}</style>
     </div>

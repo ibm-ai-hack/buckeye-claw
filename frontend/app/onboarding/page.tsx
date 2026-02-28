@@ -61,7 +61,7 @@ function PrimaryButton({
           loading || disabled ? "rgba(198,40,40,0.04)" : "rgba(198,40,40,0.1)",
         border: `1px solid ${loading || disabled ? "rgba(198,40,40,0.12)" : "rgba(198,40,40,0.28)"}`,
         borderRadius: 10,
-        fontFamily: "var(--font-space-mono)",
+        fontFamily: "var(--font-jakarta)",
         fontSize: 12,
         letterSpacing: "2.5px",
         color: loading || disabled ? "rgba(198,40,40,0.35)" : "rgb(198,40,40)",
@@ -160,7 +160,7 @@ export default function OnboardingPage() {
         @keyframes spin { to { transform: rotate(360deg); } }
         ::placeholder {
           color: rgba(255,255,255,0.18);
-          font-family: var(--font-space-mono);
+          font-family: var(--font-jakarta);
         }
       `}</style>
 
@@ -244,7 +244,7 @@ export default function OnboardingPage() {
               >
                 <h1
                   style={{
-                    fontFamily: "var(--font-outfit)",
+                    fontFamily: "var(--font-jakarta)",
                     fontWeight: 200,
                     fontSize: 36,
                     letterSpacing: "0.28em",
@@ -259,7 +259,7 @@ export default function OnboardingPage() {
                 </h1>
                 <p
                   style={{
-                    fontFamily: "var(--font-space-mono)",
+                    fontFamily: "var(--font-jakarta)",
                     fontSize: 10,
                     letterSpacing: "2px",
                     color: "rgba(255,255,255,0.2)",
@@ -288,7 +288,7 @@ export default function OnboardingPage() {
                       <motion.p
                         variants={fieldIn}
                         style={{
-                          fontFamily: "var(--font-space-mono)",
+                          fontFamily: "var(--font-jakarta)",
                           fontSize: 11,
                           letterSpacing: "1px",
                           color: "rgba(255,255,255,0.35)",
@@ -322,7 +322,7 @@ export default function OnboardingPage() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0 }}
                             style={{
-                              fontFamily: "var(--font-space-mono)",
+                              fontFamily: "var(--font-jakarta)",
                               fontSize: 11,
                               color: "#ef4444",
                               margin: 0,
@@ -347,7 +347,7 @@ export default function OnboardingPage() {
                       <motion.p
                         variants={fieldIn}
                         style={{
-                          fontFamily: "var(--font-space-mono)",
+                          fontFamily: "var(--font-jakarta)",
                           fontSize: 10,
                           color: "rgba(255,255,255,0.12)",
                           margin: 0,
@@ -400,7 +400,7 @@ export default function OnboardingPage() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.2, duration: 0.4, ease: EASE }}
                       style={{
-                        fontFamily: "var(--font-space-mono)",
+                        fontFamily: "var(--font-jakarta)",
                         fontSize: 11,
                         letterSpacing: "2px",
                         color: "rgba(255,255,255,0.4)",
@@ -444,7 +444,7 @@ function PhoneInput({
       <span
         style={{
           padding: "13px 0 13px 16px",
-          fontFamily: "var(--font-space-mono)",
+          fontFamily: "var(--font-jakarta)",
           fontSize: 13,
           color: "rgba(255,255,255,0.3)",
           whiteSpace: "nowrap",
@@ -466,7 +466,7 @@ function PhoneInput({
           padding: "13px 16px 13px 8px",
           background: "transparent",
           border: "none",
-          fontFamily: "var(--font-space-mono)",
+          fontFamily: "var(--font-jakarta)",
           fontSize: 13,
           letterSpacing: "0.5px",
           color: "rgba(255,255,255,0.85)",

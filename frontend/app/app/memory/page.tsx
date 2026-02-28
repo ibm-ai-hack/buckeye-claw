@@ -628,14 +628,14 @@ export default function MemoryPage() {
       {/* Header */}
       <div style={{ position: "absolute", top: 32, left: 32, zIndex: 10, pointerEvents: "none" }}>
         <h2 style={{
-          fontFamily: "var(--font-outfit)", fontWeight: 200, fontSize: 26,
+          fontFamily: "var(--font-jakarta)", fontWeight: 200, fontSize: 26,
           letterSpacing: "0.28em", color: "rgba(255,255,255,0.85)", margin: 0, textTransform: "lowercase",
         }}>
           memory
         </h2>
         {!loading && (
           <p style={{
-            fontFamily: "var(--font-space-mono)", fontSize: 10, letterSpacing: "2px",
+            fontFamily: "var(--font-jakarta)", fontSize: 10, letterSpacing: "2px",
             color: "rgba(255,255,255,0.2)", margin: "6px 0 0",
           }}>
             {facts.length} facts · {totalTasks} tasks · {jobs.length} jobs
@@ -661,7 +661,7 @@ export default function MemoryPage() {
                 boxShadow: `0 0 6px ${color}`, flexShrink: 0,
               }} />
               <span style={{
-                fontFamily: "var(--font-space-mono)", fontSize: 10,
+                fontFamily: "var(--font-jakarta)", fontSize: 10,
                 letterSpacing: "1.5px", color: "rgba(255,255,255,0.28)",
               }}>
                 {label}
@@ -674,7 +674,7 @@ export default function MemoryPage() {
       {/* Hint */}
       <div style={{ position: "absolute", bottom: 32, left: 32, zIndex: 10, pointerEvents: "none" }}>
         <p style={{
-          fontFamily: "var(--font-space-mono)", fontSize: 10, letterSpacing: "1.5px",
+          fontFamily: "var(--font-jakarta)", fontSize: 10, letterSpacing: "1.5px",
           color: "rgba(255,255,255,0.12)", margin: 0,
         }}>
           drag to pan · scroll to zoom · drag nodes · click for details
@@ -684,7 +684,7 @@ export default function MemoryPage() {
       {loading ? (
         <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
           <span style={{
-            fontFamily: "var(--font-space-mono)", fontSize: 11, letterSpacing: "3px", color: "rgba(255,255,255,0.18)",
+            fontFamily: "var(--font-jakarta)", fontSize: 11, letterSpacing: "3px", color: "rgba(255,255,255,0.18)",
           }}>
             loading memory...
           </span>

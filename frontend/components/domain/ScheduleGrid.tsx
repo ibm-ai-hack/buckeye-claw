@@ -49,7 +49,7 @@ export default function ScheduleGrid({ courses }: ScheduleGridProps) {
           <div
             key={day}
             style={{
-              fontFamily: "var(--font-space-mono)",
+              fontFamily: "var(--font-jakarta)",
               fontWeight: 400,
               fontSize: 12,
               color: "rgba(255,255,255,0.45)",
@@ -94,7 +94,7 @@ export default function ScheduleGrid({ courses }: ScheduleGridProps) {
             >
               <div
                 style={{
-                  fontFamily: "var(--font-space-mono)",
+                  fontFamily: "var(--font-jakarta)",
                   fontWeight: 400,
                   fontSize: 11,
                   color: "rgba(255,255,255,0.35)",
@@ -142,7 +142,7 @@ export default function ScheduleGrid({ courses }: ScheduleGridProps) {
               >
                 <span
                   style={{
-                    fontFamily: "var(--font-space-mono)",
+                    fontFamily: "var(--font-jakarta)",
                     fontWeight: 400,
                     fontSize: 12,
                     color: "rgba(255,255,255,0.80)",
