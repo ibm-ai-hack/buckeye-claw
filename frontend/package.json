@@ -11,6 +11,8 @@
   "dependencies": {
     "@react-three/fiber": "^9.5.0",
     "@react-three/postprocessing": "^3.0.4",
+    "@supabase/ssr": "^0.8.0",
+    "@supabase/supabase-js": "^2.98.0",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.34.3",
     "next": "16.1.6",

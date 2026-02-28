@@ -74,6 +74,16 @@ const NAV_ITEMS: NavItem[] = [
     ),
   },
   {
+    path: "/app/mail",
+    label: "mail",
+    icon: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="4" width="20" height="16" rx="2" />
+        <path d="M22 7l-10 6L2 7" />
+      </svg>
+    ),
+  },
+  {
     path: "/app/connect",
     label: "link",
     icon: (

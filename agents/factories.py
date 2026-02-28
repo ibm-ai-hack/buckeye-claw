@@ -42,6 +42,11 @@ from backend.integrations.buckeyelink.tools import (
     query_buckeyelink,
 )
 
+# BuckeyeMail tools
+from backend.integrations.buckeyemail.tools import (
+    get_email_inbox, search_emails, get_unread_email_count, get_email_detail,
+)
+
 
 ALL_TOOLS = [
     # Dining
@@ -83,6 +88,8 @@ ALL_TOOLS = [
     get_class_schedule, get_grades, get_financial_aid_status,
     get_holds_and_todos, get_enrollment_info, get_buckeyelink_dashboard,
     query_buckeyelink,
+    # BuckeyeMail
+    get_email_inbox, search_emails, get_unread_email_count, get_email_detail,
 ]
 
 
@@ -132,6 +139,31 @@ def create_grubhub_agent() -> RequirementAgent:
     )
 
 
+BUCKEYEMAIL_TOOLS = [
+    get_email_inbox, search_emails, get_unread_email_count, get_email_detail,
+]
+
+
+def create_email_agent() -> RequirementAgent:
+    """Dedicated BuckeyeMail agent for email queries via Microsoft Graph."""
+    llm = ChatModel.from_name("anthropic:claude-sonnet-4-6")
+    return RequirementAgent(
+        llm=llm,
+        tools=BUCKEYEMAIL_TOOLS,
+        memory=UnconstrainedMemory(),
+        role="BuckeyeClaw Email Agent — BuckeyeMail assistant for OSU students",
+        instructions=[
+            "You help Ohio State students check their BuckeyeMail (OSU Microsoft 365 email).",
+            "You have four tools: get inbox, search emails, get unread count, and get email detail.",
+            "IMPORTANT: Always pass the caller's phone number (from [caller: +1...]) as from_number to every tool call.",
+            "If the user is not connected yet, the tools will return an onboarding link — just pass that along.",
+            "For inbox requests, use get_email_inbox. For searching by sender/subject/keyword, use search_emails.",
+            "If the user asks about a specific email, use get_email_detail with the message ID from a previous inbox or search result.",
+            "Keep responses concise and conversational — this goes to an SMS user.",
+        ],
+    )
+
+
 def create_claude_agent() -> RequirementAgent:
     """Claude Opus 4.6 agent for complex reasoning and tool execution."""
     llm = ChatModel.from_name("anthropic:claude-opus-4-6")
@@ -150,5 +182,6 @@ def create_claude_agent() -> RequirementAgent:
             "Use Canvas tools to check courses, assignments, grades, announcements, and to-do items.",
             "Use Grubhub tools to help order food from nearby restaurants.",
             "Use BuckeyeLink tools to check class schedules, grades, financial aid, holds/to-dos, enrollment info, and the dashboard overview.",
+            "Use BuckeyeMail tools to check email inbox, search emails, get unread count, or read a specific email. Always pass the caller's phone number as from_number.",
         ],
     )

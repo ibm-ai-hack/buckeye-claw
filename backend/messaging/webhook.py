@@ -5,7 +5,9 @@ import os
 import random
 import threading
 
-from flask import Flask, request, jsonify
+from urllib.parse import unquote
+
+from flask import Flask, redirect, request, jsonify
 
 from backend.messaging import chat_store, sender
 from backend.messaging.events import InboundMessage, StatusEvent, ReactionEvent, TypingEvent, parse_webhook_event
@@ -34,6 +36,51 @@ def set_main_loop(loop: asyncio.AbstractEventLoop):
     global _main_loop
     _main_loop = loop
 
+
+# ---------------------------------------------------------------------------
+# BuckeyeMail OAuth routes
+# ---------------------------------------------------------------------------
+
+@app.route("/auth/buckeyemail/start")
+def buckeyemail_start():
+    """Redirect the user to the Microsoft OAuth login page."""
+    from backend.integrations.buckeyemail.auth import build_auth_url
+
+    phone = request.args.get("phone", "")
+    if not phone:
+        return "Missing phone parameter.", 400
+    auth_url = build_auth_url(phone)
+    return redirect(auth_url)
+
+
+@app.route("/auth/buckeyemail/callback")
+def buckeyemail_callback():
+    """Handle the OAuth callback from Microsoft and store tokens."""
+    from backend.integrations.buckeyemail.auth import exchange_code_for_tokens
+
+    code = request.args.get("code")
+    state = request.args.get("state", "")
+    phone = unquote(state)
+
+    if not code or not phone:
+        return "Authorization failed — missing code or state.", 400
+
+    result = exchange_code_for_tokens(code, phone)
+    if "error" in result:
+        logger.error("BuckeyeMail token exchange failed: %s", result)
+        return "Authorization failed. Please try again.", 500
+
+    return (
+        "<html><body style='font-family:system-ui;text-align:center;padding:80px'>"
+        "<h2>BuckeyeMail connected!</h2>"
+        "<p>You can close this tab and go back to texting.</p>"
+        "</body></html>"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Linq webhook
+# ---------------------------------------------------------------------------
 
 @app.route("/webhook", methods=["POST", "GET"])
 def linq_webhook():

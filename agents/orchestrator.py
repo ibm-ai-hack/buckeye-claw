@@ -4,7 +4,7 @@ import logging
 from beeai_framework.errors import FrameworkError
 from beeai_framework.workflows import Workflow
 
-from agents.factories import create_granite_agent, create_claude_agent, create_grubhub_agent, ALL_TOOLS
+from agents.factories import create_granite_agent, create_claude_agent, create_grubhub_agent, create_email_agent, ALL_TOOLS
 from agents.models import PipelineState
 
 logger = logging.getLogger(__name__)
@@ -14,7 +14,7 @@ INTENT_LIST = (
     "library_query, recsports_query, building_query, calendar_query, "
     "directory_query, athletics_query, merchant_query, foodtruck_query, "
     "studentorg_query, canvas_query, grubhub_order, buckeyelink_query, "
-    "chitchat, unknown"
+    "email_query, chitchat, unknown"
 )
 
 
@@ -85,6 +85,14 @@ def _build_workflow() -> Workflow:
                 f"User message: {state.user_text}\n"
                 f"Extracted parameters: {json.dumps(state.extracted_params)}\n\n"
                 "Help this user with their Grubhub food order."
+            )
+        elif state.intent == "email_query":
+            agent = create_email_agent()
+            prompt = (
+                f"[caller: {state.from_number}]\n"
+                f"User message: {state.user_text}\n"
+                f"Extracted parameters: {json.dumps(state.extracted_params)}\n\n"
+                "Help this user with their BuckeyeMail request."
             )
         else:
             agent = create_claude_agent()
