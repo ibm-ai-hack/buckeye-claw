@@ -94,6 +94,23 @@ const NAV_ITEMS: NavItem[] = [
       </svg>
     ),
   },
+  {
+    path: "/app/memory",
+    label: "mem",
+    icon: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="2" />
+        <circle cx="4"  cy="6"  r="1.5" />
+        <circle cx="20" cy="6"  r="1.5" />
+        <circle cx="4"  cy="18" r="1.5" />
+        <circle cx="20" cy="18" r="1.5" />
+        <line x1="5.5"  y1="6.8"  x2="10.2" y2="11" />
+        <line x1="18.5" y1="6.8"  x2="13.8" y2="11" />
+        <line x1="5.5"  y1="17.2" x2="10.2" y2="13" />
+        <line x1="18.5" y1="17.2" x2="13.8" y2="13" />
+      </svg>
+    ),
+  },
 ];
 
 export default function LeftRail() {
@@ -135,17 +152,17 @@ export default function LeftRail() {
           cursor: "pointer",
         }}
         onClick={() => router.push("/")}
+        title="BuckeyeClaw"
       >
-        <span
-          style={{
-            fontFamily: "var(--font-outfit)",
-            fontWeight: 200,
-            fontSize: 18,
-            color: "rgb(198,40,40)",
-          }}
-        >
-          s
-        </span>
+        {/* Claw mark logo */}
+        <svg width="18" height="22" viewBox="0 0 18 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+          {/* Left claw — fans left as it descends */}
+          <path d="M4.5 1.5 C4 4.5 3 8 2 20" stroke="rgb(198,40,40)" strokeWidth="2.2" strokeLinecap="round"/>
+          {/* Center claw — near-straight */}
+          <path d="M9 1 C8.8 4.5 8.8 8.5 9.5 20" stroke="rgb(198,40,40)" strokeWidth="2.2" strokeLinecap="round"/>
+          {/* Right claw — fans right as it descends */}
+          <path d="M13.5 1.5 C14 4.5 15 8 16 20" stroke="rgb(198,40,40)" strokeWidth="2.2" strokeLinecap="round"/>
+        </svg>
       </div>
 
       {/* Nav items */}

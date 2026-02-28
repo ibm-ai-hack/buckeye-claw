@@ -15,7 +15,7 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Scarlet",
+  title: "BuckeyeClaw",
   description: "Your entire campus, one text away.",
 };
 
