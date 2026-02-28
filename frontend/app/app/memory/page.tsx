@@ -159,11 +159,11 @@ function buildGraph(
       id: f.id,
       x: Math.cos(angle) * dist, y: Math.sin(angle) * dist,
       vx: 0, vy: 0,
-      radius: 5,
+      radius: 7,
       color: FACT_COLOR,
       label: f.key,
       type: "fact",
-      meta: { key: f.key, value: f.value, "updated at": new Date(f.updated_at).toLocaleString(), id: f.id },
+      meta: { key: f.key, value: f.value },
     });
     edges.push({ sourceId: "__center__", targetId: f.id, color: "#ffffff" });
   });
@@ -197,7 +197,7 @@ function buildGraph(
         color: catColor(cat),
         label: t.task.length > 40 ? t.task.slice(0, 37) + "..." : t.task,
         type: "task",
-        meta: { task: t.task, category: t.category, "created at": new Date(t.created_at).toLocaleString(), id: t.id },
+        meta: { task: t.task, category: t.category },
       });
       edges.push({ sourceId: catId, targetId: t.id, color: catColor(cat) });
     });
@@ -221,7 +221,6 @@ function buildGraph(
         "task name": j.task_name, schedule: j.schedule, prompt: j.prompt,
         description: j.description ?? "—", category: j.category,
         "run count": String(j.occurrence_count),
-        "created at": new Date(j.created_at).toLocaleString(), id: j.id,
       },
     });
     edges.push({ sourceId: parentId, targetId: j.id, color: JOB_COLOR });
@@ -233,6 +232,33 @@ function buildGraph(
 // ── Detail modal ─────────────────────────────────────────────────────────────
 
 function DetailModal({ node, onClose }: { node: GraphNode; onClose: () => void }) {
+  // Build display fields based on node type so the actual stored content is front and center
+  const displayFields: { label: string; value: string; highlight?: boolean }[] = [];
+
+  if (node.type === "fact") {
+    displayFields.push(
+      { label: "i know that your", value: node.meta.key.replace(/_/g, " "), highlight: true },
+      { label: "is", value: node.meta.value, highlight: true },
+    );
+  } else if (node.type === "task") {
+    displayFields.push(
+      { label: "you asked", value: node.meta.task, highlight: true },
+      { label: "topic", value: node.meta.category.replace(/_/g, " ") },
+    );
+  } else if (node.type === "job") {
+    displayFields.push(
+      { label: "routine", value: node.meta.description !== "—" ? node.meta.description : node.meta["task name"].replace(/_/g, " "), highlight: true },
+      { label: "i will", value: node.meta.prompt, highlight: true },
+      { label: "repeats", value: node.meta.schedule },
+      { label: "triggered", value: `${node.meta["run count"]} time${node.meta["run count"] === "1" ? "" : "s"}` },
+    );
+  } else if (node.type === "category") {
+    displayFields.push(
+      { label: "topic", value: node.meta.category.replace(/_/g, " "), highlight: true },
+      { label: "messages", value: node.meta.tasks },
+    );
+  }
+
   return (
     <div
       onClick={onClose}
@@ -257,7 +283,7 @@ function DetailModal({ node, onClose }: { node: GraphNode; onClose: () => void }
             background: node.color, boxShadow: `0 0 8px ${node.color}`, flexShrink: 0,
           }} />
           <span style={{ fontSize: 10, letterSpacing: 2, color: node.color, textTransform: "uppercase" }}>
-            {node.type}
+            {{ center: "memory hub", fact: "something i remember", task: "something you asked", job: "recurring routine", category: "topic" }[node.type] ?? node.type}
           </span>
           <div style={{ flex: 1 }} />
           <button
@@ -271,24 +297,22 @@ function DetailModal({ node, onClose }: { node: GraphNode; onClose: () => void }
           </button>
         </div>
 
-        <h3 style={{
-          fontSize: 16, fontWeight: 500, color: "rgba(255,255,255,0.9)",
-          margin: "0 0 20px", lineHeight: 1.4, fontFamily: "var(--font-outfit, monospace)",
-        }}>
-          {node.label}
-        </h3>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {Object.entries(node.meta).map(([k, v]) => (
-            <div key={k}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          {displayFields.map(({ label, value, highlight }) => (
+            <div key={label}>
               <div style={{
                 fontSize: 9, letterSpacing: 1.5, color: "rgba(255,255,255,0.25)",
-                textTransform: "uppercase", marginBottom: 3,
+                textTransform: "uppercase", marginBottom: 4,
               }}>
-                {k}
+                {label}
               </div>
-              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.7)", lineHeight: 1.5, wordBreak: "break-word" }}>
-                {v}
+              <div style={{
+                fontSize: highlight ? 14 : 12,
+                color: highlight ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.5)",
+                lineHeight: 1.5, wordBreak: "break-word",
+                ...(highlight ? { fontFamily: "var(--font-outfit, monospace)" } : {}),
+              }}>
+                {value}
               </div>
             </div>
           ))}
@@ -328,29 +352,33 @@ export default function MemoryPage() {
 
   useEffect(() => {
     const supabase = createClient();
-    Promise.all([
-      supabase.from("memory_facts").select("id, key, value, updated_at, user_id"),
-      supabase.from("memory_tasks").select("id, task, category, created_at, user_id")
-        .order("created_at", { ascending: false }).limit(40),
-      supabase.from("memory_jobs")
-        .select("id, schedule, prompt, task_name, description, category, occurrence_count, created_at")
-        .limit(20),
-    ]).then(([factsRes, tasksRes, jobsRes]) => {
-      const f = factsRes.data ?? [];
-      const t = tasksRes.data ?? [];
-      const j = jobsRes.data ?? [];
-      setFacts(f);
-      setJobs(j);
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) { setLoading(false); return; }
+      const uid = user.id;
+      Promise.all([
+        supabase.from("memory_facts").select("id, key, value, updated_at, user_id").eq("user_id", uid),
+        supabase.from("memory_tasks").select("id, task, category, created_at, user_id")
+          .eq("user_id", uid).order("created_at", { ascending: false }).limit(40),
+        supabase.from("memory_jobs")
+          .select("id, schedule, prompt, task_name, description, category, occurrence_count, created_at")
+          .eq("user_id", uid).limit(20),
+      ]).then(([factsRes, tasksRes, jobsRes]) => {
+        const f = factsRes.data ?? [];
+        const t = tasksRes.data ?? [];
+        const j = jobsRes.data ?? [];
+        setFacts(f);
+        setJobs(j);
 
-      const bycat: Record<string, MemoryTask[]> = {};
-      for (const task of t) (bycat[task.category] ??= []).push(task);
-      setTasksByCategory(bycat);
+        const bycat: Record<string, MemoryTask[]> = {};
+        for (const task of t) (bycat[task.category] ??= []).push(task);
+        setTasksByCategory(bycat);
 
-      const { nodes, edges } = buildGraph(f, bycat, j);
-      for (let i = 0; i < 200; i++) simulate(nodes, edges);
-      nodesRef.current = nodes;
-      edgesRef.current = edges;
-      setLoading(false);
+        const { nodes, edges } = buildGraph(f, bycat, j);
+        for (let i = 0; i < 200; i++) simulate(nodes, edges);
+        nodesRef.current = nodes;
+        edgesRef.current = edges;
+        setLoading(false);
+      });
     });
   }, []);
 
@@ -468,12 +496,26 @@ export default function MemoryPage() {
         ctx.fillStyle = dimmed ? hexToRgba(n.color, 0.25) : n.color;
         ctx.fill();
 
-        // always-on label for category + center
+        // always-on labels
         if ((n.type === "category" || n.type === "center") && !isHovered) {
           ctx.font = n.type === "center" ? "bold 11px monospace" : "10px monospace";
           ctx.fillStyle = dimmed ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.4)";
           ctx.textAlign = "center";
           ctx.fillText(n.label, n.x, n.y + n.radius + 14);
+        }
+
+        // always-on fact labels: show key = value
+        if (n.type === "fact" && !isHovered) {
+          const key = n.meta.key?.replace(/_/g, " ") ?? "";
+          const val = n.meta.value ?? "";
+          const display = val.length > 30 ? val.slice(0, 27) + "..." : val;
+          ctx.textAlign = "center";
+          ctx.font = "bold 9px monospace";
+          ctx.fillStyle = dimmed ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.5)";
+          ctx.fillText(key, n.x, n.y + n.radius + 12);
+          ctx.font = "9px monospace";
+          ctx.fillStyle = dimmed ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.3)";
+          ctx.fillText(display, n.x, n.y + n.radius + 23);
         }
 
         // hover tooltip

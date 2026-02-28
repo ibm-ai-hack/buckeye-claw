@@ -12,6 +12,7 @@ from backend.integrations.campus.library import get_library_locations, search_li
 from backend.integrations.campus.recsports import get_recsports_facilities, search_recsports_facilities, get_facility_hours, get_facility_events
 from backend.integrations.campus.buildings import get_buildings, search_buildings, get_building_details, find_room_type
 from backend.integrations.campus.calendar import get_academic_calendar, get_university_holidays, search_calendar_events
+from backend.integrations.campus.utils import get_current_time
 from backend.integrations.campus.directory import search_people
 from backend.integrations.campus.athletics import get_athletics_all, search_sports, get_sport_by_gender, get_upcoming_games
 from backend.integrations.campus.merchants import get_buckid_merchants, search_merchants, get_merchants_by_food_type, get_merchants_with_meal_plan
@@ -68,6 +69,8 @@ ALL_TOOLS = [
     get_buildings, search_buildings, get_building_details, find_room_type,
     # Calendar
     get_academic_calendar, get_university_holidays, search_calendar_events,
+    # Time
+    get_current_time,
     # Directory
     search_people,
     # Athletics

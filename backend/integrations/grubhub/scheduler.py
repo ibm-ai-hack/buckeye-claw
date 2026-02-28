@@ -59,9 +59,8 @@ def _execute_order(restaurant_name: str, items: str, from_number: str):
 
 
 async def _execute_order_async(restaurant_name: str, items: str, from_number: str):
-    from backend.messaging import sender
+    from backend.integrations.grubhub.notify import send_sms
 
-    await sender.start_typing(from_number)
     try:
         from backend.integrations.grubhub.automation import get_driver, intelligent_order
 
@@ -83,8 +82,7 @@ async def _execute_order_async(restaurant_name: str, items: str, from_number: st
             f"{type(e).__name__}. The emulator may not be running."
         )
 
-    await sender.stop_typing(from_number)
-    await sender.send_message(from_number, msg)
+    await send_sms(from_number, msg)
 
 
 # ── Public API ─────────────────────────────────────────────────────────

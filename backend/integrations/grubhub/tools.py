@@ -1,11 +1,98 @@
-import logging
+"""
+Grubhub tools for the BeeAI agent — thin HTTP clients that call the
+local Grubhub server (exposed via ngrok).
 
+Tool signatures are unchanged so agents/factories.py and
+agents/orchestrator.py require no modifications.
+"""
+
+import logging
+import os
+
+import httpx
 from beeai_framework.tools import StringToolOutput, tool
 
 logger = logging.getLogger(__name__)
 
+_TIMEOUT_LONG = 120.0  # Appium operations can take 30-60s
+_TIMEOUT_SHORT = 30.0
 
-# ── Scheduled ordering tools ───────────────────────────────────────────
+
+# ── HTTP helpers ──────────────────────────────────────────────────────
+
+
+def _server_url() -> str:
+    url = os.environ.get("GRUBHUB_SERVER_URL", "")
+    if not url:
+        raise RuntimeError("GRUBHUB_SERVER_URL is not set")
+    return url.rstrip("/")
+
+
+def _headers() -> dict:
+    return {"X-Grubhub-Server-Key": os.environ.get("GRUBHUB_SERVER_KEY", "")}
+
+
+def _post(path: str, body: dict, timeout: float = _TIMEOUT_LONG) -> dict:
+    try:
+        resp = httpx.post(
+            f"{_server_url()}{path}", json=body, headers=_headers(), timeout=timeout
+        )
+        resp.raise_for_status()
+        return resp.json()
+    except httpx.ConnectError:
+        return {"success": False, "error": "Grubhub server is not reachable. The local server or ngrok tunnel may be down."}
+    except httpx.TimeoutException:
+        return {"success": False, "error": "Grubhub server timed out. The automation may be stuck."}
+    except httpx.HTTPStatusError as e:
+        if e.response.status_code == 401:
+            return {"success": False, "error": "Grubhub server rejected the request. Check GRUBHUB_SERVER_KEY."}
+        return {"success": False, "error": f"Grubhub server error: {e.response.status_code}"}
+    except Exception as e:
+        return {"success": False, "error": f"Grubhub request failed: {type(e).__name__}: {e}"}
+
+
+def _get(path: str, params: dict | None = None) -> dict:
+    try:
+        resp = httpx.get(
+            f"{_server_url()}{path}", params=params, headers=_headers(), timeout=_TIMEOUT_SHORT
+        )
+        resp.raise_for_status()
+        return resp.json()
+    except httpx.ConnectError:
+        return {"success": False, "error": "Grubhub server is not reachable."}
+    except httpx.HTTPStatusError as e:
+        if e.response.status_code == 401:
+            return {"success": False, "error": "Grubhub server rejected the request. Check GRUBHUB_SERVER_KEY."}
+        return {"success": False, "error": f"Grubhub server error: {e.response.status_code}"}
+    except Exception as e:
+        return {"success": False, "error": f"Grubhub request failed: {type(e).__name__}: {e}"}
+
+
+def _delete(path: str) -> dict:
+    try:
+        resp = httpx.delete(
+            f"{_server_url()}{path}", headers=_headers(), timeout=_TIMEOUT_SHORT
+        )
+        resp.raise_for_status()
+        return resp.json()
+    except httpx.ConnectError:
+        return {"success": False, "error": "Grubhub server is not reachable."}
+    except httpx.HTTPStatusError as e:
+        if e.response.status_code == 401:
+            return {"success": False, "error": "Grubhub server rejected the request. Check GRUBHUB_SERVER_KEY."}
+        return {"success": False, "error": f"Grubhub server error: {e.response.status_code}"}
+    except Exception as e:
+        return {"success": False, "error": f"Grubhub request failed: {type(e).__name__}: {e}"}
+
+
+def _unavailable(result: dict, context: str) -> StringToolOutput:
+    return StringToolOutput(
+        f"Grubhub {context} unavailable: {result.get('error', 'Unknown error')}. "
+        "The Grubhub server may be offline."
+    )
+
+
+# ── Scheduled ordering tools ─────────────────────────────────────────
 
 
 @tool
@@ -21,21 +108,20 @@ async def schedule_grubhub_order(
         time_description: When to place the order, e.g. "6pm", "6:30 PM", "in 2 hours".
         from_number: The caller's phone number (from the [caller: ...] prefix).
     """
-    try:
-        from backend.integrations.grubhub.scheduler import schedule_order, parse_time
-
-        run_at = parse_time(time_description)
-        job_id = schedule_order(restaurant_name, items, run_at, from_number)
-        return StringToolOutput(
-            f"Got it! I'll order {items} from {restaurant_name} at "
-            f"{run_at.strftime('%I:%M %p')} and text you when it's done. "
-            f"(Order ID: {job_id})"
-        )
-    except ValueError as e:
-        return StringToolOutput(f"Couldn't understand the time: {e}")
-    except Exception as e:
-        logger.exception("Failed to schedule Grubhub order")
-        return StringToolOutput(f"Failed to schedule order: {type(e).__name__}.")
+    result = _post("/api/grubhub/schedule", {
+        "restaurant_name": restaurant_name,
+        "items": items,
+        "time_description": time_description,
+        "from_number": from_number,
+    })
+    if not result.get("success"):
+        return _unavailable(result, "scheduling")
+    data = result["data"]
+    return StringToolOutput(
+        f"Got it! I'll order {items} from {restaurant_name} at "
+        f"{data['run_at']} and text you when it's done. "
+        f"(Order ID: {data['job_id']})"
+    )
 
 
 @tool
@@ -45,9 +131,10 @@ async def list_scheduled_grubhub_orders(from_number: str) -> StringToolOutput:
     Args:
         from_number: The caller's phone number (from the [caller: ...] prefix).
     """
-    from backend.integrations.grubhub.scheduler import get_scheduled_orders
-
-    orders = get_scheduled_orders(from_number)
+    result = _get("/api/grubhub/scheduled", {"from_number": from_number})
+    if not result.get("success"):
+        return _unavailable(result, "schedule listing")
+    orders = result["data"]["orders"]
     if not orders:
         return StringToolOutput("You have no scheduled Grubhub orders.")
     lines = [
@@ -64,53 +151,43 @@ async def cancel_scheduled_grubhub_order(job_id: str) -> StringToolOutput:
     Args:
         job_id: The order ID returned when the order was scheduled.
     """
-    from backend.integrations.grubhub.scheduler import cancel_order
+    result = _delete(f"/api/grubhub/scheduled/{job_id}")
+    if not result.get("success"):
+        error = result.get("error", "")
+        if "No scheduled order" in error:
+            return StringToolOutput(f"No scheduled order found with ID {job_id}.")
+        return _unavailable(result, "cancellation")
+    return StringToolOutput(f"Cancelled scheduled order {job_id}.")
 
-    if cancel_order(job_id):
-        return StringToolOutput(f"Cancelled scheduled order {job_id}.")
-    return StringToolOutput(f"No scheduled order found with ID {job_id}.")
+
+# ── Live ordering tools ───────────────────────────────────────────────
 
 
 @tool
 async def search_grubhub_restaurants(query: str) -> StringToolOutput:
-    """Search for restaurants on Grubhub. Requires Android emulator running with Grubhub installed."""
-    try:
-        from backend.integrations.grubhub.automation import get_driver, search_restaurants
-        driver = get_driver()
-        results = search_restaurants(driver, query)
-        driver.quit()
-        if results:
-            lines = [f"- {r['name']}" for r in results]
-            return StringToolOutput(f"Grubhub restaurants for '{query}':\n" + "\n".join(lines))
-        return StringToolOutput(f"No restaurants found for '{query}' on Grubhub.")
-    except Exception as e:
-        logger.exception("Grubhub search failed")
-        return StringToolOutput(
-            f"Grubhub search unavailable: {type(e).__name__}. "
-            "Make sure the Android emulator is running with Grubhub installed and Appium server is started."
-        )
+    """Search for restaurants on Grubhub. Requires the Grubhub local server to be running."""
+    result = _post("/api/grubhub/search", {"query": query})
+    if not result.get("success"):
+        return _unavailable(result, "search")
+    restaurants = result["data"]["restaurants"]
+    if restaurants:
+        lines = [f"- {r['name']}" for r in restaurants]
+        return StringToolOutput(f"Grubhub restaurants for '{query}':\n" + "\n".join(lines))
+    return StringToolOutput(f"No restaurants found for '{query}' on Grubhub.")
 
 
 @tool
 async def get_restaurant_menu(restaurant_name: str) -> StringToolOutput:
     """Get the menu for a Grubhub restaurant. Intelligently finds the right
     restaurant from search results using LLM matching."""
-    try:
-        from backend.integrations.grubhub.automation import get_driver, search_restaurants, select_restaurant
-        driver = get_driver()
-        results = search_restaurants(driver, restaurant_name)
-        if not results:
-            driver.quit()
-            return StringToolOutput(f"No restaurants found for '{restaurant_name}'.")
-        menu = select_restaurant(driver, restaurant_name, results)
-        driver.quit()
-        if menu:
-            lines = [f"- {item['name']}" for item in menu]
-            return StringToolOutput(f"Menu for '{restaurant_name}':\n" + "\n".join(lines))
-        return StringToolOutput(f"Could not load menu for '{restaurant_name}'.")
-    except Exception as e:
-        logger.exception("Grubhub menu failed")
-        return StringToolOutput(f"Grubhub menu unavailable: {type(e).__name__}.")
+    result = _post("/api/grubhub/menu", {"restaurant_name": restaurant_name})
+    if not result.get("success"):
+        return _unavailable(result, "menu")
+    menu_items = result["data"]["menu"]
+    if menu_items:
+        lines = [f"- {item['name']}" for item in menu_items]
+        return StringToolOutput(f"Menu for '{restaurant_name}':\n" + "\n".join(lines))
+    return StringToolOutput(f"Could not load menu for '{restaurant_name}'.")
 
 
 @tool
@@ -122,19 +199,17 @@ async def place_grubhub_order(restaurant_name: str, items: str) -> StringToolOut
         restaurant_name: Name of the restaurant to order from.
         items: Comma-separated list of menu item names to add to cart.
     """
-    try:
-        from backend.integrations.grubhub.automation import get_driver, intelligent_order
-        driver = get_driver()
-        result = intelligent_order(driver, restaurant_name, items)
-        driver.quit()
-
-        msg = f"Order from {restaurant_name}:\n"
-        if result["added"]:
-            msg += f"Added: {', '.join(result['added'])}\n"
-        if result["failed"]:
-            msg += f"Could not add: {', '.join(result['failed'])}\n"
-        msg += result["checkout_result"]
-        return StringToolOutput(msg)
-    except Exception as e:
-        logger.exception("Grubhub order failed")
-        return StringToolOutput(f"Grubhub ordering unavailable: {type(e).__name__}.")
+    result = _post("/api/grubhub/order", {
+        "restaurant_name": restaurant_name,
+        "items": items,
+    })
+    if not result.get("success"):
+        return _unavailable(result, "ordering")
+    data = result["data"]
+    msg = f"Order from {restaurant_name}:\n"
+    if data.get("added"):
+        msg += f"Added: {', '.join(data['added'])}\n"
+    if data.get("failed"):
+        msg += f"Could not add: {', '.join(data['failed'])}\n"
+    msg += data.get("checkout_result", "")
+    return StringToolOutput(msg)
