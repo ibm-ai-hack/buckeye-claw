@@ -11,53 +11,60 @@ export default function SMSMessageRow({
   role,
   timestamp,
 }: SMSMessageRowProps) {
+  const isAgent = role === "agent";
+
   return (
     <div
       style={{
-        width: "100%",
-        padding: "16px 24px",
-        borderLeft: `2px solid ${
-          role === "agent"
-            ? "rgb(198,40,40)"
-            : "rgba(255,255,255,0.10)"
-        }`,
-        animation: "fadeInUp 300ms ease-out forwards",
         display: "flex",
-        justifyContent: "space-between",
-        alignItems: "flex-start",
-        gap: 16,
+        justifyContent: isAgent ? "flex-start" : "flex-end",
+        padding: "2px 20px",
+        animation: "fadeInUp 300ms ease-out forwards",
       }}
     >
-      <p
+      <div
         style={{
-          fontFamily: "var(--font-jakarta)",
-          fontWeight: 400,
-          fontSize: 15,
-          lineHeight: 1.6,
-          color:
-            role === "agent"
-              ? "rgba(255,255,255,0.85)"
-              : "rgba(255,255,255,0.85)",
-          margin: 0,
-          flex: 1,
-          whiteSpace: "pre-wrap",
+          maxWidth: "75%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: isAgent ? "flex-start" : "flex-end",
         }}
       >
-        {text}
-      </p>
-      <span
-        style={{
-          fontFamily: "var(--font-jakarta)",
-          fontWeight: 400,
-          fontSize: 12,
-          color: "rgba(255,255,255,0.35)",
-          letterSpacing: "1px",
-          flexShrink: 0,
-          marginTop: 2,
-        }}
-      >
-        {timestamp}
-      </span>
+        <div
+          style={{
+            padding: "10px 14px",
+            borderRadius: isAgent
+              ? "4px 18px 18px 18px"
+              : "18px 18px 4px 18px",
+            background: isAgent
+              ? "rgba(255, 255, 255, 0.07)"
+              : "rgb(198, 50, 45)",
+            color: isAgent
+              ? "rgba(255, 255, 255, 0.88)"
+              : "#fff",
+            fontFamily: "var(--font-jakarta)",
+            fontWeight: 400,
+            fontSize: 15,
+            lineHeight: 1.5,
+            whiteSpace: "pre-wrap",
+            wordBreak: "break-word",
+          }}
+        >
+          {text}
+        </div>
+        <span
+          style={{
+            fontFamily: "var(--font-jakarta)",
+            fontWeight: 400,
+            fontSize: 11,
+            color: "rgba(255, 255, 255, 0.25)",
+            marginTop: 4,
+            padding: "0 4px",
+          }}
+        >
+          {timestamp}
+        </span>
+      </div>
     </div>
   );
 }

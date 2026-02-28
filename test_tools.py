@@ -23,7 +23,7 @@ def t(category: str, name: str, fn, *args, **kwargs):
 
 
 def register_campus_tools():
-    from backend.integrations.campus.dining import get_dining_locations, get_dining_locations_with_menus, get_dining_menu
+    from backend.integrations.campus.dining import get_dining_locations, get_dining_locations_with_menus, get_dining_menu, search_dining_locations
     from backend.integrations.campus.bus import get_bus_routes, get_bus_stops, get_bus_vehicles
     from backend.integrations.campus.parking import get_parking_availability
     from backend.integrations.campus.events import get_campus_events, search_campus_events, get_events_by_date_range
@@ -45,6 +45,7 @@ def register_campus_tools():
     # Dining
     t("dining", "get_dining_locations", get_dining_locations)
     t("dining", "get_dining_locations_with_menus", get_dining_locations_with_menus)
+    t("dining", "search_dining_locations", search_dining_locations, "scott")
 
     # Bus
     t("bus", "get_bus_routes", get_bus_routes)

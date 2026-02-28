@@ -10,7 +10,7 @@ export default function DomainHero({ title, accentColor }: DomainHeroProps) {
     <div
       style={{
         position: "relative",
-        padding: "48px 40px 28px",
+        padding: "24px 32px 16px",
         width: "100%",
         flexShrink: 0,
       }}
@@ -20,7 +20,7 @@ export default function DomainHero({ title, accentColor }: DomainHeroProps) {
         style={{
           position: "absolute",
           inset: 0,
-          background: `radial-gradient(ellipse at 20% 80%, ${accentColor}12 0%, transparent 60%)`,
+          background: `radial-gradient(ellipse at 20% 80%, ${accentColor}18 0%, transparent 55%)`,
         }}
       />
       {/* Title */}
@@ -29,7 +29,7 @@ export default function DomainHero({ title, accentColor }: DomainHeroProps) {
           position: "relative",
           fontFamily: "var(--font-jakarta)",
           fontWeight: 600,
-          fontSize: 28,
+          fontSize: 26,
           letterSpacing: "-0.5px",
           color: "#ede8e3",
           margin: 0,

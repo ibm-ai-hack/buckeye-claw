@@ -53,7 +53,7 @@ export default function AcademicsPage() {
           display: "flex",
           gap: 4,
           borderBottom: "1px solid rgba(255, 240, 220, 0.06)",
-          padding: "0 40px",
+          padding: "0 32px",
           flexShrink: 0,
         }}
       >
@@ -85,17 +85,17 @@ export default function AcademicsPage() {
         style={{
           flex: 1,
           overflowY: "auto",
-          padding: "24px 40px",
+          padding: "20px 32px",
         }}
       >
         {activeTab === "schedule" && (
-          <div style={{ maxWidth: 840 }}>
+          <div>
             <ScheduleGrid courses={DEMO_SCHEDULE} />
           </div>
         )}
 
         {activeTab === "grades" && (
-          <div style={{ maxWidth: 720 }}>
+          <div style={{}}>
             {DEMO_GRADES.map((g, i) => (
               <GradeBar
                 key={g.course}
@@ -109,7 +109,7 @@ export default function AcademicsPage() {
         )}
 
         {activeTab === "assignments" && (
-          <div style={{ maxWidth: 720, display: "flex", flexDirection: "column", gap: 6 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
             {DEMO_ASSIGNMENTS.map((a) => (
               <AssignmentRow
                 key={`${a.course}-${a.title}`}

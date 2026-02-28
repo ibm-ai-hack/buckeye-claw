@@ -50,7 +50,7 @@ export default function CampusPage() {
           display: "flex",
           gap: 4,
           borderBottom: "1px solid rgba(255, 240, 220, 0.06)",
-          padding: "0 40px",
+          padding: "0 32px",
           flexShrink: 0,
         }}
       >
@@ -78,9 +78,9 @@ export default function CampusPage() {
       </div>
 
       {/* Content */}
-      <div style={{ flex: 1, overflowY: "auto", padding: "24px 40px" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "20px 32px" }}>
         {activeTab === "events" && (
-          <div style={{ maxWidth: 720 }}>
+          <div style={{}}>
             {DEMO_EVENTS.map((e) => (
               <EventRow key={`${e.day}-${e.title}`} {...e} />
             ))}
@@ -88,7 +88,7 @@ export default function CampusPage() {
         )}
 
         {activeTab === "athletics" && (
-          <div style={{ maxWidth: 720 }}>
+          <div style={{}}>
             {DEMO_ATHLETICS.map((e) => (
               <EventRow key={`${e.day}-${e.title}`} {...e} />
             ))}
@@ -96,7 +96,7 @@ export default function CampusPage() {
         )}
 
         {activeTab === "organizations" && (
-          <div style={{ maxWidth: 720 }}>
+          <div style={{}}>
             {DEMO_ORGS.map((org, i) => (
               <div
                 key={org.name}

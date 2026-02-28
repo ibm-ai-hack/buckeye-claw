@@ -3,7 +3,7 @@ from beeai_framework.backend import ChatModel
 from beeai_framework.memory import UnconstrainedMemory
 
 # Campus tools
-from backend.integrations.campus.dining import get_dining_locations, get_dining_locations_with_menus, get_dining_menu
+from backend.integrations.campus.dining import get_dining_locations, get_dining_locations_with_menus, get_dining_menu, search_dining_locations
 from backend.integrations.campus.bus import get_bus_routes, get_bus_stops, get_bus_vehicles
 from backend.integrations.campus.parking import get_parking_availability
 from backend.integrations.campus.events import get_campus_events, search_campus_events, get_events_by_date_range
@@ -50,7 +50,7 @@ from backend.integrations.buckeyemail.tools import (
 
 ALL_TOOLS = [
     # Dining
-    get_dining_locations, get_dining_locations_with_menus, get_dining_menu,
+    get_dining_locations, get_dining_locations_with_menus, get_dining_menu, search_dining_locations,
     # Bus
     get_bus_routes, get_bus_stops, get_bus_vehicles,
     # Parking

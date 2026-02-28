@@ -31,11 +31,11 @@ export default function FoodPage() {
     >
       <DomainHero title="food" accentColor="rgb(80,160,80)" />
 
-      <div style={{ flex: 1, overflowY: "auto", padding: "0 32px 32px" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "12px 32px 24px" }}>
         {/* Search */}
         <div
           style={{
-            marginBottom: 24,
+            marginBottom: 16,
             position: "relative",
           }}
         >
@@ -71,8 +71,8 @@ export default function FoodPage() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-            gap: 16,
+            gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+            gap: 14,
           }}
         >
           {filtered.map((restaurant) => (

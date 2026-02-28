@@ -20,6 +20,9 @@ app = Flask(__name__)
 _agent_handler = None
 _main_loop: asyncio.AbstractEventLoop | None = None
 
+# Track numbers that have already received the vCard contact card
+_vcard_sent: set[str] = set()
+
 
 def set_agent_handler(handler):
     """Register the async function that processes a message and returns a reply.
@@ -239,12 +242,50 @@ def _is_registered_number(phone: str) -> bool:
         return True
 
 
+import re
+
+_LAUGH_RE = re.compile(
+    r"\b(lol|lmao|haha|rofl|dead|funny|joke|😂|🤣|💀)\b", re.IGNORECASE
+)
+_URGENT_RE = re.compile(
+    r"\b(urgent|asap|emergency|help|important|!!|deadline|due)\b", re.IGNORECASE
+)
+_LOVE_RE = re.compile(
+    r"\b(thank|thanks|thx|love|awesome|amazing|perfect|goat|🐐|❤️|🙏|appreciate)\b",
+    re.IGNORECASE,
+)
+_QUESTION_RE = re.compile(r"\?\s*$")
+
+
+def _pick_reaction(text: str) -> str:
+    """Choose a tapback reaction based on the message content."""
+    if not text:
+        return "like"
+    if _LAUGH_RE.search(text):
+        return "laugh"
+    if _LOVE_RE.search(text):
+        return "love"
+    if _URGENT_RE.search(text):
+        return "emphasize"
+    if _QUESTION_RE.search(text):
+        return "like"
+    return "like"
+
+
 async def _handle_inbound_message(msg: InboundMessage):
     """Full alive-features message handling pipeline."""
     from_number = msg.from_number
 
     # Cache the chat mapping for outbound replies
     chat_store.set_chat_id(from_number, msg.chat_id)
+
+    # First contact: send the vCard so they can save BuckeyeClaw as a contact
+    if from_number not in _vcard_sent:
+        _vcard_sent.add(from_number)
+        try:
+            await sender.send_vcard(from_number)
+        except Exception:
+            logger.debug("Failed to send vCard to %s", from_number)
 
     # ALIVE: Send read receipt
     await sender.mark_read(from_number)
@@ -259,8 +300,8 @@ async def _handle_inbound_message(msg: InboundMessage):
         )
         return
 
-    # ALIVE: Acknowledge with a tapback
-    await sender.react_to_message(msg.message_id, "like")
+    # ALIVE: Acknowledge with a context-aware tapback
+    await sender.react_to_message(msg.message_id, _pick_reaction(msg.text))
 
     # ALIVE: Start typing indicator
     await sender.start_typing(from_number)

@@ -85,7 +85,7 @@ export default function LeftRail() {
         borderRight: "1px solid rgba(255, 240, 220, 0.06)",
         display: "flex",
         flexDirection: "column",
-        padding: "24px 16px 20px",
+        padding: "20px 14px 16px",
         zIndex: 50,
         overflowY: "auto",
         overflowX: "hidden",
@@ -99,17 +99,25 @@ export default function LeftRail() {
           alignItems: "center",
           gap: 12,
           cursor: "pointer",
-          padding: "4px 8px",
-          marginBottom: 32,
+          padding: "6px 10px",
+          marginBottom: 24,
+          borderRadius: 12,
+          transition: "background 0.2s ease",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = "rgba(255, 240, 220, 0.04)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = "transparent";
         }}
       >
         <img
           src="/chud.png"
           alt="buckeyeclaw"
           style={{
-            width: 40,
-            height: 40,
-            borderRadius: 10,
+            width: 52,
+            height: 52,
+            borderRadius: 14,
             objectFit: "contain",
           }}
         />
@@ -117,9 +125,9 @@ export default function LeftRail() {
           style={{
             fontFamily: "var(--font-jakarta)",
             fontWeight: 600,
-            fontSize: 17,
+            fontSize: 18,
             color: "#ede8e3",
-            letterSpacing: "-0.2px",
+            letterSpacing: "-0.3px",
           }}
         >
           buckeyeclaw
@@ -140,6 +148,7 @@ export default function LeftRail() {
           return (
             <button
               key={item.path}
+              className="nav-item"
               onClick={() => router.push(item.path)}
               style={{
                 display: "flex",
@@ -152,25 +161,37 @@ export default function LeftRail() {
                 border: "none",
                 borderRadius: 10,
                 cursor: "pointer",
-                transition: "all 0.15s ease",
+                transition: "all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)",
                 color: isActive
                   ? "#ede8e3"
                   : "rgba(237, 232, 227, 0.50)",
               }}
               onMouseEnter={(e) => {
                 if (!isActive) {
-                  e.currentTarget.style.background = "rgba(255, 240, 220, 0.05)";
-                  e.currentTarget.style.color = "rgba(237, 232, 227, 0.75)";
+                  e.currentTarget.style.background = "rgba(255, 240, 220, 0.06)";
+                  e.currentTarget.style.color = "rgba(237, 232, 227, 0.85)";
                 }
+                e.currentTarget.style.transform = "translateX(4px) scale(1.02)";
+                const icon = e.currentTarget.querySelector(".nav-icon") as HTMLElement;
+                if (icon) icon.style.transform = "rotate(-8deg) scale(1.15)";
               }}
               onMouseLeave={(e) => {
                 if (!isActive) {
                   e.currentTarget.style.background = "transparent";
                   e.currentTarget.style.color = "rgba(237, 232, 227, 0.50)";
                 }
+                e.currentTarget.style.transform = "translateX(0) scale(1)";
+                const icon = e.currentTarget.querySelector(".nav-icon") as HTMLElement;
+                if (icon) icon.style.transform = "rotate(0deg) scale(1)";
               }}
             >
-              {item.icon}
+              <span className="nav-icon" style={{
+                display: "flex",
+                alignItems: "center",
+                transition: "transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
+              }}>
+                {item.icon}
+              </span>
               <span
                 style={{
                   fontFamily: "var(--font-jakarta)",
@@ -190,6 +211,7 @@ export default function LeftRail() {
                     background: "rgb(198, 50, 45)",
                     marginLeft: "auto",
                     boxShadow: "0 0 8px rgba(198, 50, 45, 0.4)",
+                    animation: "pulseDot 2s ease-in-out infinite",
                   }}
                 />
               )}
@@ -202,8 +224,8 @@ export default function LeftRail() {
       <div
         style={{
           borderTop: "1px solid rgba(255, 240, 220, 0.06)",
-          paddingTop: 16,
-          marginTop: 12,
+          paddingTop: 14,
+          marginTop: 8,
         }}
       >
         <div
@@ -211,9 +233,16 @@ export default function LeftRail() {
             display: "flex",
             alignItems: "center",
             gap: 10,
-            padding: "8px 8px",
+            padding: "8px 10px",
             borderRadius: 10,
             cursor: "pointer",
+            transition: "background 0.2s ease",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "rgba(255, 240, 220, 0.04)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "transparent";
           }}
         >
           <div
