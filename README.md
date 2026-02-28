@@ -92,6 +92,8 @@ OSU students juggle a dozen different apps and portals daily: BuckeyeLink for re
 
 ## Architecture
 
+![Architecture Diagram](ArchitectureDiagram.png)
+
 ```
 ┌──────────────────────────────────────────────────────────┐
 │                     User's Phone                         │
