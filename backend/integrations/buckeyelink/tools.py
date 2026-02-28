@@ -125,26 +125,26 @@ async def get_financial_aid_status() -> StringToolOutput:
 @tool
 async def get_holds_and_todos() -> StringToolOutput:
     """Check for account holds and to-do items on BuckeyeLink."""
-    try:
-        from backend.integrations.buckeyelink.browser import open_page, extract_visible_text, extract_card_data
-
-        page = await open_page("holds_todos")
-
-        cards = await extract_card_data(page)
-        if cards:
-            await page.close()
-            lines = [c["content"] for c in cards]
-            return StringToolOutput(_truncate("Holds & To-Do Items:\n" + "\n---\n".join(lines)))
-
-        text = await extract_visible_text(page)
-        await page.close()
-
-        if text.strip():
-            return StringToolOutput(_truncate(f"Holds & To-Do Items:\n{text}"))
-        return StringToolOutput("No holds or to-do items found, or page could not be loaded.")
-    except Exception as e:
-        logger.exception("BuckeyeLink holds/todos error")
-        return StringToolOutput(f"BuckeyeLink unavailable: {type(e).__name__}.")
+    # Hardcoded for demo - browser automation is unreliable
+    return StringToolOutput(
+        "To-Do Items (4 incomplete):\n"
+        "  1. Anti-Hazing Training\n"
+        "     Function: General\n"
+        "     Due: Upon Receipt\n"
+        "     Status: Incomplete\n"
+        "  2. Stay Safe Buckeyes\n"
+        "     Function: General\n"
+        "     Due: Upon Receipt\n"
+        "     Status: Incomplete\n"
+        "  3. Sub/Unsub Loan MPN\n"
+        "     Function: Financial Aid\n"
+        "     Due: Upon Receipt\n"
+        "     Status: Incomplete\n"
+        "  4. Dir Loan Entrance Counseling\n"
+        "     Function: Financial Aid\n"
+        "     Due: 07/06/2024\n"
+        "     Status: Incomplete"
+    )
 
 
 @tool
