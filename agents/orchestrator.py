@@ -1,8 +1,10 @@
 import json
 import logging
 
+from beeai_framework.agents.requirement import RequirementAgent
 from beeai_framework.backend import ChatModel
 from beeai_framework.errors import FrameworkError
+from beeai_framework.memory import UnconstrainedMemory
 from beeai_framework.workflows import Workflow
 
 from agents.factories import create_granite_agent, create_claude_agent, create_grubhub_agent, create_email_agent, ALL_TOOLS
@@ -63,9 +65,10 @@ def _build_workflow() -> Workflow:
     """Build the dual-model orchestration workflow."""
     wf = Workflow(PipelineState)
 
-    async def granite_intake(state: PipelineState):
-        """Granite classifies intent and extracts parameters."""
-        agent = create_granite_agent()
+    async def claude_intake(state: PipelineState):
+        """Claude 4.6 classifies intent and extracts parameters."""
+        llm = ChatModel.from_name("anthropic:claude-sonnet-4-6")
+        agent = RequirementAgent(llm=llm, memory=UnconstrainedMemory())
         memory_block = (
             f"Known user context: {state.memory_context}\n\n"
             if state.memory_context else ""
@@ -85,11 +88,11 @@ def _build_workflow() -> Workflow:
             state.extracted_params = parsed.get("params", {})
             state.is_simple = parsed.get("is_simple", False)
             logger.info(
-                "Granite classified intent=%s is_simple=%s params=%s",
+                "Claude classified intent=%s is_simple=%s params=%s",
                 state.intent, state.is_simple, state.extracted_params,
             )
         except FrameworkError as e:
-            logger.error("Granite intake error: %s", e.explain())
+            logger.error("Claude intake error: %s", e.explain())
             state.intent = "unknown"
             state.is_simple = False
 
@@ -175,7 +178,7 @@ def _build_workflow() -> Workflow:
 
         return Workflow.END
 
-    wf.add_step("granite_intake", granite_intake)
+    wf.add_step("claude_intake", claude_intake)
     wf.add_step("claude_plan_execute", claude_plan_execute)
     wf.add_step("granite_format", granite_format)
 
