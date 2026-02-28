@@ -10,6 +10,24 @@ A locally-hosted AI agent that unifies several endpoints used by Ohio State Univ
 - **Academic Tools** — access BuckeyeLink services (scheduling, financial aid, grades) via browser automation
 - **Messaging Interface** — iMessage (blue bubbles), RCS, and SMS via Linq Partner API with typing indicators, read receipts, and emoji reactions
 
+## Project Structure
+
+```
+BuckeyeClaw/
+├── frontend/                        # Next.js web dashboard
+├── backend/                         # Server infra + integrations
+│   ├── messaging/                   # Linq Partner API (iMessage/RCS/SMS)
+│   └── integrations/                # All service modules
+│       ├── campus/                  # OSU MCP wrappers (dining, bus, parking, etc.)
+│       ├── canvas/                  # Canvas LMS integration
+│       ├── grubhub/                 # Grubhub ordering via Android emulation
+│       └── buckeyelink/             # BuckeyeLink browser automation
+├── agents/                          # AI orchestration (BeeAI workflows)
+├── docs/                            # Project documentation
+├── main.py                          # Entry point
+└── pyproject.toml
+```
+
 ## Architecture
 
 ### Agent Layer — BeeAI Framework
@@ -43,7 +61,7 @@ Key conventions:
   - Tapback reactions — auto-acknowledges messages with a thumbs-up
   - Rich media — supports images, videos, and file attachments
 - **Architecture:** Flask webhook at `/webhook` receives JSON events from Linq, returns `200 OK` immediately, processes in background thread, sends replies via separate API call
-- **Modules:** `messaging/client.py` (HTTP client), `messaging/sender.py` (high-level send/typing/react), `messaging/webhook.py` (Flask handler), `messaging/verify.py` (HMAC signature verification), `messaging/events.py` (event parsing), `messaging/chat_store.py` (phone-to-chat-ID cache)
+- **Modules:** `backend/messaging/client.py` (HTTP client), `backend/messaging/sender.py` (high-level send/typing/react), `backend/messaging/webhook.py` (Flask handler), `backend/messaging/verify.py` (HMAC signature verification), `backend/messaging/events.py` (event parsing), `backend/messaging/chat_store.py` (phone-to-chat-ID cache)
 
 ### Campus APIs — Ohio State MCP Server
 

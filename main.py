@@ -11,16 +11,20 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(name)s] %(levelname)s: %(message)s",
 )
-logger = logging.getLogger("buckeyebot")
+logger = logging.getLogger("buckeyeclaw")
 
 
 async def async_main():
-    from messaging.webhook import app, set_agent_handler, set_main_loop
-    from messaging import chat_store
+    from backend.messaging.webhook import app, set_agent_handler, set_main_loop
+    from backend.messaging import chat_store
     from agents import run_pipeline
+    from backend.integrations.grubhub import scheduler
 
     # Load persisted chat-ID mappings
     chat_store.load()
+
+    # Start the order scheduler (persisted jobs resume automatically)
+    scheduler.start()
 
     # Register the orchestrator pipeline as the message handler
     async def handle_message(text: str, from_number: str) -> str:
@@ -43,7 +47,7 @@ async def async_main():
     )
     flask_thread.start()
 
-    logger.info("BuckeyeBot started on port %d", port)
+    logger.info("BuckeyeClaw started on port %d", port)
     logger.info("Configure your Linq webhook to POST to: http://<your-host>:%d/webhook", port)
 
     # Keep the asyncio loop alive
@@ -52,6 +56,8 @@ async def async_main():
             await asyncio.sleep(3600)
     except KeyboardInterrupt:
         logger.info("Shutting down...")
+    finally:
+        scheduler.shutdown()
 
 
 def main():

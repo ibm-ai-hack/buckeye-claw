@@ -4,7 +4,7 @@ import logging
 from beeai_framework.errors import FrameworkError
 from beeai_framework.workflows import Workflow
 
-from agents.factories import create_granite_agent, create_claude_agent, ALL_TOOLS
+from agents.factories import create_granite_agent, create_claude_agent, create_grubhub_agent, create_email_agent, ALL_TOOLS
 from agents.models import PipelineState
 
 logger = logging.getLogger(__name__)
@@ -14,7 +14,7 @@ INTENT_LIST = (
     "library_query, recsports_query, building_query, calendar_query, "
     "directory_query, athletics_query, merchant_query, foodtruck_query, "
     "studentorg_query, canvas_query, grubhub_order, buckeyelink_query, "
-    "chitchat, unknown"
+    "email_query, chitchat, unknown"
 )
 
 
@@ -58,7 +58,7 @@ def _build_workflow() -> Workflow:
         )
         try:
             response = await agent.run(prompt)
-            parsed = _parse_json(response.result.text)
+            parsed = _parse_json(response.last_message.text)
             state.intent = parsed.get("intent", "unknown")
             state.extracted_params = parsed.get("params", {})
             state.is_simple = parsed.get("is_simple", False)
@@ -72,27 +72,46 @@ def _build_workflow() -> Workflow:
             state.is_simple = False
 
     async def claude_plan_execute(state: PipelineState):
-        """Claude Opus plans tool usage, executes tools, and synthesizes results."""
+        """Route to a specialized agent or Claude Opus for tool execution."""
         if state.is_simple:
             return
 
-        agent = create_claude_agent()
-        prompt = (
-            f"User intent: {state.intent}\n"
-            f"Extracted parameters: {json.dumps(state.extracted_params)}\n"
-            f"User message: {state.user_text}\n\n"
-            "Select and call the appropriate tools to fulfill this request, "
-            "then synthesize the results into a clear, helpful response."
-        )
+        logger.info("Agent step starting for intent=%s", state.intent)
+
+        if state.intent == "grubhub_order":
+            agent = create_grubhub_agent()
+            prompt = (
+                f"[caller: {state.from_number}]\n"
+                f"User message: {state.user_text}\n"
+                f"Extracted parameters: {json.dumps(state.extracted_params)}\n\n"
+                "Help this user with their Grubhub food order."
+            )
+        elif state.intent == "email_query":
+            agent = create_email_agent()
+            prompt = (
+                f"[caller: {state.from_number}]\n"
+                f"User message: {state.user_text}\n"
+                f"Extracted parameters: {json.dumps(state.extracted_params)}\n\n"
+                "Help this user with their BuckeyeMail request."
+            )
+        else:
+            agent = create_claude_agent()
+            prompt = (
+                f"User intent: {state.intent}\n"
+                f"Extracted parameters: {json.dumps(state.extracted_params)}\n"
+                f"User message: {state.user_text}\n\n"
+                "Select and call the appropriate tools to fulfill this request, "
+                "then synthesize the results into a clear, helpful response."
+            )
         try:
             response = await agent.run(prompt)
-            state.draft_response = response.result.text
+            state.draft_response = response.last_message.text
         except FrameworkError as e:
             logger.error("Claude execution error: %s", e.explain())
-            state.draft_response = ""
-        except Exception:
+            state.draft_response = f"[DEBUG] Claude error: {e.explain()[:400]}"
+        except Exception as e:
             logger.exception("Unexpected error in Claude execution")
-            state.draft_response = ""
+            state.draft_response = f"[DEBUG] Claude exception: {type(e).__name__}: {e}"[:500]
 
     async def granite_format(state: PipelineState):
         """Granite formats the final response for SMS delivery."""
@@ -101,7 +120,7 @@ def _build_workflow() -> Workflow:
         if state.is_simple:
             try:
                 response = await agent.run(state.user_text)
-                state.final_response = response.result.text[:1500]
+                state.final_response = response.last_message.text[:1500]
             except FrameworkError as e:
                 logger.error("Granite simple response error: %s", e.explain())
                 state.final_response = "Hey! How can I help you today?"
@@ -112,14 +131,14 @@ def _build_workflow() -> Workflow:
             return Workflow.END
 
         prompt = (
-            "Reformat the following response for SMS delivery.\n"
-            "Keep under 1500 characters. Use line breaks and bullet points for readability.\n"
-            "Do not add information — only format what's given.\n\n"
+            "Rewrite the following as a short, casual text message from a friend.\n"
+            "Rules: no markdown (no **, ##, or * bullets), plain text only, use dashes for lists, keep under 800 characters.\n"
+            "Sound natural and concise. Do not add information — only reformat what's given.\n\n"
             f"{state.draft_response}"
         )
         try:
             response = await agent.run(prompt)
-            state.final_response = response.result.text[:1500]
+            state.final_response = response.last_message.text[:1500]
         except FrameworkError as e:
             logger.error("Granite format error: %s", e.explain())
             state.final_response = state.draft_response[:1500]
@@ -157,7 +176,7 @@ async def run_pipeline(text: str, from_number: str) -> str:
     try:
         agent = create_granite_agent(tools=ALL_TOOLS)
         response = await agent.run(text)
-        return response.result.text[:1500]
+        return response.last_message.text[:1500]
     except Exception as e:
         logger.exception("Fallback agent also failed")
         if debug:
