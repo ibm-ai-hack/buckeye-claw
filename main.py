@@ -15,10 +15,10 @@ logger = logging.getLogger("buckeyeclaw")
 
 
 async def async_main():
-    from messaging.webhook import app, set_agent_handler, set_main_loop
-    from messaging import chat_store
+    from backend.messaging.webhook import app, set_agent_handler, set_main_loop
+    from backend.messaging import chat_store
     from agents import run_pipeline
-    from grubhub import scheduler
+    from backend.integrations.grubhub import scheduler
 
     # Load persisted chat-ID mappings
     chat_store.load()

@@ -10,3 +10,4 @@ build/
 .playwright/
 .claude/
 .next/
+.vscode/

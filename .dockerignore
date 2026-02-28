@@ -7,3 +7,6 @@ __pycache__
 current-buckeyelinkautomation
 *.md
 .gitignore
+frontend/
+docs/
+venv/

@@ -31,7 +31,7 @@ dev = [
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["agents*", "canvas*", "grubhub*", "messaging*", "buckeyelink*", "tools*"]
+include = ["agents*", "backend*"]
 
 [build-system]
 requires = ["setuptools>=68.0"]

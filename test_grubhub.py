@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from grubhub.automation import get_driver, intelligent_order
+from backend.integrations.grubhub.automation import get_driver, intelligent_order
 
 RESTAURANT = "connecting grounds"
 ITEMS = "buckeye mocha"
