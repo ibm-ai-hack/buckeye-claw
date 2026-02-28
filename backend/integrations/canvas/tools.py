@@ -7,15 +7,30 @@ from datetime import datetime, timezone
 from beeai_framework.tools import StringToolOutput, tool
 
 from canvasapi import Canvas
+from canvasapi.exceptions import InvalidAccessToken
 
 # Per-request canvas token — set by the orchestrator before running canvas tools
 _canvas_token_var: ContextVar[str] = ContextVar("canvas_token", default="")
+
+_TOKEN_EXPIRED_MSG = (
+    "Your Canvas access token has expired. Go to buckeyeclaw.vercel.app/app/connect, "
+    "disconnect Canvas, then generate a new token at osu.instructure.com (Account → "
+    "Settings → New Access Token) and reconnect."
+)
 
 
 def _get_canvas() -> Canvas:
     api_url = os.environ.get("CANVAS_API_URL", "https://osu.instructure.com")
     token = _canvas_token_var.get() or os.environ.get("CANVAS_API_TOKEN", "")
     return Canvas(api_url, token)
+
+
+async def _run(fn):
+    """Run a blocking Canvas function in a thread, catching auth errors cleanly."""
+    try:
+        return await asyncio.to_thread(fn)
+    except InvalidAccessToken:
+        raise RuntimeError(_TOKEN_EXPIRED_MSG)
 
 
 @tool
@@ -34,7 +49,7 @@ async def get_canvas_courses() -> StringToolOutput:
             })
         return result
 
-    result = await asyncio.to_thread(_sync)
+    result = await _run(_sync)
     return StringToolOutput("Your courses:\n" + "\n".join(
         f"- {c['name']} ({c['code']}) [ID: {c['id']}]" for c in result
     ) if result else "No active courses found.")
@@ -57,7 +72,7 @@ async def get_course_assignments(course_id: int) -> StringToolOutput:
             })
         return result
 
-    result = await asyncio.to_thread(_sync)
+    result = await _run(_sync)
     lines = []
     for a in result[:20]:
         status = "submitted" if a["submitted"] else "pending"
@@ -95,7 +110,7 @@ async def get_upcoming_assignments() -> StringToolOutput:
         upcoming.sort(key=lambda x: x["due"])
         return upcoming
 
-    upcoming = await asyncio.to_thread(_sync)
+    upcoming = await _run(_sync)
     lines = []
     for a in upcoming[:15]:
         lines.append(f"- [{a['course']}] {a['name']} | Due: {a['due']} | {a['points']} pts")
@@ -120,7 +135,7 @@ async def get_course_grades(course_id: int) -> StringToolOutput:
                 }
         return None
 
-    data = await asyncio.to_thread(_sync)
+    data = await _run(_sync)
     if data:
         return StringToolOutput(
             f"Grades for {data['course_name']}:\n"
@@ -145,7 +160,7 @@ async def get_course_announcements(course_id: int) -> StringToolOutput:
             lines.append(f"- {title} (posted {posted})")
         return lines
 
-    lines = await asyncio.to_thread(_sync)
+    lines = await _run(_sync)
     return StringToolOutput(f"Announcements for course {course_id}:\n" + "\n".join(lines) if lines else "No announcements found.")
 
 
@@ -164,7 +179,7 @@ async def get_canvas_todos() -> StringToolOutput:
             lines.append(f"- {name} (Course: {course})")
         return lines
 
-    lines = await asyncio.to_thread(_sync)
+    lines = await _run(_sync)
     return StringToolOutput("To-do items:\n" + "\n".join(lines) if lines else "No to-do items.")
 
 
@@ -183,7 +198,7 @@ async def get_course_syllabus(course_id: int) -> StringToolOutput:
             return text
         return None
 
-    text = await asyncio.to_thread(_sync)
+    text = await _run(_sync)
     if text:
         return StringToolOutput(f"Syllabus for course {course_id}:\n{text}")
     return StringToolOutput(f"No syllabus found for course {course_id}.")
