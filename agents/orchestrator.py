@@ -380,6 +380,27 @@ async def run_pipeline(text: str, from_number: str) -> str:
         except Exception:
             logger.exception("Memory context fetch failed; continuing without it")
 
+    # Fetch canvas token from Supabase and inject into ContextVar for canvas tools
+    if user_id:
+        try:
+            supabase = get_client()
+            row = (
+                supabase.table("user_integrations")
+                .select("canvas_token")
+                .eq("user_id", user_id)
+                .not_.is_("canvas_token", "null")
+                .maybe_single()
+                .execute()
+            )
+            canvas_token = row.data.get("canvas_token", "") if row.data else ""
+            if canvas_token:
+                _canvas_token_var.set(canvas_token)
+                logger.debug("[CANVAS] Token injected for user %s", user_id)
+            else:
+                logger.info("[CANVAS] No canvas token found for user %s", user_id)
+        except Exception:
+            logger.exception("[CANVAS] Failed to fetch canvas token from Supabase")
+
     state = PipelineState(
         user_text=text,
         from_number=from_number,

@@ -159,7 +159,7 @@ export default function AcademicsPage() {
               marginBottom: 16,
             }}
           >
-            Canvas error: {error}
+            Could not connect to Canvas. {error}
           </div>
         )}
 

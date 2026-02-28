@@ -22,6 +22,8 @@ _TOKEN_EXPIRED_MSG = (
 def _get_canvas() -> Canvas:
     api_url = os.environ.get("CANVAS_API_URL", "https://osu.instructure.com")
     token = _canvas_token_var.get() or os.environ.get("CANVAS_API_TOKEN", "")
+    if not token:
+        raise RuntimeError("Canvas token not available. Please connect Canvas at /app/connect")
     return Canvas(api_url, token)
 
 
