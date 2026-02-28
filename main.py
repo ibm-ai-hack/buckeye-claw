@@ -18,10 +18,14 @@ async def async_main():
     from backend.messaging.webhook import app, set_agent_handler, set_main_loop
     from backend.messaging import chat_store
     from agents import run_pipeline
+    from agents.orchestrator import init_memory
     from backend.integrations.grubhub import scheduler
 
     # Load persisted chat-ID mappings
     chat_store.load()
+
+    # Initialize persistent memory (Supabase + Granite + Voyage AI)
+    init_memory()
 
     # Start the order scheduler (persisted jobs resume automatically)
     scheduler.start()

@@ -8,6 +8,10 @@ class PipelineState(BaseModel):
     user_text: str
     from_number: str
 
+    # Memory — resolved before workflow starts
+    user_id: str = ""
+    memory_context: str = ""
+
     # After Granite intake
     intent: str = ""
     extracted_params: dict = {}

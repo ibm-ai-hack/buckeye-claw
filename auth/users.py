@@ -23,7 +23,7 @@ def get_or_create_user(client: Client, phone: str) -> str:
         .execute()
     )
 
-    if result.data:
+    if result is not None and result.data:
         return result.data["id"]
 
     # Profile doesn't exist — create one.
@@ -55,4 +55,4 @@ def get_user_by_id(client: Client, user_id: str) -> dict | None:
         .maybe_single()
         .execute()
     )
-    return result.data
+    return result.data if result is not None else None

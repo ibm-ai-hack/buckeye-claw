@@ -1,13 +1,30 @@
 import json
 import logging
 
+from beeai_framework.backend import ChatModel
 from beeai_framework.errors import FrameworkError
 from beeai_framework.workflows import Workflow
 
 from agents.factories import create_granite_agent, create_claude_agent, create_grubhub_agent, create_email_agent, ALL_TOOLS
 from agents.models import PipelineState
+from auth.client import get_client
+from auth.users import get_or_create_user
+from memory.db import MemoryDB
+from memory.module import MemoryModule
 
 logger = logging.getLogger(__name__)
+
+_memory: MemoryModule | None = None
+
+
+def init_memory() -> None:
+    """Initialize the MemoryModule singleton. Call once at startup after load_dotenv()."""
+    global _memory
+    supabase = get_client()
+    db = MemoryDB(supabase)
+    llm = ChatModel.from_name("watsonx:ibm/granite-3-8b-instruct")
+    _memory = MemoryModule(llm=llm, db=db)
+    logger.info("MemoryModule initialized")
 
 INTENT_LIST = (
     "dining_query, bus_query, parking_query, event_query, class_query, "
@@ -49,7 +66,12 @@ def _build_workflow() -> Workflow:
     async def granite_intake(state: PipelineState):
         """Granite classifies intent and extracts parameters."""
         agent = create_granite_agent()
+        memory_block = (
+            f"Known user context: {state.memory_context}\n\n"
+            if state.memory_context else ""
+        )
         prompt = (
+            f"{memory_block}"
             "Classify the following user message into exactly one intent.\n"
             f"Valid intents: {INTENT_LIST}\n\n"
             "Respond with JSON only, no other text:\n"
@@ -78,9 +100,15 @@ def _build_workflow() -> Workflow:
 
         logger.info("Agent step starting for intent=%s", state.intent)
 
+        memory_block = (
+            f"[User context from memory: {state.memory_context}]\n"
+            if state.memory_context else ""
+        )
+
         if state.intent == "grubhub_order":
             agent = create_grubhub_agent()
             prompt = (
+                f"{memory_block}"
                 f"[caller: {state.from_number}]\n"
                 f"User message: {state.user_text}\n"
                 f"Extracted parameters: {json.dumps(state.extracted_params)}\n\n"
@@ -89,6 +117,7 @@ def _build_workflow() -> Workflow:
         elif state.intent == "email_query":
             agent = create_email_agent()
             prompt = (
+                f"{memory_block}"
                 f"[caller: {state.from_number}]\n"
                 f"User message: {state.user_text}\n"
                 f"Extracted parameters: {json.dumps(state.extracted_params)}\n\n"
@@ -97,6 +126,7 @@ def _build_workflow() -> Workflow:
         else:
             agent = create_claude_agent()
             prompt = (
+                f"{memory_block}"
                 f"User intent: {state.intent}\n"
                 f"Extracted parameters: {json.dumps(state.extracted_params)}\n"
                 f"User message: {state.user_text}\n\n"
@@ -159,18 +189,44 @@ async def run_pipeline(text: str, from_number: str) -> str:
     """Run the dual-model orchestration pipeline. Returns SMS-ready text."""
     debug = True  # TODO: remove after debugging
 
-    state = PipelineState(user_text=text, from_number=from_number)
+    # --- Memory: resolve user, fetch context ---
+    user_id = ""
+    memory_context = ""
+    if _memory is not None:
+        try:
+            supabase = get_client()
+            user_id = get_or_create_user(supabase, from_number)
+            memory_context = await _memory.get_context(user_id, text)
+            logger.info("Memory context for user %s (%d chars)", user_id, len(memory_context))
+        except Exception:
+            logger.exception("Memory context fetch failed; continuing without it")
+
+    state = PipelineState(
+        user_text=text,
+        from_number=from_number,
+        user_id=user_id,
+        memory_context=memory_context,
+    )
+
+    response_text = None
     try:
         run = await _workflow.run(state).observe(lambda event: None)
-        return run.state.final_response
+        response_text = run.state.final_response
     except FrameworkError as e:
         logger.error("Pipeline framework error: %s", e.explain())
         if debug:
-            return f"[DEBUG] Pipeline error: {e.explain()[:500]}"
+            response_text = f"[DEBUG] Pipeline error: {e.explain()[:500]}"
     except Exception as e:
         logger.exception("Unexpected pipeline error")
         if debug:
-            return f"[DEBUG] Pipeline exception: {type(e).__name__}: {e}"[:600]
+            response_text = f"[DEBUG] Pipeline exception: {type(e).__name__}: {e}"[:600]
+
+    # --- Memory: background update (fire and forget) ---
+    if _memory is not None and user_id:
+        _memory.update_background(user_id, text)
+
+    if response_text:
+        return response_text
 
     # Last-resort fallback: try Granite alone with tools
     try:
