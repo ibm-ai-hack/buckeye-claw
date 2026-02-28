@@ -361,22 +361,6 @@ async def run_pipeline(text: str, from_number: str) -> str:
                 logger.info("[MEMORY] Current task: %r", text)
                 logger.info("[MEMORY] Injected context (%d chars): %s", len(memory_context), memory_context or "(empty)")
 
-                # Fetch canvas token if available
-                try:
-                    integ = (
-                        supabase.table("user_integrations")
-                        .select("canvas_token")
-                        .eq("user_id", user_id)
-                        .maybe_single()
-                        .execute()
-                    )
-                    if integ.data and integ.data.get("canvas_token"):
-                        canvas_token = integ.data["canvas_token"]
-                        logger.debug("[CANVAS] Token found for user %s", user_id)
-                    else:
-                        logger.debug("[CANVAS] No token for user %s", user_id)
-                except Exception:
-                    logger.exception("Canvas token fetch failed; continuing without it")
         except Exception:
             logger.exception("Memory context fetch failed; continuing without it")
 
