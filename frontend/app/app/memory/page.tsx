@@ -328,29 +328,33 @@ export default function MemoryPage() {
 
   useEffect(() => {
     const supabase = createClient();
-    Promise.all([
-      supabase.from("memory_facts").select("id, key, value, updated_at, user_id"),
-      supabase.from("memory_tasks").select("id, task, category, created_at, user_id")
-        .order("created_at", { ascending: false }).limit(40),
-      supabase.from("memory_jobs")
-        .select("id, schedule, prompt, task_name, description, category, occurrence_count, created_at")
-        .limit(20),
-    ]).then(([factsRes, tasksRes, jobsRes]) => {
-      const f = factsRes.data ?? [];
-      const t = tasksRes.data ?? [];
-      const j = jobsRes.data ?? [];
-      setFacts(f);
-      setJobs(j);
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) { setLoading(false); return; }
+      const uid = user.id;
+      Promise.all([
+        supabase.from("memory_facts").select("id, key, value, updated_at, user_id").eq("user_id", uid),
+        supabase.from("memory_tasks").select("id, task, category, created_at, user_id")
+          .eq("user_id", uid).order("created_at", { ascending: false }).limit(40),
+        supabase.from("memory_jobs")
+          .select("id, schedule, prompt, task_name, description, category, occurrence_count, created_at")
+          .eq("user_id", uid).limit(20),
+      ]).then(([factsRes, tasksRes, jobsRes]) => {
+        const f = factsRes.data ?? [];
+        const t = tasksRes.data ?? [];
+        const j = jobsRes.data ?? [];
+        setFacts(f);
+        setJobs(j);
 
-      const bycat: Record<string, MemoryTask[]> = {};
-      for (const task of t) (bycat[task.category] ??= []).push(task);
-      setTasksByCategory(bycat);
+        const bycat: Record<string, MemoryTask[]> = {};
+        for (const task of t) (bycat[task.category] ??= []).push(task);
+        setTasksByCategory(bycat);
 
-      const { nodes, edges } = buildGraph(f, bycat, j);
-      for (let i = 0; i < 200; i++) simulate(nodes, edges);
-      nodesRef.current = nodes;
-      edgesRef.current = edges;
-      setLoading(false);
+        const { nodes, edges } = buildGraph(f, bycat, j);
+        for (let i = 0; i < 200; i++) simulate(nodes, edges);
+        nodesRef.current = nodes;
+        edgesRef.current = edges;
+        setLoading(false);
+      });
     });
   }, []);
 
