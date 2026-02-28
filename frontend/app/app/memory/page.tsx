@@ -283,7 +283,7 @@ function DetailModal({ node, onClose }: { node: GraphNode; onClose: () => void }
             background: node.color, boxShadow: `0 0 8px ${node.color}`, flexShrink: 0,
           }} />
           <span style={{ fontSize: 10, letterSpacing: 2, color: node.color, textTransform: "uppercase" }}>
-            {{ fact: "something i remember", task: "something you asked", job: "recurring routine", category: "topic" }[node.type] ?? node.type}
+            {{ center: "memory hub", fact: "something i remember", task: "something you asked", job: "recurring routine", category: "topic" }[node.type] ?? node.type}
           </span>
           <div style={{ flex: 1 }} />
           <button
