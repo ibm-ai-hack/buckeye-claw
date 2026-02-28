@@ -2,7 +2,7 @@
 
 Your entire campus, one text away.
 
-BuckeyeClaw is a locally-hosted AI agent that unifies Ohio State University's fragmented student services into a single messaging interface. Text a phone number from iMessage, RCS, or SMS and the agent handles everything — dining menus, bus tracking, Grubhub orders, class schedules, grades, financial aid, email, and 50+ more campus tools — with typing indicators, read receipts, and tapback reactions that make it feel like you're talking to a person.
+BuckeyeClaw is a locally-hosted AI agent that unifies Ohio State University's fragmented student services into a single messaging interface. Text a phone number from iMessage, RCS, or SMS and the agent handles everything -dining menus, bus tracking, Grubhub orders, class schedules, grades, financial aid, email, and 50+ more campus tools -with typing indicators, read receipts, and tapback reactions that make it feel like you're talking to a person.
 
 ---
 
@@ -16,12 +16,12 @@ OSU students juggle a dozen different apps and portals daily: BuckeyeLink for re
 
 ### Messaging (Linq Partner API)
 - **iMessage blue bubbles** with automatic RCS/SMS fallback
-- **Typing indicators** — dots appear while the agent thinks
-- **Read receipts** — messages marked as read on receipt
-- **Tapback reactions** — auto-acknowledges your message with a thumbs-up
-- **Rich media** — supports images, videos, and file attachments
+- **Typing indicators** -dots appear while the agent thinks
+- **Read receipts** -messages marked as read on receipt
+- **Tapback reactions** -auto-acknowledges your message with a thumbs-up
+- **Rich media** -supports images, videos, and file attachments
 - **HMAC-SHA256 webhook verification** for security
-- **Gated access** — only registered phone numbers reach the agent; unregistered numbers get a signup prompt
+- **Gated access** -only registered phone numbers reach the agent; unregistered numbers get a signup prompt
 
 ### Campus Services (50+ Tools)
 | Category | Examples |
@@ -73,15 +73,15 @@ OSU students juggle a dozen different apps and portals daily: BuckeyeLink for re
 - Per-user token persistence with automatic refresh
 
 ### Persistent Memory (pgvector + Voyage AI)
-- **User facts** — key-value pairs with semantic embeddings for context-aware responses
-- **Task history** — 30-day rolling window categorized into 11 domains (food, transit, canvas, etc.)
-- **Scheduled jobs** — recurring tasks detected by Granite and stored as cron expressions
-- **Semantic retrieval** — Voyage AI `voyage-3` embeddings (1024 dims) with pgvector cosine similarity
+- **User facts** -key-value pairs with semantic embeddings for context-aware responses
+- **Task history** -30-day rolling window categorized into 11 domains (food, transit, canvas, etc.)
+- **Scheduled jobs** -recurring tasks detected by Granite and stored as cron expressions
+- **Semantic retrieval** -Voyage AI `voyage-3` embeddings (1024 dims) with pgvector cosine similarity
 - Memory context injected into agent system prompt before every interaction
 
 ### Web Dashboard
 - Three.js animated landing page with dithered wave shader
-- Real-time agent reasoning split view — see tool calls, intent, and timing as the agent works
+- Real-time agent reasoning split view -see tool calls, intent, and timing as the agent works
 - Domain-specific pages for dining, transit, academics, campus, food, and email
 - Memory visualization with D3-style force-directed graph
 - BuckeyeLink SSO browser session with real-time screenshot streaming
@@ -94,68 +94,13 @@ OSU students juggle a dozen different apps and portals daily: BuckeyeLink for re
 
 ![Architecture Diagram](ArchitectureDiagram.png)
 
-```
-┌──────────────────────────────────────────────────────────┐
-│                     User's Phone                         │
-│              (iMessage / RCS / SMS)                       │
-└────────────────────────┬─────────────────────────────────┘
-                         │
-                    Linq Partner API
-                         │
-┌────────────────────────▼─────────────────────────────────┐
-│                   Flask Webhook (/webhook)                │
-│          HMAC verify → 200 OK → background thread         │
-└────────────────────────┬─────────────────────────────────┘
-                         │
-          ┌──────────────▼──────────────┐
-          │     Alive Features Pipeline  │
-          │  read receipt → tapback →    │
-          │  typing indicator → ack msg  │
-          └──────────────┬──────────────┘
-                         │
-┌────────────────────────▼─────────────────────────────────┐
-│              Dual-Model Agent Orchestrator                │
-│                                                          │
-│  ┌─────────────────┐  ┌──────────────────────────────┐   │
-│  │  Granite 3 8B   │  │      Claude Opus 4.6         │   │
-│  │  (IBM watsonx)  │  │      (Anthropic)             │   │
-│  │                 │  │                              │   │
-│  │  • Classify     │→ │  • Select & execute tools    │   │
-│  │    intent       │  │  • Synthesize results        │   │
-│  │  • Extract      │  │  • Draft response            │   │
-│  │    params       │  │                              │   │
-│  └─────────────────┘  └──────────────────────────────┘   │
-│            │                       │                     │
-│            └───────────┬───────────┘                     │
-│                        ▼                                 │
-│               Granite Formatter                          │
-│           (plain text, <800 chars)                        │
-└────────────────────────┬─────────────────────────────────┘
-                         │
-          ┌──────────────▼──────────────┐
-          │      87 Tools Available      │
-          ├─────────────────────────────┤
-          │  Campus APIs (50+ tools)     │
-          │  Canvas (7 tools)            │
-          │  Grubhub (6 tools)           │
-          │  BuckeyeLink (7 tools)       │
-          │  BuckeyeMail (4 tools)       │
-          └──────────────┬──────────────┘
-                         │
-          ┌──────────────▼──────────────┐
-          │    Persistent Memory Layer   │
-          │  pgvector + Voyage AI        │
-          │  facts │ tasks │ jobs        │
-          └─────────────────────────────┘
-```
-
 ### Agent Workflow
 
-1. **Memory Read** — Retrieve top-5 relevant user facts + all scheduled jobs via pgvector semantic search
-2. **Granite Intake** — IBM Granite 3 8B (fast, cheap) classifies the user's message into one of 18 intents and extracts parameters. Simple greetings are handled directly.
-3. **Claude Execution** — Claude Opus 4.6 (powerful reasoning) selects from 87 tools, executes them, and drafts a response. Skipped for simple queries.
-4. **Granite Format** — Granite reformats the response as plain text under 800 characters for SMS delivery.
-5. **Memory Write** — Background thread categorizes the task, detects repetition patterns, extracts facts with LLM, embeds with Voyage AI, and stores to Supabase.
+1. **Memory Read** -Retrieve top-5 relevant user facts + all scheduled jobs via pgvector semantic search
+2. **Granite Intake** -IBM Granite 3 8B (fast, cheap) classifies the user's message into one of 18 intents and extracts parameters. Simple greetings are handled directly.
+3. **Claude Execution** -Claude Opus 4.6 (powerful reasoning) selects from 87 tools, executes them, and drafts a response. Skipped for simple queries.
+4. **Granite Format** -Granite reformats the response as plain text under 800 characters for SMS delivery.
+5. **Memory Write** -Background thread categorizes the task, detects repetition patterns, extracts facts with LLM, embeds with Voyage AI, and stores to Supabase.
 
 ### Intent Classification
 
@@ -406,13 +351,13 @@ BuckeyeClaw uses Supabase (PostgreSQL + pgvector) with the following tables:
 
 | Table | Purpose |
 |---|---|
-| `profiles` | User accounts — `id` (UUID), `phone` (E.164), `email`, `auth_id` |
-| `messages` | Chat messages — `phone`, `role` (user/agent), `text`, `run_id`, `created_at` |
-| `agent_runs` | Agent execution history — `status`, `intent`, `user_message`, `final_response`, `error` |
-| `agent_events` | Tool-level tracing — `event_type`, `tool_name`, `tool_args`, `tool_result`, `duration_ms` |
-| `memory_facts` | User facts with Voyage AI embeddings — `key`, `value`, `embedding` (VECTOR 1024) |
-| `memory_tasks` | 30-day task history — `category`, `summary`, `user_id`, `created_at` |
-| `memory_jobs` | Recurring scheduled jobs — `name`, `cron_expr`, `params`, `user_id` |
+| `profiles` | User accounts -`id` (UUID), `phone` (E.164), `email`, `auth_id` |
+| `messages` | Chat messages -`phone`, `role` (user/agent), `text`, `run_id`, `created_at` |
+| `agent_runs` | Agent execution history -`status`, `intent`, `user_message`, `final_response`, `error` |
+| `agent_events` | Tool-level tracing -`event_type`, `tool_name`, `tool_args`, `tool_result`, `duration_ms` |
+| `memory_facts` | User facts with Voyage AI embeddings -`key`, `value`, `embedding` (VECTOR 1024) |
+| `memory_tasks` | 30-day task history -`category`, `summary`, `user_id`, `created_at` |
+| `memory_jobs` | Recurring scheduled jobs -`name`, `cron_expr`, `params`, `user_id` |
 
 Key features:
 - **pgvector** extension for semantic similarity search
@@ -440,7 +385,7 @@ Pushes to `main` trigger automatic deployment via GitHub Actions:
 3. Updates the Code Engine application
 
 **Required GitHub Secrets:**
-- `IBM_API_KEY` — IBM Cloud API key with Code Engine and Container Registry access
+- `IBM_API_KEY` -IBM Cloud API key with Code Engine and Container Registry access
 
 ---
 
@@ -484,7 +429,7 @@ Bot: There are 3 Campus Loop (CLS) buses running right now.
 You: Order me Raising Cane's at 6pm
 Bot: (tapback)
 Bot: Scheduling your Cane's order for 6:00 PM today.
-     I'll place it automatically — you'll get a confirmation
+     I'll place it automatically -you'll get a confirmation
      when it goes through.
 
 You: What's my GPA this semester?
@@ -496,18 +441,18 @@ Bot: Your Fall 2025 GPA is 3.67.
 You: Check my email
 Bot: (tapback)
 Bot: You have 3 unread emails:
-     1. Prof. Smith — "HW5 deadline extended to Friday"
-     2. OSU Financial Aid — "Spring aid disbursement posted"
-     3. CSE 2221 TA — "Lab 7 graded"
+     1. Prof. Smith -"HW5 deadline extended to Friday"
+     2. OSU Financial Aid -"Spring aid disbursement posted"
+     3. CSE 2221 TA -"Lab 7 graded"
 ```
 
 ---
 
 ## Documentation
 
-- [`docs/USECASES.md`](docs/USECASES.md) — Full feature matrix with 80+ use cases, tool names, and example prompts
-- [`docs/EVENT-LOOP-PLAN.md`](docs/EVENT-LOOP-PLAN.md) — Event loop architecture design
-- [`CLAUDE.md`](CLAUDE.md) — Project conventions and framework reference
+- [`docs/USECASES.md`](docs/USECASES.md) -Full feature matrix with 80+ use cases, tool names, and example prompts
+- [`docs/EVENT-LOOP-PLAN.md`](docs/EVENT-LOOP-PLAN.md) -Event loop architecture design
+- [`CLAUDE.md`](CLAUDE.md) -Project conventions and framework reference
 
 ---
 
