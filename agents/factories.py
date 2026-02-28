@@ -105,6 +105,33 @@ def create_granite_agent(tools=None) -> RequirementAgent:
     )
 
 
+GRUBHUB_TOOLS = [
+    search_grubhub_restaurants, get_restaurant_menu, place_grubhub_order,
+    schedule_grubhub_order, list_scheduled_grubhub_orders, cancel_scheduled_grubhub_order,
+]
+
+
+def create_grubhub_agent() -> RequirementAgent:
+    """Dedicated Grubhub food-ordering agent with focused tools and instructions."""
+    llm = ChatModel.from_name("anthropic:claude-sonnet-4-6")
+    return RequirementAgent(
+        llm=llm,
+        tools=GRUBHUB_TOOLS,
+        memory=UnconstrainedMemory(),
+        role="BuckeyeClaw Grubhub Agent — food ordering assistant for OSU students",
+        instructions=[
+            "You are a food ordering assistant. You help Ohio State students order food from Grubhub.",
+            "You have six tools: search restaurants, view menus, place immediate orders, schedule future orders, list scheduled orders, and cancel scheduled orders.",
+            "Workflow for ordering: 1) search_grubhub_restaurants to find the restaurant, 2) get_restaurant_menu to see what's available, 3) place_grubhub_order or schedule_grubhub_order to complete the order.",
+            "If the user specifies a future time (e.g. 'at 6pm', 'in 2 hours', 'tonight at 8'), use schedule_grubhub_order. For immediate orders with no time specified, use place_grubhub_order.",
+            "The user's phone number is provided as [caller: +1...] — pass it as from_number when scheduling orders.",
+            "If a search returns no results, suggest the user try a different name or spelling.",
+            "If the emulator or Appium is unavailable, let the user know Grubhub ordering is temporarily down.",
+            "Keep responses concise and conversational — this goes to an SMS user.",
+        ],
+    )
+
+
 def create_claude_agent() -> RequirementAgent:
     """Claude Opus 4.6 agent for complex reasoning and tool execution."""
     llm = ChatModel.from_name("anthropic:claude-opus-4-6")

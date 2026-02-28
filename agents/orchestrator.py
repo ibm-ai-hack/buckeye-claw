@@ -4,7 +4,7 @@ import logging
 from beeai_framework.errors import FrameworkError
 from beeai_framework.workflows import Workflow
 
-from agents.factories import create_granite_agent, create_claude_agent, ALL_TOOLS
+from agents.factories import create_granite_agent, create_claude_agent, create_grubhub_agent, ALL_TOOLS
 from agents.models import PipelineState
 
 logger = logging.getLogger(__name__)
@@ -72,19 +72,29 @@ def _build_workflow() -> Workflow:
             state.is_simple = False
 
     async def claude_plan_execute(state: PipelineState):
-        """Claude Opus plans tool usage, executes tools, and synthesizes results."""
+        """Route to a specialized agent or Claude Opus for tool execution."""
         if state.is_simple:
             return
 
-        logger.info("Claude step starting for intent=%s", state.intent)
-        agent = create_claude_agent()
-        prompt = (
-            f"User intent: {state.intent}\n"
-            f"Extracted parameters: {json.dumps(state.extracted_params)}\n"
-            f"User message: {state.user_text}\n\n"
-            "Select and call the appropriate tools to fulfill this request, "
-            "then synthesize the results into a clear, helpful response."
-        )
+        logger.info("Agent step starting for intent=%s", state.intent)
+
+        if state.intent == "grubhub_order":
+            agent = create_grubhub_agent()
+            prompt = (
+                f"[caller: {state.from_number}]\n"
+                f"User message: {state.user_text}\n"
+                f"Extracted parameters: {json.dumps(state.extracted_params)}\n\n"
+                "Help this user with their Grubhub food order."
+            )
+        else:
+            agent = create_claude_agent()
+            prompt = (
+                f"User intent: {state.intent}\n"
+                f"Extracted parameters: {json.dumps(state.extracted_params)}\n"
+                f"User message: {state.user_text}\n\n"
+                "Select and call the appropriate tools to fulfill this request, "
+                "then synthesize the results into a clear, helpful response."
+            )
         try:
             response = await agent.run(prompt)
             state.draft_response = response.last_message.text
