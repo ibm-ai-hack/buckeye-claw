@@ -164,9 +164,9 @@ def _build_workflow() -> Workflow:
             return Workflow.END
 
         prompt = (
-            "Rewrite the following as a short, casual text message from a friend.\n"
-            "Rules: no markdown (no **, ##, or * bullets), plain text only, use dashes for lists, keep under 800 characters.\n"
-            "Sound natural and concise. Do not add information — only reformat what's given.\n\n"
+            "Rewrite the following as a short text message from a chill, helpful friend.\n"
+            "Rules: no markdown (no **, ##, or * bullets), no emojis, plain text only, use dashes for lists, keep under 800 characters.\n"
+            "Sound natural and personable but not over the top. Keep it concise — no long explanations. Do not add information — only reformat what's given.\n\n"
             f"{state.draft_response}"
         )
         try:
