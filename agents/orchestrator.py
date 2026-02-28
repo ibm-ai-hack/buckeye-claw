@@ -137,6 +137,17 @@ def _build_workflow() -> Workflow:
             if state.memory_context else ""
         )
 
+        # Grubhub access restricted to approved accounts
+        GRUBHUB_ALLOWED_USERS = {"61a0bbff-fd23-4fb4-8108-5eda6ec290a6"}  # shetty.118@osu.edu
+
+        if state.intent == "grubhub_order" and state.user_id not in GRUBHUB_ALLOWED_USERS:
+            state.draft_response = (
+                "Grubhub ordering isn't available for your account yet. "
+                "Stay tuned — we're rolling it out soon!"
+            )
+            logger.info("Grubhub access denied for user_id=%s", state.user_id)
+            return
+
         if state.intent == "grubhub_order":
             agent = create_grubhub_agent()
             prompt = (
