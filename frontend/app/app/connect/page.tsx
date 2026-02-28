@@ -112,6 +112,7 @@ function IntegrationCard({
   onDisconnect,
   loading,
   comingSoon,
+  inputSlot,
 }: {
   icon: React.ReactNode;
   name: string;
@@ -123,6 +124,7 @@ function IntegrationCard({
   onDisconnect?: () => void;
   loading?: boolean;
   comingSoon?: boolean;
+  inputSlot?: React.ReactNode;
 }) {
   return (
     <div
@@ -188,12 +190,14 @@ function IntegrationCard({
             color: "rgba(255,255,255,0.38)",
             lineHeight: 1.6,
             margin: 0,
-            marginBottom: 18,
+            marginBottom: inputSlot ? 14 : 18,
             maxWidth: 440,
           }}
         >
           {description}
         </p>
+
+        {inputSlot && <div style={{ marginBottom: 16 }}>{inputSlot}</div>}
 
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <StatusDot connected={connected} />
@@ -267,23 +271,15 @@ export default function ConnectPage() {
   const [status, setStatus] = useState<IntegrationStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [disconnecting, setDisconnecting] = useState(false);
+  const [showCanvasInput, setShowCanvasInput] = useState(false);
+  const [canvasTokenInput, setCanvasTokenInput] = useState("");
+  const [connecting, setConnecting] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
-  // Handle URL params from OAuth callback
   useEffect(() => {
-    const success = searchParams.get("success");
     const error = searchParams.get("error");
-
-    if (success === "canvas") {
-      setToast({ message: "Canvas connected successfully", type: "success" });
-    } else if (error === "canvas_denied") {
-      setToast({ message: "Canvas authorization was cancelled", type: "error" });
-    } else if (error === "token_exchange") {
-      setToast({ message: "Failed to connect Canvas — please try again", type: "error" });
-    } else if (error === "no_profile") {
+    if (error === "no_profile") {
       setToast({ message: "Profile not found — contact support", type: "error" });
-    } else if (error === "not_configured") {
-      setToast({ message: "Canvas OAuth is not configured yet", type: "error" });
     }
   }, [searchParams]);
 
@@ -329,7 +325,33 @@ export default function ConnectPage() {
   }, [searchParams]); // re-fetch after OAuth redirect
 
   const handleConnectCanvas = () => {
-    window.location.href = "/api/auth/canvas";
+    setShowCanvasInput(true);
+  };
+
+  const handleSaveCanvasToken = async () => {
+    if (!canvasTokenInput.trim()) return;
+    setConnecting(true);
+    try {
+      const res = await fetch("/api/auth/canvas/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: canvasTokenInput.trim() }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error ?? "Failed to save token");
+      }
+      setStatus((prev) =>
+        prev ? { ...prev, canvas_connected: true, canvas_connected_at: new Date().toISOString() } : prev
+      );
+      setShowCanvasInput(false);
+      setCanvasTokenInput("");
+      setToast({ message: "Canvas connected successfully", type: "success" });
+    } catch (e) {
+      setToast({ message: e instanceof Error ? e.message : "Failed to connect Canvas", type: "error" });
+    } finally {
+      setConnecting(false);
+    }
   };
 
   const handleDisconnectCanvas = async () => {
@@ -439,6 +461,79 @@ export default function ConnectPage() {
             onConnect={handleConnectCanvas}
             onDisconnect={handleDisconnectCanvas}
             loading={disconnecting}
+            inputSlot={showCanvasInput && !status?.canvas_connected ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                <p style={{ fontFamily: "var(--font-jakarta)", fontSize: 11, letterSpacing: "0.8px", color: "rgba(255,255,255,0.3)", margin: 0 }}>
+                  generate a token at{" "}
+                  <a
+                    href="https://osu.instructure.com/profile/settings"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: "rgba(226,80,80,0.7)", textDecoration: "none" }}
+                  >
+                    osu.instructure.com → Account → Settings → New Access Token
+                  </a>
+                </p>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <input
+                    type="password"
+                    placeholder="paste your access token"
+                    value={canvasTokenInput}
+                    onChange={(e) => setCanvasTokenInput(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleSaveCanvasToken()}
+                    autoFocus
+                    style={{
+                      flex: 1,
+                      background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      borderRadius: 8,
+                      padding: "9px 14px",
+                      fontFamily: "var(--font-jakarta)",
+                      fontSize: 12,
+                      color: "rgba(255,255,255,0.7)",
+                      outline: "none",
+                      letterSpacing: "0.3px",
+                    }}
+                  />
+                  <button
+                    onClick={handleSaveCanvasToken}
+                    disabled={connecting || !canvasTokenInput.trim()}
+                    style={{
+                      fontFamily: "var(--font-jakarta)",
+                      fontSize: 12,
+                      letterSpacing: "1px",
+                      color: "rgba(226,80,80,0.8)",
+                      background: "rgba(226,50,50,0.08)",
+                      border: "1px solid rgba(226,50,50,0.2)",
+                      borderRadius: 8,
+                      padding: "9px 18px",
+                      cursor: connecting ? "default" : "pointer",
+                      opacity: connecting || !canvasTokenInput.trim() ? 0.5 : 1,
+                      transition: "all 0.2s ease",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {connecting ? "saving..." : "save"}
+                  </button>
+                  <button
+                    onClick={() => { setShowCanvasInput(false); setCanvasTokenInput(""); }}
+                    style={{
+                      fontFamily: "var(--font-jakarta)",
+                      fontSize: 12,
+                      letterSpacing: "1px",
+                      color: "rgba(255,255,255,0.3)",
+                      background: "transparent",
+                      border: "1px solid rgba(255,255,255,0.08)",
+                      borderRadius: 8,
+                      padding: "9px 14px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    cancel
+                  </button>
+                </div>
+              </div>
+            ) : undefined}
           />
 
           <IntegrationCard
