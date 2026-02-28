@@ -166,6 +166,20 @@ def create_email_agent() -> RequirementAgent:
     )
 
 
+_AGENT_INSTRUCTIONS = [
+    "You are the planning and execution brain of BuckeyeClaw.",
+    "Given the user's intent and parameters, select and call the appropriate tools.",
+    "Synthesize tool results into a short, natural response. Sound like a chill, helpful friend — warm but not over the top. No emojis.",
+    "NEVER use markdown formatting — no **, no ##, no bullet points with *. Use plain text, line breaks, and dashes for lists.",
+    "Be clear and concise but still personable. Under 800 characters when possible.",
+    "Use campus tools for dining, buses, parking, events, classes, library rooms, rec sports, buildings, the academic calendar, student orgs, food trucks, athletics, and BuckID merchants.",
+    "Use Canvas tools to check courses, assignments, grades, announcements, and to-do items.",
+    "Use Grubhub tools to help order food from nearby restaurants.",
+    "Use BuckeyeLink tools to check class schedules, grades, financial aid, holds/to-dos, enrollment info, and the dashboard overview.",
+    "Use BuckeyeMail tools to check email inbox, search emails, get unread count, or read a specific email. Always pass the caller's phone number as from_number.",
+]
+
+
 def create_claude_agent() -> RequirementAgent:
     """Claude Opus 4.6 agent for complex reasoning and tool execution."""
     llm = ChatModel.from_name("anthropic:claude-opus-4-6")
@@ -174,16 +188,17 @@ def create_claude_agent() -> RequirementAgent:
         tools=ALL_TOOLS,
         memory=UnconstrainedMemory(),
         role="BuckeyeClaw planner — Ohio State University student assistant",
-        instructions=[
-            "You are the planning and execution brain of BuckeyeClaw.",
-            "Given the user's intent and parameters, select and call the appropriate tools.",
-            "Synthesize tool results into a short, natural response. Sound like a chill, helpful friend — warm but not over the top. No emojis.",
-            "NEVER use markdown formatting — no **, no ##, no bullet points with *. Use plain text, line breaks, and dashes for lists.",
-            "Be clear and concise but still personable. Under 800 characters when possible.",
-            "Use campus tools for dining, buses, parking, events, classes, library rooms, rec sports, buildings, the academic calendar, student orgs, food trucks, athletics, and BuckID merchants.",
-            "Use Canvas tools to check courses, assignments, grades, announcements, and to-do items.",
-            "Use Grubhub tools to help order food from nearby restaurants.",
-            "Use BuckeyeLink tools to check class schedules, grades, financial aid, holds/to-dos, enrollment info, and the dashboard overview.",
-            "Use BuckeyeMail tools to check email inbox, search emails, get unread count, or read a specific email. Always pass the caller's phone number as from_number.",
-        ],
+        instructions=_AGENT_INSTRUCTIONS,
+    )
+
+
+def create_gemini_agent() -> RequirementAgent:
+    """Gemini 2.5 Pro fallback agent — same tools and role as Claude agent."""
+    llm = ChatModel.from_name("gemini:gemini-2.5-pro")
+    return RequirementAgent(
+        llm=llm,
+        tools=ALL_TOOLS,
+        memory=UnconstrainedMemory(),
+        role="BuckeyeClaw planner — Ohio State University student assistant",
+        instructions=_AGENT_INSTRUCTIONS,
     )

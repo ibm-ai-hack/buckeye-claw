@@ -7,7 +7,7 @@ from beeai_framework.errors import FrameworkError
 from beeai_framework.memory import UnconstrainedMemory
 from beeai_framework.workflows import Workflow
 
-from agents.factories import create_granite_agent, create_claude_agent, create_grubhub_agent, create_email_agent, ALL_TOOLS
+from agents.factories import create_granite_agent, create_claude_agent, create_gemini_agent, create_grubhub_agent, create_email_agent, ALL_TOOLS
 from agents.models import PipelineState
 from backend.integrations.campus.utils import now_eastern
 from backend.integrations.canvas.tools import _canvas_token_var
@@ -89,38 +89,49 @@ def _build_workflow() -> Workflow:
         if tracer:
             tracer.step_start("claude_intake")
 
-        llm = ChatModel.from_name("anthropic:claude-sonnet-4-6")
-        agent = RequirementAgent(llm=llm, memory=UnconstrainedMemory())
         prompt = _build_intake_prompt(state.memory_context, state.last_reply, state.user_text)
-        try:
-            response = await agent.run(prompt)
-            parsed = _parse_json(response.last_message.text)
-            state.intent = parsed.get("intent", "unknown")
-            state.extracted_params = parsed.get("params", {})
-            state.is_simple = parsed.get("is_simple", False)
-            logger.info(
-                "Claude classified intent=%s is_simple=%s params=%s",
-                state.intent, state.is_simple, state.extracted_params,
-            )
-            if tracer:
-                tracer.emit(
-                    "intent_classified",
-                    step="claude_intake",
-                    metadata={
-                        "intent": state.intent,
-                        "is_simple": state.is_simple,
-                        "params": state.extracted_params,
-                    },
+
+        # Try Claude first, fall back to Gemini on any failure
+        for provider, make_llm in [
+            ("claude", lambda: ChatModel.from_name("anthropic:claude-sonnet-4-6")),
+            ("gemini", lambda: ChatModel.from_name("gemini:gemini-2.5-pro")),
+        ]:
+            try:
+                llm = make_llm()
+                agent = RequirementAgent(llm=llm, memory=UnconstrainedMemory())
+                response = await agent.run(prompt)
+                parsed = _parse_json(response.last_message.text)
+                state.intent = parsed.get("intent", "unknown")
+                state.extracted_params = parsed.get("params", {})
+                state.is_simple = parsed.get("is_simple", False)
+                logger.info(
+                    "Intake (%s) classified intent=%s is_simple=%s params=%s",
+                    provider, state.intent, state.is_simple, state.extracted_params,
                 )
-        except FrameworkError as e:
-            logger.error("Claude intake error: %s", e.explain())
-            state.intent = "unknown"
-            state.is_simple = False
-            if tracer:
-                tracer.emit("error", step="claude_intake", metadata={"error": e.explain()[:500]})
-        finally:
-            if tracer:
-                tracer.step_end("claude_intake")
+                if tracer:
+                    tracer.emit(
+                        "intent_classified",
+                        step="claude_intake",
+                        metadata={
+                            "intent": state.intent,
+                            "is_simple": state.is_simple,
+                            "params": state.extracted_params,
+                            "provider": provider,
+                        },
+                    )
+                break  # success — skip fallback
+            except Exception as e:
+                err_msg = e.explain() if isinstance(e, FrameworkError) else f"{type(e).__name__}: {e}"
+                logger.warning("Intake (%s) failed: %s", provider, err_msg[:300])
+                if tracer:
+                    tracer.emit("error", step="claude_intake", metadata={"error": err_msg[:500], "provider": provider})
+                if provider == "gemini":
+                    # Both providers failed
+                    state.intent = "unknown"
+                    state.is_simple = False
+
+        if tracer:
+            tracer.step_end("claude_intake")
 
     async def claude_plan_execute(state: PipelineState):
         """Route to a specialized agent or Claude Opus for tool execution."""
@@ -191,49 +202,62 @@ def _build_workflow() -> Workflow:
                 "Select and call the appropriate tools to fulfill this request, "
                 "then synthesize the results into a clear, helpful response."
             )
+        # Try primary agent, fall back to Gemini on failure
+        response = None
         try:
             response = await agent.run(prompt)
             state.draft_response = response.last_message.text
-
-            # Post-process tool calls from the agent run
-            if tracer and hasattr(response, "state") and hasattr(response.state, "steps"):
-                for step in response.state.steps:
-                    if hasattr(step, "tool_name"):
-                        tool_args = None
-                        tool_result = None
-                        try:
-                            tool_args = step.tool_input if hasattr(step, "tool_input") else None
-                        except Exception:
-                            pass
-                        try:
-                            tool_result = str(step.tool_output)[:2000] if hasattr(step, "tool_output") else None
-                        except Exception:
-                            pass
-                        tracer.emit(
-                            "tool_invoked",
-                            step="claude_plan_execute",
-                            tool_name=step.tool_name,
-                            tool_args={"input": tool_args} if tool_args else None,
-                        )
-                        tracer.emit(
-                            "tool_resolved",
-                            step="claude_plan_execute",
-                            tool_name=step.tool_name,
-                            tool_result={"output": tool_result} if tool_result else None,
-                        )
-        except FrameworkError as e:
-            logger.error("Claude execution error: %s", e.explain())
-            state.draft_response = f"[DEBUG] Claude error: {e.explain()[:400]}"
-            if tracer:
-                tracer.emit("error", step="claude_plan_execute", metadata={"error": e.explain()[:500]})
+            provider_used = "claude"
         except Exception as e:
-            logger.exception("Unexpected error in Claude execution")
-            state.draft_response = f"[DEBUG] Claude exception: {type(e).__name__}: {e}"[:500]
+            err_msg = e.explain() if isinstance(e, FrameworkError) else f"{type(e).__name__}: {e}"
+            logger.warning("Primary agent failed: %s — falling back to Gemini", err_msg[:300])
             if tracer:
-                tracer.emit("error", step="claude_plan_execute", metadata={"error": f"{type(e).__name__}: {e}"[:500]})
-        finally:
-            if tracer:
-                tracer.step_end("claude_plan_execute")
+                tracer.emit("error", step="claude_plan_execute", metadata={"error": err_msg[:500], "provider": "claude"})
+            try:
+                fallback = create_gemini_agent()
+                response = await fallback.run(prompt)
+                state.draft_response = response.last_message.text
+                provider_used = "gemini"
+                logger.info("Gemini fallback succeeded")
+            except Exception as e2:
+                err2 = e2.explain() if isinstance(e2, FrameworkError) else f"{type(e2).__name__}: {e2}"
+                logger.error("Gemini fallback also failed: %s", err2[:300])
+                state.draft_response = "Sorry, I'm having trouble right now. Please try again in a moment."
+                provider_used = "none"
+                if tracer:
+                    tracer.emit("error", step="claude_plan_execute", metadata={"error": err2[:500], "provider": "gemini"})
+
+        # Emit tool call traces from the successful run
+        if response and tracer and hasattr(response, "state") and hasattr(response.state, "steps"):
+            for step in response.state.steps:
+                if hasattr(step, "tool_name"):
+                    tool_args = None
+                    tool_result = None
+                    try:
+                        tool_args = step.tool_input if hasattr(step, "tool_input") else None
+                    except Exception:
+                        pass
+                    try:
+                        tool_result = str(step.tool_output)[:2000] if hasattr(step, "tool_output") else None
+                    except Exception:
+                        pass
+                    tracer.emit(
+                        "tool_invoked",
+                        step="claude_plan_execute",
+                        tool_name=step.tool_name,
+                        tool_args={"input": tool_args} if tool_args else None,
+                    )
+                    tracer.emit(
+                        "tool_resolved",
+                        step="claude_plan_execute",
+                        tool_name=step.tool_name,
+                        tool_result={"output": tool_result} if tool_result else None,
+                    )
+
+        if tracer:
+            if provider_used != "none":
+                tracer.emit("provider_used", step="claude_plan_execute", metadata={"provider": provider_used})
+            tracer.step_end("claude_plan_execute")
 
     async def granite_format(state: PipelineState):
         """Granite formats the final response for SMS delivery."""
