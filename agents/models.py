@@ -13,6 +13,9 @@ class PipelineState(BaseModel):
     memory_context: str = ""
     last_reply: str = ""  # Last message the agent sent to this user (for follow-up detection)
 
+    # Integration tokens — fetched before workflow starts
+    canvas_token: str = ""
+
     # After Granite intake
     intent: str = ""
     extracted_params: dict = {}

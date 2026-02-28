@@ -10,6 +10,7 @@ from beeai_framework.workflows import Workflow
 from agents.factories import create_granite_agent, create_claude_agent, create_grubhub_agent, create_email_agent, ALL_TOOLS
 from agents.models import PipelineState
 from backend.integrations.campus.utils import now_eastern
+from backend.integrations.canvas.tools import _canvas_token_var
 from agents.tracer import RunTracer, _tracer_var, get_tracer
 from auth.client import get_client
 from auth.users import get_user
@@ -136,6 +137,19 @@ def _build_workflow() -> Workflow:
             f"[User context from memory: {state.memory_context}]\n"
             if state.memory_context else ""
         )
+
+        if state.intent == "canvas_query":
+            if not state.canvas_token:
+                state.draft_response = (
+                    "Canvas isn't connected yet. Head to buckeyeclaw.vercel.app/app/connect "
+                    "to link your OSU Canvas account and I'll be able to answer questions about "
+                    "your courses, assignments, grades, and more."
+                )
+                if tracer:
+                    tracer.step_end("claude_plan_execute")
+                return
+            # Set the per-request token so canvas tools use this user's token
+            _canvas_token_var.set(state.canvas_token)
 
         # Grubhub access restricted to approved accounts
         GRUBHUB_ALLOWED_USERS = {"61a0bbff-fd23-4fb4-8108-5eda6ec290a6"}  # shetty.118@osu.edu
@@ -286,6 +300,7 @@ async def run_pipeline(text: str, from_number: str) -> str:
 
     # --- Memory: resolve user, fetch context ---
     user_id = ""
+    canvas_token = ""
     memory_context = ""
     last_reply = ""
     if _memory is not None:
@@ -345,8 +360,30 @@ async def run_pipeline(text: str, from_number: str) -> str:
                 memory_context = await _memory.get_context(user_id, text)
                 logger.info("[MEMORY] Current task: %r", text)
                 logger.info("[MEMORY] Injected context (%d chars): %s", len(memory_context), memory_context or "(empty)")
+
         except Exception:
             logger.exception("Memory context fetch failed; continuing without it")
+
+    # Fetch canvas token from Supabase and inject into ContextVar for canvas tools
+    if user_id:
+        try:
+            supabase = get_client()
+            row = (
+                supabase.table("user_integrations")
+                .select("canvas_token")
+                .eq("user_id", user_id)
+                .not_.is_("canvas_token", "null")
+                .maybe_single()
+                .execute()
+            )
+            canvas_token = row.data.get("canvas_token", "") if row.data else ""
+            if canvas_token:
+                _canvas_token_var.set(canvas_token)
+                logger.debug("[CANVAS] Token injected for user %s", user_id)
+            else:
+                logger.info("[CANVAS] No canvas token found for user %s", user_id)
+        except Exception:
+            logger.exception("[CANVAS] Failed to fetch canvas token from Supabase")
 
     state = PipelineState(
         user_text=text,
@@ -354,6 +391,7 @@ async def run_pipeline(text: str, from_number: str) -> str:
         user_id=user_id,
         memory_context=memory_context,
         last_reply=last_reply,
+        canvas_token=canvas_token,
     )
 
     response_text = None

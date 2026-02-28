@@ -12,22 +12,34 @@ from flask import Blueprint, jsonify
 
 from canvasapi import Canvas
 
+from auth.client import get_client
+
 logger = logging.getLogger(__name__)
 
 canvas_api = Blueprint("canvas_api", __name__)
 
-_canvas: Canvas | None = None
-
 
 def _get_canvas() -> Canvas:
-    global _canvas
-    if _canvas is None:
-        api_url = os.environ.get("CANVAS_API_URL", "https://osu.instructure.com")
-        api_token = os.environ.get("CANVAS_API_TOKEN", "")
-        if not api_token:
-            raise RuntimeError("CANVAS_API_TOKEN not set")
-        _canvas = Canvas(api_url, api_token)
-    return _canvas
+    """Return a Canvas client using the token stored in Supabase user_integrations."""
+    api_url = os.environ.get("CANVAS_API_URL", "https://osu.instructure.com")
+    try:
+        supabase = get_client()
+        row = (
+            supabase.table("user_integrations")
+            .select("canvas_token")
+            .not_.is_("canvas_token", "null")
+            .limit(1)
+            .maybe_single()
+            .execute()
+        )
+        token = row.data.get("canvas_token") if row.data else None
+    except Exception:
+        logger.exception("Failed to fetch canvas token from Supabase")
+        token = None
+
+    if not token:
+        raise RuntimeError("Canvas is not connected. Visit /app/connect to link your account.")
+    return Canvas(api_url, token)
 
 
 # ---------------------------------------------------------------------------
