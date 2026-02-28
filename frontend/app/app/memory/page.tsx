@@ -159,7 +159,7 @@ function buildGraph(
       id: f.id,
       x: Math.cos(angle) * dist, y: Math.sin(angle) * dist,
       vx: 0, vy: 0,
-      radius: 5,
+      radius: 7,
       color: FACT_COLOR,
       label: f.key,
       type: "fact",
@@ -496,12 +496,26 @@ export default function MemoryPage() {
         ctx.fillStyle = dimmed ? hexToRgba(n.color, 0.25) : n.color;
         ctx.fill();
 
-        // always-on label for category + center
+        // always-on labels
         if ((n.type === "category" || n.type === "center") && !isHovered) {
           ctx.font = n.type === "center" ? "bold 11px monospace" : "10px monospace";
           ctx.fillStyle = dimmed ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.4)";
           ctx.textAlign = "center";
           ctx.fillText(n.label, n.x, n.y + n.radius + 14);
+        }
+
+        // always-on fact labels: show key = value
+        if (n.type === "fact" && !isHovered) {
+          const key = n.meta.key?.replace(/_/g, " ") ?? "";
+          const val = n.meta.value ?? "";
+          const display = val.length > 30 ? val.slice(0, 27) + "..." : val;
+          ctx.textAlign = "center";
+          ctx.font = "bold 9px monospace";
+          ctx.fillStyle = dimmed ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.5)";
+          ctx.fillText(key, n.x, n.y + n.radius + 12);
+          ctx.font = "9px monospace";
+          ctx.fillStyle = dimmed ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.3)";
+          ctx.fillText(display, n.x, n.y + n.radius + 23);
         }
 
         // hover tooltip
