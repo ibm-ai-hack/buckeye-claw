@@ -9,6 +9,7 @@ from beeai_framework.workflows import Workflow
 
 from agents.factories import create_granite_agent, create_claude_agent, create_grubhub_agent, create_email_agent, ALL_TOOLS
 from agents.models import PipelineState
+from agents.tracer import RunTracer, _tracer_var, get_tracer
 from auth.client import get_client
 from auth.users import get_user
 from memory.db import MemoryDB
@@ -67,6 +68,10 @@ def _build_workflow() -> Workflow:
 
     async def claude_intake(state: PipelineState):
         """Claude 4.6 classifies intent and extracts parameters."""
+        tracer = get_tracer()
+        if tracer:
+            tracer.step_start("claude_intake")
+
         llm = ChatModel.from_name("anthropic:claude-sonnet-4-6")
         agent = RequirementAgent(llm=llm, memory=UnconstrainedMemory())
         memory_block = (
@@ -91,15 +96,34 @@ def _build_workflow() -> Workflow:
                 "Claude classified intent=%s is_simple=%s params=%s",
                 state.intent, state.is_simple, state.extracted_params,
             )
+            if tracer:
+                tracer.emit(
+                    "intent_classified",
+                    step="claude_intake",
+                    metadata={
+                        "intent": state.intent,
+                        "is_simple": state.is_simple,
+                        "params": state.extracted_params,
+                    },
+                )
         except FrameworkError as e:
             logger.error("Claude intake error: %s", e.explain())
             state.intent = "unknown"
             state.is_simple = False
+            if tracer:
+                tracer.emit("error", step="claude_intake", metadata={"error": e.explain()[:500]})
+        finally:
+            if tracer:
+                tracer.step_end("claude_intake")
 
     async def claude_plan_execute(state: PipelineState):
         """Route to a specialized agent or Claude Opus for tool execution."""
         if state.is_simple:
             return
+
+        tracer = get_tracer()
+        if tracer:
+            tracer.step_start("claude_plan_execute")
 
         logger.info("Agent step starting for intent=%s", state.intent)
 
@@ -139,15 +163,53 @@ def _build_workflow() -> Workflow:
         try:
             response = await agent.run(prompt)
             state.draft_response = response.last_message.text
+
+            # Post-process tool calls from the agent run
+            if tracer and hasattr(response, "state") and hasattr(response.state, "steps"):
+                for step in response.state.steps:
+                    if hasattr(step, "tool_name"):
+                        tool_args = None
+                        tool_result = None
+                        try:
+                            tool_args = step.tool_input if hasattr(step, "tool_input") else None
+                        except Exception:
+                            pass
+                        try:
+                            tool_result = str(step.tool_output)[:2000] if hasattr(step, "tool_output") else None
+                        except Exception:
+                            pass
+                        tracer.emit(
+                            "tool_invoked",
+                            step="claude_plan_execute",
+                            tool_name=step.tool_name,
+                            tool_args={"input": tool_args} if tool_args else None,
+                        )
+                        tracer.emit(
+                            "tool_resolved",
+                            step="claude_plan_execute",
+                            tool_name=step.tool_name,
+                            tool_result={"output": tool_result} if tool_result else None,
+                        )
         except FrameworkError as e:
             logger.error("Claude execution error: %s", e.explain())
             state.draft_response = f"[DEBUG] Claude error: {e.explain()[:400]}"
+            if tracer:
+                tracer.emit("error", step="claude_plan_execute", metadata={"error": e.explain()[:500]})
         except Exception as e:
             logger.exception("Unexpected error in Claude execution")
             state.draft_response = f"[DEBUG] Claude exception: {type(e).__name__}: {e}"[:500]
+            if tracer:
+                tracer.emit("error", step="claude_plan_execute", metadata={"error": f"{type(e).__name__}: {e}"[:500]})
+        finally:
+            if tracer:
+                tracer.step_end("claude_plan_execute")
 
     async def granite_format(state: PipelineState):
         """Granite formats the final response for SMS delivery."""
+        tracer = get_tracer()
+        if tracer:
+            tracer.step_start("granite_format")
+
         agent = create_granite_agent()
 
         if state.is_simple:
@@ -157,10 +219,14 @@ def _build_workflow() -> Workflow:
             except FrameworkError as e:
                 logger.error("Granite simple response error: %s", e.explain())
                 state.final_response = "Hey! How can I help you today?"
+            if tracer:
+                tracer.step_end("granite_format")
             return Workflow.END
 
         if not state.draft_response:
             state.final_response = "Sorry, I couldn't process that. Could you try rephrasing?"
+            if tracer:
+                tracer.step_end("granite_format")
             return Workflow.END
 
         prompt = (
@@ -176,6 +242,8 @@ def _build_workflow() -> Workflow:
             logger.error("Granite format error: %s", e.explain())
             state.final_response = state.draft_response[:1500]
 
+        if tracer:
+            tracer.step_end("granite_format")
         return Workflow.END
 
     wf.add_step("claude_intake", claude_intake)
@@ -191,6 +259,11 @@ _workflow = _build_workflow()
 async def run_pipeline(text: str, from_number: str) -> str:
     """Run the dual-model orchestration pipeline. Returns SMS-ready text."""
     debug = True  # TODO: remove after debugging
+
+    # --- Tracing: create run and set context var ---
+    tracer = RunTracer.create(phone=from_number, user_message=text)
+    _tracer_var.set(tracer)
+    tracer.record_message("user", text)
 
     # --- Memory: resolve user, fetch context ---
     user_id = ""
@@ -257,10 +330,12 @@ async def run_pipeline(text: str, from_number: str) -> str:
         response_text = run.state.final_response
     except FrameworkError as e:
         logger.error("Pipeline framework error: %s", e.explain())
+        tracer.fail(e.explain()[:500])
         if debug:
             response_text = f"[DEBUG] Pipeline error: {e.explain()[:500]}"
     except Exception as e:
         logger.exception("Unexpected pipeline error")
+        tracer.fail(f"{type(e).__name__}: {e}"[:500])
         if debug:
             response_text = f"[DEBUG] Pipeline exception: {type(e).__name__}: {e}"[:600]
 
@@ -270,15 +345,21 @@ async def run_pipeline(text: str, from_number: str) -> str:
         _memory.update_background(user_id, text)
 
     if response_text:
+        tracer.record_message("agent", response_text)
+        tracer.complete(response_text, intent=state.intent or None)
         return response_text
 
     # Last-resort fallback: try Granite alone with tools
     try:
         agent = create_granite_agent(tools=ALL_TOOLS)
         response = await agent.run(text)
-        return response.last_message.text[:1500]
+        fallback_text = response.last_message.text[:1500]
+        tracer.record_message("agent", fallback_text)
+        tracer.complete(fallback_text, intent="fallback")
+        return fallback_text
     except Exception as e:
         logger.exception("Fallback agent also failed")
+        tracer.fail(f"Fallback also failed: {type(e).__name__}: {e}"[:500])
         if debug:
             return f"[DEBUG] Fallback also failed: {type(e).__name__}: {e}"[:600]
         return "Sorry, I'm having technical difficulties. Please try again in a moment."
