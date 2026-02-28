@@ -14,15 +14,6 @@ export default async function AppLayout({
 
   if (!user) redirect("/");
 
-  // Redirect to onboarding if phone not yet registered
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("phone")
-    .eq("id", user.id)
-    .single();
-
-  if (!profile?.phone) redirect("/onboarding");
-
   return (
     <div style={{ display: "flex", minHeight: "100vh", background: "#0a0a0a" }}>
       <LeftRail />
