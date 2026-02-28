@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 
 import httpx
+from beeai_framework.tools import StringToolOutput, tool
 
 EASTERN = ZoneInfo("America/New_York")
 
@@ -43,6 +44,12 @@ def to_eastern(utc_str: str) -> str:
 
 def now_eastern() -> str:
     return datetime.now(EASTERN).strftime("%B %d, %Y %I:%M %p ET")
+
+
+@tool
+def get_current_time() -> StringToolOutput:
+    """Get the current date and time in Eastern Time (Ohio). Use this when the user asks what time or date it is."""
+    return StringToolOutput(now_eastern())
 
 
 def format_response(data: dict | list, label: str = "Results") -> str:

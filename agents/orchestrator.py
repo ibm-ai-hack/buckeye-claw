@@ -9,6 +9,7 @@ from beeai_framework.workflows import Workflow
 
 from agents.factories import create_granite_agent, create_claude_agent, create_grubhub_agent, create_email_agent, ALL_TOOLS
 from agents.models import PipelineState
+from backend.integrations.campus.utils import now_eastern
 from agents.tracer import RunTracer, _tracer_var, get_tracer
 from auth.client import get_client
 from auth.users import get_user
@@ -79,6 +80,7 @@ def _build_workflow() -> Workflow:
             if state.memory_context else ""
         )
         prompt = (
+            f"[Current date/time: {now_eastern()}]\n"
             f"{memory_block}"
             "Classify the following user message into exactly one intent.\n"
             f"Valid intents: {INTENT_LIST}\n\n"
@@ -153,6 +155,7 @@ def _build_workflow() -> Workflow:
         else:
             agent = create_claude_agent()
             prompt = (
+                f"[Current date/time: {now_eastern()}]\n"
                 f"{memory_block}"
                 f"User intent: {state.intent}\n"
                 f"Extracted parameters: {json.dumps(state.extracted_params)}\n"
@@ -214,7 +217,9 @@ def _build_workflow() -> Workflow:
 
         if state.is_simple:
             try:
-                response = await agent.run(state.user_text)
+                response = await agent.run(
+                    f"[Current date/time: {now_eastern()}]\n\n{state.user_text}"
+                )
                 state.final_response = response.last_message.text[:1500]
             except FrameworkError as e:
                 logger.error("Granite simple response error: %s", e.explain())
