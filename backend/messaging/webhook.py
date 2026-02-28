@@ -2,7 +2,6 @@ import asyncio
 import json
 import logging
 import os
-import random
 import threading
 
 from urllib.parse import unquote
@@ -196,19 +195,6 @@ async def _handle_inbound_message(msg: InboundMessage):
         return
 
     logger.info("Message from %s via %s: %s", from_number, msg.service, msg.text[:100])
-
-    # Send immediate acknowledgment so user knows we're working
-    ack = random.choice([
-        "On it! Give me a sec...",
-        "Working on it...",
-        "Let me look into that!",
-        "One sec...",
-        "Looking that up for you...",
-    ])
-    await sender.send_message(from_number, ack)
-
-    # Restart typing — sending the ack message clears the indicator
-    await sender.start_typing(from_number)
 
     try:
         if _agent_handler:

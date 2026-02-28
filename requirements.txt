@@ -1,0 +1,21 @@
+# Core
+beeai-framework
+ibm-watsonx-ai
+anthropic
+flask
+httpx
+python-dotenv
+canvasapi
+pydantic>=2.0
+
+# Grubhub (Android emulation)
+Appium-Python-Client
+
+# BuckeyeLink (browser automation)
+playwright
+browser-use
+beeai-framework[anthropic]
+
+# Dev
+pytest
+pytest-asyncio
