@@ -246,6 +246,16 @@ def _is_registered_number(phone: str) -> bool:
         return True
 
 
+async def _persist_last_reply(phone: str, reply: str) -> None:
+    """Fire-and-forget: write the agent's last reply to Supabase for follow-up detection."""
+    try:
+        from auth import get_client
+        supabase = get_client()
+        supabase.table("profiles").update({"last_reply": reply}).eq("phone", phone).execute()
+    except Exception:
+        logger.warning("Failed to persist last_reply for %s", phone)
+
+
 import re
 
 _LAUGH_RE = re.compile(
@@ -324,6 +334,7 @@ async def _handle_inbound_message(msg: InboundMessage):
 
         await sender.stop_typing(from_number)
         await sender.send_message(from_number, reply)
+        asyncio.ensure_future(_persist_last_reply(from_number, reply))
 
     except Exception:
         logger.exception("Agent error processing message from %s", from_number)

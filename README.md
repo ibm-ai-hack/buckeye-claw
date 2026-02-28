@@ -79,6 +79,8 @@ OSU students juggle a dozen different apps and portals daily: BuckeyeLink for re
 - **Semantic retrieval** -Voyage AI `voyage-3` embeddings (1024 dims) with pgvector cosine similarity
 - Memory context injected into agent system prompt before every interaction
 
+![Memory Module Architecture](docs/MemoryDiagram.png)
+
 ### Web Dashboard
 - Three.js animated landing page with dithered wave shader
 - Real-time agent reasoning split view -see tool calls, intent, and timing as the agent works

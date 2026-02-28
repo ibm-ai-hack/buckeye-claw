@@ -63,6 +63,21 @@ def _parse_json(text: str) -> dict:
     return {}
 
 
+def _build_intake_prompt(memory_context: str, last_reply: str, user_text: str) -> str:
+    """Build the intent-classification prompt for the claude_intake step."""
+    memory_block = f"Known user context: {memory_context}\n\n" if memory_context else ""
+    prior_block = f"Last message you sent to this user: {last_reply}\n\n" if last_reply else ""
+    return (
+        f"{memory_block}"
+        f"{prior_block}"
+        "Classify the following user message into exactly one intent.\n"
+        f"Valid intents: {INTENT_LIST}\n\n"
+        "Respond with JSON only, no other text:\n"
+        '{"intent": "<intent>", "params": {<extracted parameters>}, "is_simple": <true if chitchat/greeting that needs no tools>}\n\n'
+        f"User message: {user_text}"
+    )
+
+
 def _build_workflow() -> Workflow:
     """Build the dual-model orchestration workflow."""
     wf = Workflow(PipelineState)
@@ -75,19 +90,7 @@ def _build_workflow() -> Workflow:
 
         llm = ChatModel.from_name("anthropic:claude-sonnet-4-6")
         agent = RequirementAgent(llm=llm, memory=UnconstrainedMemory())
-        memory_block = (
-            f"Known user context: {state.memory_context}\n\n"
-            if state.memory_context else ""
-        )
-        prompt = (
-            f"[Current date/time: {now_eastern()}]\n"
-            f"{memory_block}"
-            "Classify the following user message into exactly one intent.\n"
-            f"Valid intents: {INTENT_LIST}\n\n"
-            "Respond with JSON only, no other text:\n"
-            '{"intent": "<intent>", "params": {<extracted parameters>}, "is_simple": <true if chitchat/greeting that needs no tools>}\n\n'
-            f"User message: {state.user_text}"
-        )
+        prompt = _build_intake_prompt(state.memory_context, state.last_reply, state.user_text)
         try:
             response = await agent.run(prompt)
             parsed = _parse_json(response.last_message.text)
@@ -273,6 +276,7 @@ async def run_pipeline(text: str, from_number: str) -> str:
     # --- Memory: resolve user, fetch context ---
     user_id = ""
     memory_context = ""
+    last_reply = ""
     if _memory is not None:
         try:
             supabase = get_client()
@@ -281,6 +285,17 @@ async def run_pipeline(text: str, from_number: str) -> str:
                 logger.info("[MEMORY] No profile found for %s; skipping memory", from_number)
             else:
                 user_id = resolved
+
+                # Fetch last reply for follow-up detection
+                lr = (
+                    supabase.table("profiles")
+                    .select("last_reply")
+                    .eq("id", user_id)
+                    .maybe_single()
+                    .execute()
+                )
+                if lr and lr.data:
+                    last_reply = lr.data.get("last_reply") or ""
                 logger.debug("[MEMORY] Resolved %s → user_id=%s", from_number, user_id)
 
                 # Fetch stored task history for this user (recent tasks across all categories)
@@ -327,6 +342,7 @@ async def run_pipeline(text: str, from_number: str) -> str:
         from_number=from_number,
         user_id=user_id,
         memory_context=memory_context,
+        last_reply=last_reply,
     )
 
     response_text = None
