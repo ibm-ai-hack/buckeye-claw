@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useRef, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
@@ -73,6 +74,18 @@ const NAV_ITEMS: NavItem[] = [
 export default function LeftRail() {
   const pathname = usePathname();
   const router = useRouter();
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setProfileOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <nav
@@ -223,16 +236,73 @@ export default function LeftRail() {
 
       {/* Bottom user section */}
       <div
+        ref={profileRef}
         style={{
           borderTop: "1px solid rgba(255, 240, 220, 0.06)",
           paddingTop: 14,
           marginTop: 8,
-          display: "flex",
-          flexDirection: "column",
-          gap: 6,
+          position: "relative",
         }}
       >
+        {/* Dropdown */}
+        {profileOpen && (
+          <div
+            style={{
+              position: "absolute",
+              bottom: "calc(100% + 6px)",
+              left: 0,
+              right: 0,
+              background: "#242120",
+              border: "1px solid rgba(255, 240, 220, 0.08)",
+              borderRadius: 10,
+              padding: 4,
+              boxShadow: "0 8px 24px rgba(0, 0, 0, 0.4)",
+              animation: "dropdownIn 0.15s ease-out",
+            }}
+          >
+            <button
+              onClick={async () => {
+                const supabase = createClient();
+                await supabase.auth.signOut();
+                router.push("/");
+              }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                padding: "8px 12px",
+                background: "transparent",
+                border: "none",
+                borderRadius: 8,
+                cursor: "pointer",
+                transition: "all 0.15s ease",
+                color: "rgba(237, 232, 227, 0.5)",
+                fontFamily: "var(--font-jakarta)",
+                fontSize: 13,
+                width: "100%",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "rgba(239, 68, 68, 0.10)";
+                e.currentTarget.style.color = "rgba(239, 68, 68, 0.8)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.color = "rgba(237, 232, 227, 0.5)";
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+              log out
+            </button>
+          </div>
+        )}
+
+        {/* Profile button */}
         <div
+          onClick={() => setProfileOpen((prev) => !prev)}
           style={{
             display: "flex",
             alignItems: "center",
@@ -241,12 +311,13 @@ export default function LeftRail() {
             borderRadius: 10,
             cursor: "pointer",
             transition: "background 0.2s ease",
+            background: profileOpen ? "rgba(255, 240, 220, 0.04)" : "transparent",
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.background = "rgba(255, 240, 220, 0.04)";
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = "transparent";
+            if (!profileOpen) e.currentTarget.style.background = "transparent";
           }}
         >
           <div
@@ -271,7 +342,7 @@ export default function LeftRail() {
               bu
             </span>
           </div>
-          <div>
+          <div style={{ flex: 1 }}>
             <div
               style={{
                 fontFamily: "var(--font-jakarta)",
@@ -293,46 +364,23 @@ export default function LeftRail() {
               student
             </div>
           </div>
-        </div>
-
-        {/* Logout button */}
-        <button
-          onClick={async () => {
-            const supabase = createClient();
-            await supabase.auth.signOut();
-            router.push("/");
-          }}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            padding: "8px 14px",
-            background: "transparent",
-            border: "none",
-            borderRadius: 10,
-            cursor: "pointer",
-            transition: "all 0.2s ease",
-            color: "rgba(237, 232, 227, 0.35)",
-            fontFamily: "var(--font-jakarta)",
-            fontSize: 12,
-            width: "100%",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "rgba(239, 68, 68, 0.08)";
-            e.currentTarget.style.color = "rgba(239, 68, 68, 0.7)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "transparent";
-            e.currentTarget.style.color = "rgba(237, 232, 227, 0.35)";
-          }}
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-            <polyline points="16 17 21 12 16 7" />
-            <line x1="21" y1="12" x2="9" y2="12" />
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="rgba(237, 232, 227, 0.3)"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{
+              transition: "transform 0.2s ease",
+              transform: profileOpen ? "rotate(180deg)" : "rotate(0deg)",
+            }}
+          >
+            <polyline points="18 15 12 9 6 15" />
           </svg>
-          log out
-        </button>
+        </div>
       </div>
     </nav>
   );
