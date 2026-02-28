@@ -11,9 +11,6 @@ _linq_client: LinqClient | None = None
 # Valid iMessage tapback reaction types
 REACTION_TYPES = {"love", "like", "dislike", "laugh", "emphasize", "question"}
 
-# Public URL where the vCard is hosted (Vercel frontend)
-VCARD_URL = "https://buckeyeclaw.vercel.app/buckeyeclaw.vcf"
-
 
 def get_linq_client() -> LinqClient:
     global _linq_client
@@ -71,22 +68,6 @@ async def mark_read(to: str) -> None:
     except Exception:
         logger.debug("Failed to send read receipt for %s", to)
 
-
-async def send_vcard(to: str) -> dict:
-    """Send the BuckeyeClaw vCard contact card so the user can save the contact."""
-    client = get_linq_client()
-    from_number = os.environ["LINQ_FROM_NUMBER"]
-    preferred = os.environ.get("LINQ_PREFERRED_SERVICE", "iMessage")
-
-    chat_id = chat_store.get_chat_id(to)
-    if not chat_id:
-        resp = await client.create_chat(from_number, [to])
-        chat_id = resp.get("chat", {}).get("id", "")
-        if chat_id:
-            chat_store.set_chat_id(to, chat_id)
-
-    parts = [{"type": "media", "url": VCARD_URL}]
-    return await client.send_message(chat_id, parts, service=preferred)
 
 
 async def react_to_message(message_id: str, reaction: str = "like") -> None:

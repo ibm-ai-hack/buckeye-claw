@@ -24,8 +24,6 @@ app.register_blueprint(canvas_api)
 _agent_handler = None
 _main_loop: asyncio.AbstractEventLoop | None = None
 
-# Track numbers that have already received the vCard contact card
-_vcard_sent: set[str] = set()
 
 
 def set_agent_handler(handler):
@@ -292,14 +290,6 @@ async def _handle_inbound_message(msg: InboundMessage):
 
     # Cache the chat mapping for outbound replies
     chat_store.set_chat_id(from_number, msg.chat_id)
-
-    # First contact: send the vCard so they can save BuckeyeClaw as a contact
-    if from_number not in _vcard_sent:
-        _vcard_sent.add(from_number)
-        try:
-            await sender.send_vcard(from_number)
-        except Exception:
-            logger.debug("Failed to send vCard to %s", from_number)
 
     # ALIVE: Send read receipt
     await sender.mark_read(from_number)
