@@ -1,6 +1,8 @@
 import Dither from "@/components/Dither";
 import GlassPanel from "@/components/GlassPanel";
 
+export const dynamic = "force-dynamic";
+
 export default function Home() {
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-[#666666]">

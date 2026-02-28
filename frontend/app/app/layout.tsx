@@ -1,10 +1,28 @@
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 import LeftRail from "@/components/LeftRail";
 
-export default function AppLayout({
+export default async function AppLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) redirect("/");
+
+  // Redirect to onboarding if phone not yet registered
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("phone")
+    .eq("id", user.id)
+    .single();
+
+  if (!profile?.phone) redirect("/onboarding");
+
   return (
     <div style={{ display: "flex", minHeight: "100vh", background: "#0a0a0a" }}>
       <LeftRail />

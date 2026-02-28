@@ -10,7 +10,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from auth.users import get_or_create_user, get_user_by_id
+from auth.users import get_user, get_user_by_id
 
 
 # ---------------------------------------------------------------------------
@@ -40,54 +40,36 @@ def _make_client(select_data=None, insert_data=None):
 
 
 # ---------------------------------------------------------------------------
-# get_or_create_user
+# get_user
 # ---------------------------------------------------------------------------
 
-class TestGetOrCreateUser:
+class TestGetUser:
     def test_returns_existing_user_id(self):
-        """When a profile already exists for the phone, returns its ID."""
+        """When a profile exists for the phone, returns its ID."""
         existing_id = str(uuid.uuid4())
         client = _make_client(select_data={"id": existing_id})
 
-        result = get_or_create_user(client, "+16141234567")
+        result = get_user(client, "+16141234567")
 
         assert result == existing_id
-        # insert should NOT have been called
         client.table.return_value.insert.assert_not_called()
 
-    def test_creates_new_user_when_not_found(self):
-        """When no profile exists, inserts one and returns the new ID."""
-        new_id = str(uuid.uuid4())
+    def test_returns_none_when_not_found(self):
+        """When no profile exists, returns None without inserting."""
+        client = _make_client(select_data=None)
 
-        client = MagicMock()
-        # First select returns nothing
-        (
-            client.table.return_value
-            .select.return_value
-            .eq.return_value
-            .maybe_single.return_value
-            .execute.return_value
-        ) = MagicMock(data=None)
+        result = get_user(client, "+16141234567")
 
-        # Insert returns new profile
-        (
-            client.table.return_value
-            .insert.return_value
-            .execute.return_value
-        ) = MagicMock(data=[{"id": new_id}])
-
-        result = get_or_create_user(client, "+16141234567")
-
-        assert result == new_id
-        client.table.return_value.insert.assert_called_once()
+        assert result is None
+        client.table.return_value.insert.assert_not_called()
 
     def test_same_phone_same_id(self):
         """Two calls with the same phone return the same ID."""
         existing_id = str(uuid.uuid4())
         client = _make_client(select_data={"id": existing_id})
 
-        id1 = get_or_create_user(client, "+16141234567")
-        id2 = get_or_create_user(client, "+16141234567")
+        id1 = get_user(client, "+16141234567")
+        id2 = get_user(client, "+16141234567")
 
         assert id1 == id2 == existing_id
 
