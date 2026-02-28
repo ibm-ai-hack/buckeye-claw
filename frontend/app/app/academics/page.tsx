@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import DomainHero from "@/components/DomainHero";
 import GradeBar from "@/components/domain/GradeBar";
-import ScheduleGrid from "@/components/domain/ScheduleGrid";
 import AssignmentRow from "@/components/domain/AssignmentRow";
 
 interface Course {
@@ -21,31 +20,21 @@ interface Assignment {
   urgency: "normal" | "soon" | "tomorrow" | "overdue";
 }
 
-interface ScheduleBlock {
-  code: string;
-  days: string[];
-  startHour: number;
-  endHour: number;
-}
-
-const TABS = ["schedule", "grades", "assignments"] as const;
+const TABS = ["grades", "assignments"] as const;
 type Tab = (typeof TABS)[number];
 
 export default function AcademicsPage() {
-  const [activeTab, setActiveTab] = useState<Tab>("schedule");
+  const [activeTab, setActiveTab] = useState<Tab>("grades");
 
   const [courses, setCourses] = useState<Course[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
-  const [schedule, setSchedule] = useState<ScheduleBlock[]>([]);
 
   const [loadingCourses, setLoadingCourses] = useState(true);
   const [loadingAssignments, setLoadingAssignments] = useState(true);
-  const [loadingSchedule, setLoadingSchedule] = useState(true);
 
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Fetch all three in parallel
     fetch("/api/canvas/courses")
       .then((r) => {
         if (!r.ok) throw new Error(`${r.status}`);
@@ -69,26 +58,12 @@ export default function AcademicsPage() {
       })
       .catch(() => {})
       .finally(() => setLoadingAssignments(false));
-
-    fetch("/api/canvas/schedule")
-      .then((r) => {
-        if (!r.ok) throw new Error(`${r.status}`);
-        return r.json();
-      })
-      .then((data) => {
-        if (data.error) throw new Error(data.error);
-        setSchedule(data);
-      })
-      .catch(() => {})
-      .finally(() => setLoadingSchedule(false));
   }, []);
 
   const isLoading =
     (activeTab === "grades" && loadingCourses) ||
-    (activeTab === "assignments" && loadingAssignments) ||
-    (activeTab === "schedule" && loadingSchedule);
+    (activeTab === "assignments" && loadingAssignments);
 
-  // Filter courses that have grade data
   const gradedCourses = courses.filter(
     (c) => c.percentage !== null && c.percentage !== undefined,
   );
@@ -145,7 +120,6 @@ export default function AcademicsPage() {
           padding: "20px 32px",
         }}
       >
-        {/* Error banner */}
         {error && (
           <div
             style={{
@@ -163,7 +137,6 @@ export default function AcademicsPage() {
           </div>
         )}
 
-        {/* Loading indicator */}
         {isLoading && (
           <div
             style={{
@@ -179,18 +152,6 @@ export default function AcademicsPage() {
           </div>
         )}
 
-        {/* Schedule tab */}
-        {activeTab === "schedule" && !isLoading && (
-          <div>
-            {schedule.length > 0 ? (
-              <ScheduleGrid courses={schedule} />
-            ) : (
-              <EmptyState message="no calendar events found in carmen" />
-            )}
-          </div>
-        )}
-
-        {/* Grades tab */}
         {activeTab === "grades" && !isLoading && (
           <div>
             {gradedCourses.length > 0 ? (
@@ -209,7 +170,6 @@ export default function AcademicsPage() {
           </div>
         )}
 
-        {/* Assignments tab */}
         {activeTab === "assignments" && !isLoading && (
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
             {assignments.length > 0 ? (
