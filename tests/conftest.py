@@ -1,9 +1,10 @@
 """Shared pytest fixtures and auto-skip logic for the BuckeyeBot test suite.
 
-Tests are organized into three credential tiers:
+Tests are organized into four credential tiers:
   - @pytest.mark.integration  requires SUPABASE_URL + SUPABASE_API_KEY
-  - @pytest.mark.semantic     requires above + OPENAI_API_KEY
+  - @pytest.mark.semantic     requires above + VOYAGE_API_KEY
   - @pytest.mark.llm          requires WATSONX_API_KEY + WATSONX_PROJECT_ID (no Supabase needed)
+  - @pytest.mark.e2e          requires all of the above (full MemoryModule pipeline)
 
 Tests in each tier are automatically skipped when the required env vars are absent.
 Set them in a .env file at the project root; this conftest loads it automatically.
@@ -29,16 +30,20 @@ def pytest_configure(config: pytest.Config) -> None:
         "markers", "integration: requires SUPABASE_URL and SUPABASE_API_KEY"
     )
     config.addinivalue_line(
-        "markers", "semantic: requires Supabase + OPENAI_API_KEY for pgvector tests"
+        "markers", "semantic: requires Supabase + VOYAGE_API_KEY for pgvector tests"
     )
     config.addinivalue_line(
         "markers", "llm: requires WATSONX_API_KEY + WATSONX_PROJECT_ID for Granite quality tests"
+    )
+    config.addinivalue_line(
+        "markers",
+        "e2e: requires Supabase + Voyage AI + WATSONX credentials for full MemoryModule pipeline tests",
     )
 
 
 def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
     has_sb = bool(os.environ.get("SUPABASE_URL") and os.environ.get("SUPABASE_API_KEY"))
-    has_oai = bool(os.environ.get("OPENAI_API_KEY"))
+    has_voyage = bool(os.environ.get("VOYAGE_API_KEY"))
     has_wx = bool(
         os.environ.get("WATSONX_API_KEY") and os.environ.get("WATSONX_PROJECT_ID")
     )
@@ -48,13 +53,17 @@ def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
             item.add_marker(
                 pytest.mark.skip(reason="SUPABASE_URL / SUPABASE_API_KEY not set")
             )
-        if "semantic" in item.keywords and not (has_sb and has_oai):
+        if "semantic" in item.keywords and not (has_sb and has_voyage):
             item.add_marker(
-                pytest.mark.skip(reason="SUPABASE + OPENAI_API_KEY not set")
+                pytest.mark.skip(reason="SUPABASE + VOYAGE_API_KEY not set")
             )
         if "llm" in item.keywords and not has_wx:
             item.add_marker(
                 pytest.mark.skip(reason="WATSONX_API_KEY / WATSONX_PROJECT_ID not set")
+            )
+        if "e2e" in item.keywords and not (has_sb and has_voyage and has_wx):
+            item.add_marker(
+                pytest.mark.skip(reason="e2e requires SUPABASE + VOYAGE_API_KEY + WATSONX credentials")
             )
 
 

@@ -20,7 +20,7 @@ from memory.db import MemoryDB
 
 pytestmark = pytest.mark.integration
 
-_DUMMY_EMBEDDING = [0.0] * 1536  # valid dimension, not semantically meaningful
+_DUMMY_EMBEDDING = [0.0] * 1024  # valid dimension, not semantically meaningful
 
 
 # ---------------------------------------------------------------------------

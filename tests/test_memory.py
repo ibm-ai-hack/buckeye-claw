@@ -146,7 +146,7 @@ class TestUpsertFact:
         upsert_chain.execute.return_value = MagicMock(data=[{}])
         mock_client.table.return_value.upsert.return_value = upsert_chain
 
-        embedding = [0.1] * 1536
+        embedding = [0.1] * 1024
         db.upsert_fact(USER_ID, "dietary_pref", "vegetarian", embedding)
 
         call_args = mock_client.table.return_value.upsert.call_args
@@ -161,7 +161,7 @@ class TestUpsertFact:
         upsert_chain.execute.return_value = MagicMock(data=[{}])
         mock_client.table.return_value.upsert.return_value = upsert_chain
 
-        db.upsert_fact(USER_ID, "key", "value", [0.0] * 1536)
+        db.upsert_fact(USER_ID, "key", "value", [0.0] * 1024)
 
         call_kwargs = mock_client.table.return_value.upsert.call_args[1]
         assert call_kwargs.get("on_conflict") == "user_id,key"
@@ -175,7 +175,7 @@ class TestGetRelevantFacts:
         ]
         mock_client.rpc.return_value.execute.return_value = MagicMock(data=facts)
 
-        embedding = [0.1] * 1536
+        embedding = [0.1] * 1024
         result = db.get_relevant_facts(USER_ID, embedding, k=5)
 
         mock_client.rpc.assert_called_once_with(
@@ -187,7 +187,7 @@ class TestGetRelevantFacts:
     def test_returns_empty_list_on_no_data(self, mock_client, db):
         mock_client.rpc.return_value.execute.return_value = MagicMock(data=None)
 
-        result = db.get_relevant_facts(USER_ID, [0.0] * 1536)
+        result = db.get_relevant_facts(USER_ID, [0.0] * 1024)
 
         assert result == []
 
@@ -294,7 +294,7 @@ class TestGetContext:
         mock_client.table.return_value.select.return_value = select_chain
 
         with patch("memory.module.embed", new_callable=AsyncMock) as mock_embed:
-            mock_embed.return_value = [0.1] * 1536
+            mock_embed.return_value = [0.1] * 1024
             result = await memory_module.get_context(USER_ID, "check bus")
 
         assert result == ""
@@ -316,7 +316,7 @@ class TestGetContext:
         mock_client.table.return_value.select.return_value = select_chain
 
         with patch("memory.module.embed", new_callable=AsyncMock) as mock_embed:
-            mock_embed.return_value = [0.1] * 1536
+            mock_embed.return_value = [0.1] * 1024
             result = await memory_module.get_context(USER_ID, "next bus")
 
         assert "dietary_pref=vegetarian" in result
@@ -377,7 +377,7 @@ class TestMemoryUpdate:
         select_chain.order = MagicMock(return_value=select_chain)
         mock_client.table.return_value.select.return_value = select_chain
 
-        with patch("memory.module.embed", new_callable=AsyncMock, return_value=[0.0] * 1536):
+        with patch("memory.module.embed", new_callable=AsyncMock, return_value=[0.0] * 1024):
             with patch("memory.module.extract_facts", new_callable=AsyncMock, return_value=[]):
                 await memory_module._update(USER_ID, "order sandwich from Curl Market")
 
@@ -406,7 +406,7 @@ class TestMemoryUpdate:
                 "description": "Daily morning bus check",
             }),
             patch("memory.module.extract_facts", new_callable=AsyncMock, return_value=[]),
-            patch("memory.module.embed", new_callable=AsyncMock, return_value=[0.0] * 1536),
+            patch("memory.module.embed", new_callable=AsyncMock, return_value=[0.0] * 1024),
         ):
             await memory_module._update(USER_ID, "next 10 bus")
 
@@ -431,7 +431,7 @@ class TestMemoryUpdate:
             patch.object(memory_module.db, "add_job") as mock_add_job,
             patch("memory.module.check_repetition", new_callable=AsyncMock, return_value=None),
             patch("memory.module.extract_facts", new_callable=AsyncMock, return_value=[]),
-            patch("memory.module.embed", new_callable=AsyncMock, return_value=[0.0] * 1536),
+            patch("memory.module.embed", new_callable=AsyncMock, return_value=[0.0] * 1024),
         ):
             await memory_module._update(USER_ID, "random task")
 
@@ -447,19 +447,19 @@ class TestMemoryUpdate:
             patch.object(memory_module.db, "push_task"),
             patch.object(memory_module.db, "get_tasks_by_category", return_value=[]),
             patch("memory.module.extract_facts", new_callable=AsyncMock, return_value=extracted),
-            patch("memory.module.embed", new_callable=AsyncMock, return_value=[0.5] * 1536),
+            patch("memory.module.embed", new_callable=AsyncMock, return_value=[0.5] * 1024),
             patch.object(memory_module.db, "upsert_fact") as mock_upsert,
         ):
             await memory_module._update(USER_ID, "I prefer vegetarian food")
 
         mock_upsert.assert_called_once_with(
-            USER_ID, "dietary_pref", "vegetarian", [0.5] * 1536
+            USER_ID, "dietary_pref", "vegetarian", [0.5] * 1024
         )
 
     @pytest.mark.asyncio
     async def test_fact_embedding_stored(self, memory_module):
         """Upserted facts include a non-trivial embedding vector."""
-        embedding = [float(i) / 1536 for i in range(1536)]
+        embedding = [float(i) / 1024 for i in range(1024)]
         extracted = [{"key": "major", "value": "CSE"}]
 
         with (
@@ -473,5 +473,5 @@ class TestMemoryUpdate:
             await memory_module._update(USER_ID, "I'm studying CSE")
 
         call_embedding = mock_upsert.call_args[0][3]
-        assert len(call_embedding) == 1536
+        assert len(call_embedding) == 1024
         assert any(v != 0.0 for v in call_embedding)

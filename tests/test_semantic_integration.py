@@ -1,11 +1,11 @@
-"""Semantic integration tests: real OpenAI embeddings + Supabase pgvector.
+"""Semantic integration tests: real Voyage AI embeddings + Supabase pgvector.
 
 These tests verify that the cosine similarity ranking in `match_facts` actually
 reflects semantic relevance — e.g. a bus-related query ranks transit facts above
 dietary facts, and vice versa for a food-related query.
 
 Requirements:
-    SUPABASE_URL, SUPABASE_API_KEY, and OPENAI_API_KEY must be set.
+    SUPABASE_URL, SUPABASE_API_KEY, and VOYAGE_API_KEY must be set.
     The schema from supabase/migrations/001_memory.sql must be applied.
 
 Run:
@@ -86,7 +86,7 @@ class TestEmbeddingStorage:
     async def test_embedding_column_is_populated(
         self, db: MemoryDB, supabase_client: Client, test_user: str
     ):
-        """After upsert_fact(), the embedding column in the DB should be non-null with 1536 dims."""
+        """After upsert_fact(), the embedding column in the DB should be non-null with 1024 dims."""
         embedding = await embed("major: Computer Science and Engineering")
         db.upsert_fact(test_user, "major", "Computer Science and Engineering", embedding)
 
@@ -101,7 +101,7 @@ class TestEmbeddingStorage:
 
         stored = row.data["embedding"]
         assert stored is not None, "embedding column should not be null"
-        assert len(stored) == 1536, f"Expected 1536 dims, got {len(stored)}"
+        assert len(stored) == 1024, f"Expected 1024 dims, got {len(stored)}"
 
     @pytest.mark.asyncio
     async def test_k_limit_respected(

@@ -12,7 +12,7 @@ dependencies = [
     "python-dotenv",
     "canvasapi",
     "supabase",
-    "openai",
+    "voyageai",
     "pydantic>=2.0",
 ]
 
@@ -29,6 +29,18 @@ dev = [
     "pytest",
     "pytest-asyncio",
 ]
+
+[tool.pytest.ini_options]
+asyncio_mode = "strict"
+markers = [
+    "integration: requires SUPABASE_URL and SUPABASE_API_KEY",
+    "semantic: requires Supabase + VOYAGE_API_KEY for pgvector ranking tests",
+    "llm: requires WATSONX credentials for Granite LLM quality tests",
+    "e2e: requires all credentials for full MemoryModule pipeline tests",
+]
+
+[tool.setuptools.packages.find]
+include = ["memory*", "auth*", "messaging*", "canvas*", "grubhub*", "buckeyelink*", "agents*"]
 
 [build-system]
 requires = ["setuptools>=68.0"]

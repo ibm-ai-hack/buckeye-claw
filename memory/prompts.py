@@ -1,7 +1,7 @@
-"""Granite LLM prompts and OpenAI embedding utilities for the memory module.
+"""Granite LLM prompts and Voyage AI embedding utilities for the memory module.
 
 All Granite calls use the BeeAI ChatModel already configured in the project.
-Embeddings use OpenAI text-embedding-3-small (1536 dims).
+Embeddings use Voyage AI voyage-3 (1024 dims).
 """
 
 import json
@@ -9,9 +9,9 @@ import logging
 import os
 from typing import Any
 
+import voyageai
 from beeai_framework.backend import ChatModel
 from beeai_framework.backend.message import UserMessage
-from openai import AsyncOpenAI
 
 logger = logging.getLogger(__name__)
 
@@ -30,24 +30,21 @@ CATEGORIES = [
     "general",
 ]
 
-_openai_client: AsyncOpenAI | None = None
+_voyage_client: voyageai.AsyncClient | None = None
 
 
-def _get_openai() -> AsyncOpenAI:
-    global _openai_client
-    if _openai_client is None:
-        _openai_client = AsyncOpenAI(api_key=os.environ["OPENAI_API_KEY"])
-    return _openai_client
+def _get_voyage() -> voyageai.AsyncClient:
+    global _voyage_client
+    if _voyage_client is None:
+        _voyage_client = voyageai.AsyncClient(api_key=os.environ["VOYAGE_API_KEY"])
+    return _voyage_client
 
 
 async def embed(text: str) -> list[float]:
-    """Embed text using OpenAI text-embedding-3-small (1536 dims)."""
-    client = _get_openai()
-    response = await client.embeddings.create(
-        model="text-embedding-3-small",
-        input=text,
-    )
-    return response.data[0].embedding
+    """Embed text using Voyage AI voyage-3 (1024 dims)."""
+    client = _get_voyage()
+    result = await client.embed([text], model="voyage-3")
+    return result.embeddings[0]
 
 
 def _parse_json_response(raw: str, context: str) -> dict[str, Any]:
