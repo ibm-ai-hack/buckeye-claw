@@ -47,3 +47,8 @@ include = ["memory*", "auth*", "messaging*", "canvas*", "grubhub*", "buckeyelink
 [build-system]
 requires = ["setuptools>=68.0"]
 build-backend = "setuptools.build_meta"
+
+[dependency-groups]
+dev = [
+    "pg8000>=1.31.5",
+]

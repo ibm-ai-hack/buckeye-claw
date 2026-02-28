@@ -156,7 +156,7 @@ class MemoryDB:
             .maybe_single()
             .execute()
         )
-        if not result.data:
+        if result is None or not result.data:
             return
         new_count = result.data["occurrence_count"] + 1
         self.client.table("memory_jobs").update(
@@ -173,4 +173,4 @@ class MemoryDB:
             .maybe_single()
             .execute()
         )
-        return result.data is not None
+        return result is not None and result.data is not None

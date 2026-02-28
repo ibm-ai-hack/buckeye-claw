@@ -73,7 +73,7 @@ async def categorize_task(llm: ChatModel, task: str) -> str:
         f'Reply with JSON only, no explanation: {{"category": "..."}}'
     )
 
-    response = await llm.create(messages=[UserMessage(content=prompt)])
+    response = await llm.run([UserMessage(content=prompt)])
     raw = response.get_text_content()
     data = _parse_json_response(raw, "categorize_task")
     category = data.get("category", "general")
@@ -113,7 +113,7 @@ async def check_repetition(
         'Set "schedule" to null if repetition exists but no clear time pattern is detectable.'
     )
 
-    response = await llm.create(messages=[UserMessage(content=prompt)])
+    response = await llm.run([UserMessage(content=prompt)])
     raw = response.get_text_content()
     data = _parse_json_response(raw, "check_repetition")
 
@@ -145,7 +145,7 @@ async def extract_facts(llm: ChatModel, task: str) -> list[dict[str, str]]:
         'Return {"facts": []} if nothing notable is present.'
     )
 
-    response = await llm.create(messages=[UserMessage(content=prompt)])
+    response = await llm.run([UserMessage(content=prompt)])
     raw = response.get_text_content()
     data = _parse_json_response(raw, "extract_facts")
     facts = data.get("facts", [])
