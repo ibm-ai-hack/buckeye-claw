@@ -136,7 +136,7 @@ class MemoryModule:
         user_id: str,
         task: str,
         category: str,
-        same_cat_tasks: list[str],
+        same_cat_tasks: list[dict],
         llm: ChatModel | None = None,
     ) -> None:
         try:

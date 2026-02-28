@@ -81,27 +81,31 @@ async def categorize_task(llm: ChatModel, task: str) -> str:
 
 
 async def check_repetition(
-    llm: ChatModel, task: str, same_category_tasks: list[str]
+    llm: ChatModel, task: str, same_category_tasks: list[dict]
 ) -> dict[str, Any] | None:
     """Ask Granite whether a new task represents a repeating pattern.
 
     Args:
         llm: BeeAI ChatModel instance.
         task: The new task text.
-        same_category_tasks: Recent tasks in the same category (last 30 days).
+        same_category_tasks: Recent tasks in the same category (last 30 days),
+            each a dict with 'task' and 'created_at' keys.
 
     Returns:
         A dict with keys {is_repeat, schedule, prompt, task_name, description}
         if a repetition is confirmed, or None if not a repeat.
         schedule may be None if there is no clear temporal pattern.
     """
-    tasks_json = json.dumps(same_category_tasks, ensure_ascii=False)
+    tasks_formatted = "\n".join(
+        f'- {t["created_at"]}: "{t["task"]}"' for t in same_category_tasks
+    )
     prompt = (
         "Does the new task represent a recurring activity that matches any tasks "
         "in the list below? A recurring activity means the user regularly does the "
-        "same type of thing (not just similar words).\n\n"
+        "same type of thing (not just similar words). Use the timestamps to detect "
+        "temporal patterns (e.g. daily, weekly, every few days).\n\n"
         f'New task: "{task}"\n'
-        f"Same-category recent tasks: {tasks_json}\n\n"
+        f"Same-category recent tasks (with timestamps):\n{tasks_formatted}\n\n"
         "Reply with JSON only, no explanation:\n"
         "{\n"
         '  "is_repeat": true or false,\n'
@@ -110,7 +114,8 @@ async def check_repetition(
         '  "task_name": "snake_case_slug",\n'
         '  "description": "one sentence description"\n'
         "}\n"
-        'Set "schedule" to null if repetition exists but no clear time pattern is detectable.'
+        'Use the timestamps to infer a cron schedule. Set "schedule" to null only if '
+        "repetition exists but no time pattern is detectable from the dates."
     )
 
     response = await llm.run([UserMessage(content=prompt)])

@@ -37,25 +37,22 @@ class MemoryDB:
             "user_id", user_id
         ).lt("created_at", cutoff).execute()
 
-    def get_tasks_by_category(self, user_id: str, category: str) -> list[str]:
-        """Return task strings for the given user/category from the last 30 days.
-
-        Returns plain task strings (not dicts) since that's what the LLM prompt needs.
-        """
+    def get_tasks_by_category(self, user_id: str, category: str) -> list[dict]:
+        """Return tasks with timestamps for the given user/category from the last 30 days."""
         cutoff = (
             datetime.now(tz=timezone.utc) - timedelta(days=_TASK_RETENTION_DAYS)
         ).isoformat()
 
         result = (
             self.client.table("memory_tasks")
-            .select("task")
+            .select("task, created_at")
             .eq("user_id", user_id)
             .eq("category", category)
             .gte("created_at", cutoff)
             .order("created_at", desc=True)
             .execute()
         )
-        return [row["task"] for row in (result.data or [])]
+        return [{"task": row["task"], "created_at": row["created_at"]} for row in (result.data or [])]
 
     # ------------------------------------------------------------------
     # Store 3 — User facts
