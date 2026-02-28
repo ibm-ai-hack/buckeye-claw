@@ -42,7 +42,7 @@ markers = [
 ]
 
 [tool.setuptools.packages.find]
-include = ["memory*", "auth*", "messaging*", "canvas*", "grubhub*", "buckeyelink*", "agents*"]
+include = ["memory*", "auth*", "backend*", "agents*"]
 
 [build-system]
 requires = ["setuptools>=68.0"]
