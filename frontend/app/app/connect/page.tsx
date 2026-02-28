@@ -1,854 +1,521 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
-// ── Types ──────────────────────────────────────────────
+// ── Types ────────────────────────────────────────────────
 
-interface Course {
-  code: string | null;
-  title: string | null;
-  days: string[] | null;
-  start_time: string | null;
-  end_time: string | null;
-  location: string | null;
-  instructor: string | null;
+interface IntegrationStatus {
+  canvas_connected: boolean;
+  canvas_connected_at: string | null;
 }
 
-interface Schedule {
-  term: string;
-  courses: Course[];
-  raw?: string;
+// ── Canvas icon ──────────────────────────────────────────
+
+function CanvasIcon() {
+  return (
+    <svg
+      width="28"
+      height="28"
+      viewBox="0 0 28 28"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect width="28" height="28" rx="7" fill="rgba(226,50,50,0.15)" />
+      <text
+        x="14"
+        y="20"
+        textAnchor="middle"
+        fontFamily="var(--font-jakarta, sans-serif)"
+        fontWeight="700"
+        fontSize="15"
+        fill="rgb(226,80,80)"
+      >
+        C
+      </text>
+    </svg>
+  );
 }
 
-type SessionStatus =
-  | "idle"
-  | "awaiting_auth"
-  | "authenticated"
-  | "extracting"
-  | "complete"
-  | "error";
+// ── Status dot ───────────────────────────────────────────
 
-interface FrameMessage {
-  type: "frame";
-  image: string;
-  status: SessionStatus;
+function StatusDot({ connected }: { connected: boolean }) {
+  return (
+    <span
+      style={{
+        width: 7,
+        height: 7,
+        borderRadius: "50%",
+        background: connected ? "#22c55e" : "rgba(255,255,255,0.2)",
+        display: "inline-block",
+        boxShadow: connected ? "0 0 6px rgba(34,197,94,0.5)" : "none",
+        flexShrink: 0,
+      }}
+    />
+  );
+}
+
+// ── Toast ────────────────────────────────────────────────
+
+function Toast({
+  message,
+  type,
+  onClose,
+}: {
   message: string;
+  type: "success" | "error";
+  onClose: () => void;
+}) {
+  useEffect(() => {
+    const t = setTimeout(onClose, 4000);
+    return () => clearTimeout(t);
+  }, [onClose]);
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        bottom: 32,
+        left: "50%",
+        transform: "translateX(-50%)",
+        background: type === "success" ? "rgba(34,197,94,0.12)" : "rgba(239,68,68,0.12)",
+        border: `1px solid ${type === "success" ? "rgba(34,197,94,0.25)" : "rgba(239,68,68,0.25)"}`,
+        borderRadius: 10,
+        padding: "12px 22px",
+        fontFamily: "var(--font-jakarta)",
+        fontSize: 13,
+        letterSpacing: "0.5px",
+        color: type === "success" ? "rgba(34,197,94,0.9)" : "rgba(239,68,68,0.9)",
+        zIndex: 200,
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+        whiteSpace: "nowrap",
+        animation: "fadeInUp 0.3s ease",
+      }}
+    >
+      {message}
+    </div>
+  );
 }
 
-interface CompleteMessage {
-  type: "complete";
-  status: "complete";
-  schedule: Schedule;
-  message: string;
+// ── Integration card ─────────────────────────────────────
+
+function IntegrationCard({
+  icon,
+  name,
+  subtitle,
+  description,
+  connected,
+  connectedAt,
+  onConnect,
+  onDisconnect,
+  loading,
+  comingSoon,
+}: {
+  icon: React.ReactNode;
+  name: string;
+  subtitle: string;
+  description: string;
+  connected: boolean;
+  connectedAt?: string | null;
+  onConnect?: () => void;
+  onDisconnect?: () => void;
+  loading?: boolean;
+  comingSoon?: boolean;
+}) {
+  return (
+    <div
+      style={{
+        background: "rgba(255,255,255,0.025)",
+        border: `1px solid ${connected ? "rgba(34,197,94,0.15)" : "rgba(255,255,255,0.06)"}`,
+        borderRadius: 14,
+        padding: "24px 28px",
+        display: "flex",
+        alignItems: "flex-start",
+        gap: 20,
+        opacity: comingSoon ? 0.4 : 1,
+        transition: "border-color 0.3s ease",
+      }}
+    >
+      <div style={{ flexShrink: 0, paddingTop: 2 }}>{icon}</div>
+
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+          <span
+            style={{
+              fontFamily: "var(--font-jakarta)",
+              fontWeight: 500,
+              fontSize: 16,
+              color: "rgba(255,255,255,0.88)",
+              letterSpacing: "-0.1px",
+            }}
+          >
+            {name}
+          </span>
+          <span
+            style={{
+              fontFamily: "var(--font-jakarta)",
+              fontSize: 11,
+              color: "rgba(255,255,255,0.28)",
+              letterSpacing: "1px",
+            }}
+          >
+            {subtitle}
+          </span>
+          {comingSoon && (
+            <span
+              style={{
+                fontFamily: "var(--font-jakarta)",
+                fontSize: 9,
+                letterSpacing: "1.5px",
+                color: "rgba(255,255,255,0.25)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                borderRadius: 4,
+                padding: "2px 7px",
+                textTransform: "uppercase",
+              }}
+            >
+              soon
+            </span>
+          )}
+        </div>
+
+        <p
+          style={{
+            fontFamily: "var(--font-jakarta)",
+            fontSize: 13,
+            color: "rgba(255,255,255,0.38)",
+            lineHeight: 1.6,
+            margin: 0,
+            marginBottom: 18,
+            maxWidth: 440,
+          }}
+        >
+          {description}
+        </p>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <StatusDot connected={connected} />
+          <span
+            style={{
+              fontFamily: "var(--font-jakarta)",
+              fontSize: 12,
+              letterSpacing: "0.5px",
+              color: connected ? "rgba(34,197,94,0.8)" : "rgba(255,255,255,0.25)",
+            }}
+          >
+            {connected
+              ? connectedAt
+                ? `connected · ${new Date(connectedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`
+                : "connected"
+              : "not connected"}
+          </span>
+
+          {!comingSoon && (
+            <button
+              onClick={connected ? onDisconnect : onConnect}
+              disabled={loading}
+              style={{
+                marginLeft: "auto",
+                fontFamily: "var(--font-jakarta)",
+                fontSize: 12,
+                letterSpacing: "1.5px",
+                textTransform: "lowercase",
+                color: connected ? "rgba(239,68,68,0.6)" : "rgba(255,255,255,0.55)",
+                background: connected
+                  ? "rgba(239,68,68,0.06)"
+                  : "rgba(255,255,255,0.05)",
+                border: `1px solid ${connected ? "rgba(239,68,68,0.15)" : "rgba(255,255,255,0.1)"}`,
+                borderRadius: 8,
+                padding: "8px 18px",
+                cursor: loading ? "default" : "pointer",
+                opacity: loading ? 0.5 : 1,
+                transition: "all 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                if (loading) return;
+                e.currentTarget.style.background = connected
+                  ? "rgba(239,68,68,0.12)"
+                  : "rgba(255,255,255,0.1)";
+                e.currentTarget.style.color = connected
+                  ? "rgba(239,68,68,0.85)"
+                  : "rgba(255,255,255,0.85)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = connected
+                  ? "rgba(239,68,68,0.06)"
+                  : "rgba(255,255,255,0.05)";
+                e.currentTarget.style.color = connected
+                  ? "rgba(239,68,68,0.6)"
+                  : "rgba(255,255,255,0.55)";
+              }}
+            >
+              {loading ? "..." : connected ? "disconnect" : "connect"}
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
 
-interface ErrorMessage {
-  type: "error";
-  message: string;
-}
-
-type WSMessage = FrameMessage | CompleteMessage | ErrorMessage;
-
-interface ClickRipple {
-  id: number;
-  x: number;
-  y: number;
-}
-
-const API = "http://localhost:8000";
-const WS_URL = "ws://localhost:8000/api/session/stream";
-
-const SPECIAL_KEYS = new Set([
-  "Enter",
-  "Tab",
-  "Backspace",
-  "Escape",
-  "ArrowUp",
-  "ArrowDown",
-  "ArrowLeft",
-  "ArrowRight",
-  "Delete",
-  "Home",
-  "End",
-  "PageUp",
-  "PageDown",
-]);
-
-// ── Component ──────────────────────────────────────────
+// ── Page ─────────────────────────────────────────────────
 
 export default function ConnectPage() {
-  const router = useRouter();
-  const wsRef = useRef<WebSocket | null>(null);
-  const mountedRef = useRef(true);
-  const hiddenInputRef = useRef<HTMLInputElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
-  const rippleIdRef = useRef(0);
+  const searchParams = useSearchParams();
+  const [status, setStatus] = useState<IntegrationStatus | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [disconnecting, setDisconnecting] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
-  const [imageSrc, setImageSrc] = useState<string>("");
-  const [hasFirstFrame, setHasFirstFrame] = useState(false);
-  const [status, setStatus] = useState<SessionStatus>("idle");
-  const [message, setMessage] = useState("connecting...");
-  const [schedule, setSchedule] = useState<Schedule | null>(null);
-  const [showSchedule, setShowSchedule] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [browserFocused, setBrowserFocused] = useState(false);
-  const [ripples, setRipples] = useState<ClickRipple[]>([]);
-
-  // ── WebSocket helpers ──────────────────────────────
-
-  const wsSend = useCallback((data: object) => {
-    if (wsRef.current?.readyState === WebSocket.OPEN) {
-      wsRef.current.send(JSON.stringify(data));
-    }
-  }, []);
-
-  const closeSession = useCallback(async () => {
-    try {
-      await fetch(`${API}/api/session/close`, { method: "POST" });
-    } catch {
-      /* ignore */
-    }
-  }, []);
-
-  const cleanupWs = useCallback(() => {
-    if (wsRef.current) {
-      wsRef.current.onopen = null;
-      wsRef.current.onmessage = null;
-      wsRef.current.onerror = null;
-      wsRef.current.onclose = null;
-      if (
-        wsRef.current.readyState === WebSocket.OPEN ||
-        wsRef.current.readyState === WebSocket.CONNECTING
-      ) {
-        wsRef.current.close();
-      }
-      wsRef.current = null;
-    }
-  }, []);
-
-  const connectWs = useCallback(() => {
-    cleanupWs();
-    const ws = new WebSocket(WS_URL);
-    wsRef.current = ws;
-
-    ws.onmessage = (ev) => {
-      if (!mountedRef.current) return;
-      try {
-        const msg: WSMessage = JSON.parse(ev.data);
-
-        if (msg.type === "frame") {
-          if (msg.image) {
-            setImageSrc(`data:image/png;base64,${msg.image}`);
-            setHasFirstFrame(true);
-          }
-          setStatus(msg.status);
-          setMessage(msg.message);
-        }
-
-        if (msg.type === "complete") {
-          setStatus("complete");
-          setMessage(msg.message);
-          setSchedule(msg.schedule);
-          setTimeout(() => {
-            if (mountedRef.current) setShowSchedule(true);
-          }, 2000);
-        }
-
-        if (msg.type === "error") {
-          setStatus("error");
-          setError(msg.message);
-          setMessage(msg.message);
-        }
-      } catch {
-        /* ignore */
-      }
-    };
-
-    ws.onerror = () => {
-      if (mountedRef.current) {
-        setStatus("error");
-        setError("Connection lost");
-        setMessage("Connection lost");
-      }
-    };
-  }, [cleanupWs]);
-
-  // ── Lifecycle ──────────────────────────────────────
-
+  // Handle URL params from OAuth callback
   useEffect(() => {
-    mountedRef.current = true;
-    let cancelled = false;
+    const success = searchParams.get("success");
+    const error = searchParams.get("error");
 
-    (async () => {
-      try {
-        const res = await fetch(`${API}/api/session/start`, {
-          method: "POST",
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        if (cancelled) return;
-        setStatus("awaiting_auth");
-        setMessage("waiting for you to log in...");
-        connectWs();
-      } catch (e) {
-        if (cancelled) return;
-        setStatus("error");
-        setError(e instanceof Error ? e.message : "Failed to start session");
-        setMessage("failed to start session");
+    if (success === "canvas") {
+      setToast({ message: "Canvas connected successfully", type: "success" });
+    } else if (error === "canvas_denied") {
+      setToast({ message: "Canvas authorization was cancelled", type: "error" });
+    } else if (error === "token_exchange") {
+      setToast({ message: "Failed to connect Canvas — please try again", type: "error" });
+    } else if (error === "no_profile") {
+      setToast({ message: "Profile not found — contact support", type: "error" });
+    } else if (error === "not_configured") {
+      setToast({ message: "Canvas OAuth is not configured yet", type: "error" });
+    }
+  }, [searchParams]);
+
+  // Load integration status
+  useEffect(() => {
+    async function load() {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        setLoading(false);
+        return;
       }
-    })();
 
-    return () => {
-      cancelled = true;
-      mountedRef.current = false;
-      cleanupWs();
-      closeSession();
-    };
-  }, [connectWs, cleanupWs, closeSession]);
+      // Get profile id
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("auth_id", user.id)
+        .single();
 
-  // ── Interaction handlers ───────────────────────────
+      if (!profile) {
+        setLoading(false);
+        return;
+      }
 
-  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width;
-    const y = (e.clientY - rect.top) / rect.height;
+      const { data: integrations } = await supabase
+        .from("user_integrations")
+        .select("canvas_token, canvas_connected_at")
+        .eq("user_id", profile.id)
+        .single();
 
-    wsSend({ type: "click", x, y });
-
-    // Click ripple
-    const id = ++rippleIdRef.current;
-    const rippleX = e.clientX - rect.left;
-    const rippleY = e.clientY - rect.top;
-    setRipples((prev) => [...prev, { id, x: rippleX, y: rippleY }]);
-    setTimeout(() => {
-      setRipples((prev) => prev.filter((r) => r.id !== id));
-    }, 400);
-
-    // Focus hidden input for keyboard capture
-    hiddenInputRef.current?.focus();
-    setBrowserFocused(true);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (SPECIAL_KEYS.has(e.key)) {
-      e.preventDefault();
-      wsSend({ type: "keypress", key: e.key });
-      return;
+      setStatus({
+        canvas_connected: !!(integrations?.canvas_token),
+        canvas_connected_at: integrations?.canvas_connected_at ?? null,
+      });
+      setLoading(false);
     }
 
-    // Let the input event handle regular characters
+    load();
+  }, [searchParams]); // re-fetch after OAuth redirect
+
+  const handleConnectCanvas = () => {
+    window.location.href = "/api/auth/canvas";
   };
 
-  const handleInput = (e: React.FormEvent<HTMLInputElement>) => {
-    const input = e.currentTarget;
-    const text = input.value;
-    if (text) {
-      wsSend({ type: "type", text });
-      input.value = "";
-    }
-  };
-
-  const handleBlur = () => {
-    setBrowserFocused(false);
-  };
-
-  const handleRetry = async () => {
-    setError(null);
-    setStatus("idle");
-    setMessage("connecting...");
-    setImageSrc("");
-    setHasFirstFrame(false);
-    setSchedule(null);
-    setShowSchedule(false);
-    await closeSession();
+  const handleDisconnectCanvas = async () => {
+    setDisconnecting(true);
     try {
-      const res = await fetch(`${API}/api/session/start`, { method: "POST" });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      setStatus("awaiting_auth");
-      setMessage("waiting for you to log in...");
-      connectWs();
-    } catch (e) {
-      setStatus("error");
-      setError(e instanceof Error ? e.message : "Failed to start session");
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("auth_id", user.id)
+        .single();
+      if (!profile) return;
+
+      await supabase
+        .from("user_integrations")
+        .update({ canvas_token: null, canvas_connected_at: null })
+        .eq("user_id", profile.id);
+
+      setStatus((prev) =>
+        prev ? { ...prev, canvas_connected: false, canvas_connected_at: null } : prev
+      );
+      setToast({ message: "Canvas disconnected", type: "success" });
+    } catch {
+      setToast({ message: "Failed to disconnect — try again", type: "error" });
+    } finally {
+      setDisconnecting(false);
     }
   };
-
-  const handleClose = async () => {
-    cleanupWs();
-    await closeSession();
-    router.push("/");
-  };
-
-  // ── Render ─────────────────────────────────────────
 
   return (
     <div
       style={{
         minHeight: "100vh",
-        width: "100vw",
-        background:
-          "radial-gradient(ellipse at 50% 40%, rgba(40,5,5,1) 0%, rgba(15,2,2,1) 40%, #0a0a0a 70%)",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        overflow: "auto",
+        padding: "56px 48px",
+        maxWidth: 760,
       }}
     >
       {/* Header */}
-      <div
-        style={{
-          paddingTop: 60,
-          paddingBottom: 32,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
+      <div style={{ marginBottom: 40 }}>
         <h1
           style={{
             fontFamily: "var(--font-jakarta)",
             fontWeight: 200,
-            fontSize: "clamp(24px, 4vw, 36px)",
-            letterSpacing: "0.25em",
+            fontSize: 28,
+            letterSpacing: "0.22em",
             textTransform: "lowercase",
             color: "rgba(255,255,255,0.85)",
             margin: 0,
             lineHeight: 1,
           }}
         >
-          connect buckeyelink
+          connect
         </h1>
         <p
           style={{
             fontFamily: "var(--font-jakarta)",
-            fontWeight: 400,
-            fontSize: 13,
-            letterSpacing: "2px",
-            color: "rgba(255,255,255,0.5)",
-            margin: 0,
-            marginTop: 10,
+            fontSize: 12,
+            letterSpacing: "1.5px",
+            color: "rgba(255,255,255,0.2)",
+            margin: "10px 0 0",
           }}
         >
-          log in, and we&apos;ll handle the rest.
+          manage your connected apps
         </p>
       </div>
 
-      {/* Browser view */}
-      <div style={{ position: "relative", width: "72%", maxWidth: 1080 }}>
+      {/* Cards */}
+      {loading ? (
         <div
           style={{
-            position: "relative",
-            width: "100%",
-            aspectRatio: "16 / 10",
-            borderRadius: 16,
-            overflow: "hidden",
-            border: `1px solid ${browserFocused ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.08)"}`,
-            background: "rgba(255,255,255,0.03)",
-            backdropFilter: "blur(12px)",
-            WebkitBackdropFilter: "blur(12px)",
-            boxShadow: browserFocused
-              ? "0 8px 40px rgba(0,0,0,0.4), 0 2px 12px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.06)"
-              : "0 8px 40px rgba(0,0,0,0.4), 0 2px 12px rgba(0,0,0,0.3)",
-            transition: "border-color 0.2s ease, box-shadow 0.2s ease",
-          }}
-        >
-          {/* Loading state */}
-          {!hasFirstFrame && (
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 16,
-                zIndex: 5,
-              }}
-            >
-              <span
-                style={{
-                  width: 20,
-                  height: 20,
-                  border: "1.5px solid rgba(255,255,255,0.1)",
-                  borderTopColor: "rgba(255,255,255,0.6)",
-                  borderRadius: "50%",
-                  display: "inline-block",
-                  animation: "spin 0.9s linear infinite",
-                }}
-              />
-              <span
-                style={{
-                  fontFamily: "var(--font-jakarta)",
-                  fontSize: 13,
-                  letterSpacing: "3px",
-                  color: "rgba(255,255,255,0.6)",
-                  textTransform: "lowercase",
-                  animation: "pulse 2s ease infinite",
-                }}
-              >
-                connecting...
-              </span>
-            </div>
-          )}
-
-          {/* Browser screenshot */}
-          {imageSrc && (
-            <img
-              src={imageSrc}
-              alt="Browser session"
-              draggable={false}
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "contain",
-                display: "block",
-                opacity: hasFirstFrame ? 1 : 0,
-                transform: hasFirstFrame ? "scale(1)" : "scale(0.98)",
-                transition: "opacity 0.5s ease-out, transform 0.5s ease-out",
-                pointerEvents: "none",
-                userSelect: "none",
-              }}
-            />
-          )}
-
-          {/* Transparent click overlay */}
-          <div
-            ref={overlayRef}
-            onClick={handleOverlayClick}
-            style={{
-              position: "absolute",
-              inset: 0,
-              zIndex: 6,
-              cursor: hasFirstFrame ? "crosshair" : "default",
-            }}
-          >
-            {/* Click ripples */}
-            {ripples.map((r) => (
-              <span
-                key={r.id}
-                style={{
-                  position: "absolute",
-                  left: r.x - 12,
-                  top: r.y - 12,
-                  width: 24,
-                  height: 24,
-                  borderRadius: "50%",
-                  border: "1.5px solid rgba(255,255,255,0.5)",
-                  animation: "ripple 0.4s ease-out forwards",
-                  pointerEvents: "none",
-                }}
-              />
-            ))}
-          </div>
-
-          {/* Hidden input for keyboard capture */}
-          <input
-            ref={hiddenInputRef}
-            onKeyDown={handleKeyDown}
-            onInput={handleInput}
-            onBlur={handleBlur}
-            style={{
-              position: "absolute",
-              opacity: 0,
-              width: 0,
-              height: 0,
-              top: 0,
-              left: 0,
-              pointerEvents: "none",
-            }}
-            autoComplete="off"
-            autoCorrect="off"
-            autoCapitalize="off"
-            spellCheck={false}
-          />
-
-          {/* Close button */}
-          <button
-            onClick={handleClose}
-            style={{
-              position: "absolute",
-              top: 12,
-              right: 12,
-              width: 28,
-              height: 28,
-              borderRadius: 8,
-              border: "1px solid rgba(255,255,255,0.1)",
-              background: "rgba(0,0,0,0.5)",
-              backdropFilter: "blur(8px)",
-              WebkitBackdropFilter: "blur(8px)",
-              color: "rgba(255,255,255,0.5)",
-              fontSize: 14,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              transition: "all 0.2s ease",
-              zIndex: 10,
-              padding: 0,
-              lineHeight: 1,
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(255,255,255,0.1)";
-              e.currentTarget.style.color = "white";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "rgba(0,0,0,0.5)";
-              e.currentTarget.style.color = "rgba(255,255,255,0.5)";
-            }}
-          >
-            &times;
-          </button>
-        </div>
-
-        {/* Focus hint */}
-        {hasFirstFrame && !browserFocused && status === "awaiting_auth" && (
-          <div
-            style={{
-              position: "absolute",
-              bottom: -4,
-              left: "50%",
-              transform: "translateX(-50%) translateY(100%)",
-              fontFamily: "var(--font-jakarta)",
-              fontSize: 12,
-              letterSpacing: "1.5px",
-              color: "rgba(255,255,255,0.6)",
-              marginTop: 8,
-              whiteSpace: "nowrap",
-            }}
-          >
-            click to interact
-          </div>
-        )}
-
-        {/* Status bar */}
-        <div
-          style={{
-            marginTop: 24,
             display: "flex",
             alignItems: "center",
-            justifyContent: "center",
             gap: 10,
-            minHeight: 32,
+            color: "rgba(255,255,255,0.2)",
+            fontFamily: "var(--font-jakarta)",
+            fontSize: 12,
+            letterSpacing: "2px",
           }}
         >
-          <StatusIndicator status={status} />
           <span
             style={{
-              fontFamily: "var(--font-jakarta)",
-              fontSize: 13,
-              letterSpacing: "2px",
-              color: "rgba(255,255,255,0.6)",
-              textTransform: "lowercase",
+              width: 14,
+              height: 14,
+              border: "1.5px solid rgba(255,255,255,0.08)",
+              borderTopColor: "rgba(255,255,255,0.3)",
+              borderRadius: "50%",
+              display: "inline-block",
+              animation: "spin 0.9s linear infinite",
             }}
-          >
-            {message}
-          </span>
-          {status === "error" && (
-            <button
-              onClick={handleRetry}
-              style={{
-                fontFamily: "var(--font-jakarta)",
-                fontSize: 12,
-                letterSpacing: "2px",
-                textTransform: "lowercase",
-                color: "rgba(255,255,255,0.5)",
-                background: "rgba(255,255,255,0.05)",
-                border: "1px solid rgba(255,255,255,0.1)",
-                borderRadius: 6,
-                padding: "6px 16px",
-                cursor: "pointer",
-                marginLeft: 8,
-                transition: "all 0.2s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(255,255,255,0.1)";
-                e.currentTarget.style.color = "white";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "rgba(255,255,255,0.05)";
-                e.currentTarget.style.color = "rgba(255,255,255,0.5)";
-              }}
-            >
-              try again
-            </button>
-          )}
+          />
+          loading...
         </div>
-      </div>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <IntegrationCard
+            icon={<CanvasIcon />}
+            name="Canvas"
+            subtitle="OSU Carmen"
+            description="Connect your Canvas account so BuckeyeClaw can answer questions about your courses, assignments, grades, announcements, and upcoming due dates."
+            connected={status?.canvas_connected ?? false}
+            connectedAt={status?.canvas_connected_at}
+            onConnect={handleConnectCanvas}
+            onDisconnect={handleDisconnectCanvas}
+            loading={disconnecting}
+          />
 
-      {/* Schedule results */}
-      {showSchedule && schedule && schedule.courses.length > 0 && (
-        <div
-          style={{
-            width: "72%",
-            maxWidth: 1080,
-            marginTop: 40,
-            paddingBottom: 80,
-            animation: "fadeInUp 0.6s ease forwards",
-          }}
-        >
-          <h2
-            style={{
-              fontFamily: "var(--font-jakarta)",
-              fontWeight: 200,
-              fontSize: 24,
-              letterSpacing: "0.15em",
-              color: "rgba(255,255,255,0.7)",
-              textTransform: "lowercase",
-              marginBottom: 20,
-            }}
-          >
-            {schedule.term}
-          </h2>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {schedule.courses.map((course, i) => (
+          <IntegrationCard
+            icon={
               <div
-                key={i}
                 style={{
-                  padding: "16px 20px",
-                  borderRadius: 12,
-                  border: "1px solid rgba(255,255,255,0.06)",
-                  background: "rgba(255,255,255,0.02)",
+                  width: 28,
+                  height: 28,
+                  borderRadius: 7,
+                  background: "rgba(100,100,255,0.1)",
                   display: "flex",
-                  alignItems: "baseline",
-                  gap: 16,
-                  flexWrap: "wrap",
-                  animation: `fadeInUp 0.4s ease ${i * 0.05}s forwards`,
-                  opacity: 0,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 13,
+                  fontWeight: 700,
+                  color: "rgba(130,130,255,0.7)",
+                  fontFamily: "var(--font-jakarta)",
                 }}
               >
-                <span
-                  style={{
-                    fontFamily: "var(--font-jakarta)",
-                    fontSize: 15,
-                    fontWeight: 400,
-                    color: "rgba(255,255,255,0.8)",
-                    letterSpacing: "1px",
-                    minWidth: 100,
-                  }}
-                >
-                  {course.code}
-                </span>
-                <span
-                  style={{
-                    fontFamily: "var(--font-jakarta)",
-                    fontSize: 16,
-                    fontWeight: 300,
-                    color: "rgba(255,255,255,0.75)",
-                    flex: 1,
-                    minWidth: 180,
-                  }}
-                >
-                  {course.title}
-                </span>
-                <span
-                  style={{
-                    fontFamily: "var(--font-jakarta)",
-                    fontSize: 13,
-                    color: "rgba(255,255,255,0.75)",
-                    letterSpacing: "1px",
-                  }}
-                >
-                  {course.days?.join(" ") ?? ""}
-                </span>
-                <span
-                  style={{
-                    fontFamily: "var(--font-jakarta)",
-                    fontSize: 13,
-                    color: "rgba(255,255,255,0.75)",
-                    letterSpacing: "1px",
-                  }}
-                >
-                  {[course.start_time, course.end_time]
-                    .filter(Boolean)
-                    .join(" – ")}
-                </span>
-                <span
-                  style={{
-                    fontFamily: "var(--font-jakarta)",
-                    fontSize: 13,
-                    color: "rgba(255,255,255,0.45)",
-                    letterSpacing: "1px",
-                  }}
-                >
-                  {course.location}
-                </span>
+                G
               </div>
-            ))}
-          </div>
+            }
+            name="Grubhub"
+            subtitle="food ordering"
+            description="Order food delivery from nearby restaurants and schedule future orders."
+            connected={false}
+            comingSoon
+          />
 
-          {/* Continue button */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              marginTop: 40,
-              animation: `fadeInUp 0.4s ease ${schedule.courses.length * 0.05 + 0.2}s forwards`,
-              opacity: 0,
-            }}
-          >
-            <button
-              onClick={() => alert("coming soon")}
-              style={{
-                fontFamily: "var(--font-jakarta)",
-                fontWeight: 400,
-                fontSize: 12,
-                letterSpacing: "3px",
-                color: "rgba(255,255,255,0.5)",
-                padding: "14px 48px",
-                background: "rgba(255,255,255,0.05)",
-                backdropFilter: "blur(16px)",
-                WebkitBackdropFilter: "blur(16px)",
-                border: "1px solid rgba(255,255,255,0.1)",
-                borderRadius: 12,
-                cursor: "pointer",
-                transition: "all 0.3s ease",
-              }}
-              onMouseEnter={(e) => {
-                const t = e.currentTarget;
-                t.style.background = "rgba(255,255,255,0.1)";
-                t.style.borderColor = "rgba(255,255,255,0.6)";
-                t.style.color = "white";
-              }}
-              onMouseLeave={(e) => {
-                const t = e.currentTarget;
-                t.style.background = "rgba(255,255,255,0.05)";
-                t.style.borderColor = "rgba(255,255,255,0.1)";
-                t.style.color = "rgba(255,255,255,0.5)";
-              }}
-            >
-              continue
-            </button>
-          </div>
+          <IntegrationCard
+            icon={
+              <div
+                style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: 7,
+                  background: "rgba(255,160,60,0.1)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 13,
+                  fontWeight: 700,
+                  color: "rgba(255,160,60,0.7)",
+                  fontFamily: "var(--font-jakarta)",
+                }}
+              >
+                B
+              </div>
+            }
+            name="BuckeyeLink"
+            subtitle="student services"
+            description="Access your class schedule, financial aid, grades, and enrollment info."
+            connected={false}
+            comingSoon
+          />
         </div>
+      )}
+
+      {/* Toast */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
       )}
 
       {/* Keyframes */}
       <style jsx global>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        @keyframes pulse {
-          0%,
-          100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0.3;
-          }
-        }
         @keyframes spin {
-          to {
-            transform: rotate(360deg);
-          }
+          to { transform: rotate(360deg); }
         }
-        @keyframes ripple {
-          0% {
-            transform: scale(0.5);
-            opacity: 1;
-          }
-          100% {
-            transform: scale(2);
-            opacity: 0;
-          }
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px) translateX(-50%); }
+          to   { opacity: 1; transform: translateY(0)  translateX(-50%); }
         }
       `}</style>
     </div>
   );
-}
-
-// ── Status indicator ───────────────────────────────────
-
-function StatusIndicator({ status }: { status: SessionStatus }) {
-  if (status === "idle") {
-    return (
-      <span
-        style={{
-          width: 12,
-          height: 12,
-          border: "1.5px solid rgba(255,255,255,0.1)",
-          borderTopColor: "rgba(255,255,255,0.6)",
-          borderRadius: "50%",
-          display: "inline-block",
-          animation: "spin 0.9s linear infinite",
-        }}
-      />
-    );
-  }
-
-  if (status === "awaiting_auth") {
-    return (
-      <span
-        style={{
-          width: 8,
-          height: 8,
-          borderRadius: "50%",
-          background: "#eab308",
-          display: "inline-block",
-          animation: "pulse 1.5s ease infinite",
-        }}
-      />
-    );
-  }
-
-  if (status === "authenticated") {
-    return (
-      <span
-        style={{
-          width: 8,
-          height: 8,
-          borderRadius: "50%",
-          background: "#22c55e",
-          display: "inline-block",
-        }}
-      />
-    );
-  }
-
-  if (status === "extracting") {
-    return (
-      <span
-        style={{
-          width: 12,
-          height: 12,
-          border: "1.5px solid rgba(255,255,255,0.15)",
-          borderTopColor: "rgba(255,255,255,0.6)",
-          borderRadius: "50%",
-          display: "inline-block",
-          animation: "spin 0.8s linear infinite",
-        }}
-      />
-    );
-  }
-
-  if (status === "complete") {
-    return (
-      <span style={{ color: "#22c55e", fontSize: 14, lineHeight: 1 }}>
-        &#10003;
-      </span>
-    );
-  }
-
-  if (status === "error") {
-    return (
-      <span
-        style={{
-          width: 8,
-          height: 8,
-          borderRadius: "50%",
-          background: "#ef4444",
-          display: "inline-block",
-        }}
-      />
-    );
-  }
-
-  return null;
 }
