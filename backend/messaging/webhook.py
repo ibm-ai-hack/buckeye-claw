@@ -149,6 +149,29 @@ async def _process_event_async(event):
         logger.info("Typing %s by %s", state, event.from_number)
 
 
+async def _is_registered_number(phone: str) -> bool:
+    """Check Supabase profiles table to see if this phone number is registered."""
+    supabase_url = os.environ.get("NEXT_PUBLIC_SUPABASE_URL", "")
+    supabase_key = os.environ.get("NEXT_PUBLIC_SUPABASE_ANON_KEY", "")
+    if not supabase_url or not supabase_key:
+        logger.warning("Supabase env vars not set — allowing all numbers through")
+        return True
+
+    url = f"{supabase_url}/rest/v1/profiles?phone=eq.{phone}&select=id&limit=1"
+    headers = {
+        "apikey": supabase_key,
+        "Authorization": f"Bearer {supabase_key}",
+    }
+    try:
+        import httpx
+        async with httpx.AsyncClient(timeout=5) as client:
+            resp = await client.get(url, headers=headers)
+            return resp.status_code == 200 and len(resp.json()) > 0
+    except Exception:
+        logger.exception("Supabase lookup failed for %s — allowing through", phone)
+        return True
+
+
 async def _handle_inbound_message(msg: InboundMessage):
     """Full alive-features message handling pipeline."""
     from_number = msg.from_number
@@ -158,6 +181,16 @@ async def _handle_inbound_message(msg: InboundMessage):
 
     # ALIVE: Send read receipt
     await sender.mark_read(from_number)
+
+    # Gate: only registered numbers get agent access
+    if not await _is_registered_number(from_number):
+        logger.info("Unregistered number %s — sending signup prompt", from_number)
+        await sender.send_message(
+            from_number,
+            "Hey! looks like you've discovered BuckeyeClaw. "
+            "Head to buckeyeclaw.vercel.app to register.",
+        )
+        return
 
     # ALIVE: Acknowledge with a tapback
     await sender.react_to_message(msg.message_id, "like")
