@@ -159,7 +159,7 @@ export default function AcademicsPage() {
               marginBottom: 16,
             }}
           >
-            Could not connect to Canvas. Make sure your CANVAS_API_TOKEN is set in the backend.
+            Canvas error: {error}
           </div>
         )}
 
