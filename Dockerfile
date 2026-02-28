@@ -2,21 +2,20 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install uv
-RUN pip install uv
+# Install uv (pinned for reproducibility)
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 # Copy dependency files first for layer caching
-COPY pyproject.toml .
-COPY uv.lock .
+COPY pyproject.toml uv.lock ./
 
-# Install only core dependencies (no grubhub/buckeyelink extras — those need emulators)
-RUN uv sync --no-dev --no-install-project
+# Install dependencies (cached unless pyproject.toml/uv.lock change)
+RUN uv sync --no-dev --no-install-project --frozen
 
 # Copy source
 COPY . .
 
-# Install the project itself
-RUN uv sync --no-dev
+# Install the project itself (fast — deps already cached above)
+RUN uv sync --no-dev --frozen
 
 EXPOSE 5000
 

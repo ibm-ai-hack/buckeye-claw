@@ -45,4 +45,13 @@ jobs:
       - name: Deploy to Code Engine
         run: |
           ibmcloud ce project select --name buckeyeclaw
-          ibmcloud ce app update --name buckeyeclaw --image icr.io/buckeyeclaw/buckeyeclaw:latest
+          ibmcloud ce app update --name buckeyeclaw \
+            --image icr.io/buckeyeclaw/buckeyeclaw:latest \
+            --wait --wait-timeout 180
+
+      - name: Show logs on failure
+        if: failure()
+        run: |
+          ibmcloud ce project select --name buckeyeclaw
+          ibmcloud ce app logs --name buckeyeclaw --tail 100 || true
+          ibmcloud ce app get --name buckeyeclaw || true
