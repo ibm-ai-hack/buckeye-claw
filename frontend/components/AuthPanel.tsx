@@ -1,13 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  motion,
-  AnimatePresence,
-  useMotionValue,
-  useMotionTemplate,
-} from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 
 // ── Types ───────────────────────────────────────────────────────────────
@@ -19,12 +14,6 @@ const OSU_DOMAIN = "@osu.edu";
 // ── Animation variants ─────────────────────────────────────────────────
 
 const EASE = [0.16, 1, 0.3, 1] as const;
-
-const stagger = { animate: { transition: { staggerChildren: 0.06 } } };
-const fieldIn = {
-  initial: { opacity: 0, y: 8 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.3, ease: EASE } },
-};
 
 // ── Primitives ─────────────────────────────────────────────────────────
 
@@ -250,38 +239,25 @@ function StepAuth({
   };
 
   return (
-    <motion.div
-      variants={stagger}
-      initial="initial"
-      animate="animate"
-      style={{ display: "flex", flexDirection: "column", gap: 10 }}
-    >
-      <motion.div variants={fieldIn}>
-        <OsuEmailInput value={username} onChange={setUsername} autoFocus />
-      </motion.div>
+    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <OsuEmailInput value={username} onChange={setUsername} autoFocus />
 
-      <motion.div variants={fieldIn}>
-        <PasswordInput
-          value={password}
-          onChange={setPassword}
-          placeholder={isSignUp ? "create password" : "password"}
-        />
-      </motion.div>
+      <PasswordInput
+        value={password}
+        onChange={setPassword}
+        placeholder={isSignUp ? "create password" : "password"}
+      />
 
       {isSignUp && (
-        <motion.div variants={fieldIn}>
-          <PasswordInput
-            value={confirm}
-            onChange={setConfirm}
-            placeholder="confirm password"
-          />
-        </motion.div>
+        <PasswordInput
+          value={confirm}
+          onChange={setConfirm}
+          placeholder="confirm password"
+        />
       )}
 
       {isSignUp && confirm.length > 0 && !passwordsMatch && (
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+        <p
           style={{
             fontFamily: "var(--font-space-mono)",
             fontSize: 11,
@@ -291,12 +267,11 @@ function StepAuth({
           }}
         >
           passwords don&apos;t match
-        </motion.p>
+        </p>
       )}
 
       {isSignUp && (
-        <motion.p
-          variants={fieldIn}
+        <p
           style={{
             fontFamily: "var(--font-space-mono)",
             fontSize: 10,
@@ -307,17 +282,17 @@ function StepAuth({
           }}
         >
           must be at least 8 characters
-        </motion.p>
+        </p>
       )}
 
       <AnimatePresence>{error && <ErrorMsg msg={error} />}</AnimatePresence>
 
-      <motion.div variants={fieldIn} style={{ marginTop: 4 }}>
+      <div style={{ marginTop: 4 }}>
         <PrimaryButton onClick={submit} loading={loading} disabled={!canSubmit}>
           {isSignUp ? "create account" : "sign in"}
         </PrimaryButton>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }
 
@@ -326,34 +301,10 @@ function StepAuth({
 export default function AuthPanel() {
   const router = useRouter();
   const supabase = createClient();
-  const glassRef = useRef<HTMLDivElement>(null);
 
-  const [visible, setVisible] = useState(false);
   const [mode, setMode] = useState<Mode>("sign_in");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const specularBg =
-    useMotionTemplate`radial-gradient(circle at ${mouseX}px ${mouseY}px, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 30%, rgba(255,255,255,0) 60%)`;
-
-  useEffect(() => {
-    const t = requestAnimationFrame(() => setVisible(true));
-    return () => cancelAnimationFrame(t);
-  }, []);
-
-  useEffect(() => {
-    const el = glassRef.current;
-    if (!el) return;
-    const handle = (e: MouseEvent) => {
-      const rect = el.getBoundingClientRect();
-      mouseX.set(e.clientX - rect.left);
-      mouseY.set(e.clientY - rect.top);
-    };
-    el.addEventListener("mousemove", handle);
-    return () => el.removeEventListener("mousemove", handle);
-  }, [mouseX, mouseY]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const switchMode = (m: Mode) => {
     setMode(m);
@@ -372,7 +323,6 @@ export default function AuthPanel() {
       setError(error.message.toLowerCase());
       return;
     }
-    // App layout will redirect to /onboarding if no phone registered yet
     router.push("/app/feed");
     router.refresh();
   };
@@ -387,8 +337,7 @@ export default function AuthPanel() {
       setError(error.message.toLowerCase());
       return;
     }
-    // Session is live immediately — app layout redirects to /onboarding if no phone
-    router.push("/app/feed");
+    router.push("/onboarding");
     router.refresh();
   };
 
@@ -405,19 +354,11 @@ export default function AuthPanel() {
         }
       `}</style>
 
-      <svg width="0" height="0" style={{ position: "absolute" }}>
-        <filter id="glass-distortion">
-          <feTurbulence type="turbulence" baseFrequency="0.008" numOctaves={2} result="noise" />
-          <feDisplacementMap in="SourceGraphic" in2="noise" scale={77} />
-        </filter>
-      </svg>
-
       <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
         <motion.div
-          ref={glassRef}
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: visible ? 1 : 0, y: visible ? 0 : 16 }}
-          transition={{ duration: 1.2, ease: EASE }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, ease: EASE }}
           style={{
             position: "relative",
             width: 440,
@@ -436,7 +377,6 @@ export default function AuthPanel() {
               zIndex: 1,
               backdropFilter: "blur(24px)",
               WebkitBackdropFilter: "blur(24px)",
-              filter: "url(#glass-distortion) saturate(110%) brightness(1.1)",
             }}
           />
           <div
@@ -445,30 +385,14 @@ export default function AuthPanel() {
               inset: 0,
               borderRadius: "inherit",
               zIndex: 2,
-              background: "rgba(0,0,0,0.45)",
-              border: "1px solid rgba(255,255,255,0.06)",
-            }}
-          />
-          <motion.div
-            style={{
-              position: "absolute",
-              inset: 0,
-              borderRadius: "inherit",
-              zIndex: 3,
-              background: specularBg,
-              pointerEvents: "none",
+              background: "rgba(10,10,10,0.6)",
+              border: "1px solid rgba(255,255,255,0.08)",
             }}
           />
 
           {/* Content */}
           <div style={{ position: "relative", zIndex: 4, padding: "48px 40px 44px" }}>
-            {/* Logo */}
-            <motion.div
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.6, ease: EASE }}
-              style={{ textAlign: "center", marginBottom: 32 }}
-            >
+            <div style={{ textAlign: "center", marginBottom: 32 }}>
               <h1
                 style={{
                   fontFamily: "var(--font-outfit)",
@@ -495,13 +419,10 @@ export default function AuthPanel() {
               >
                 your entire campus, one text away.
               </p>
-            </motion.div>
+            </div>
 
             {/* Tab switcher */}
-            <motion.div
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.25, ease: EASE }}
+            <div
               style={{
                 display: "flex",
                 background: "rgba(255,255,255,0.03)",
@@ -512,7 +433,7 @@ export default function AuthPanel() {
               }}
             >
               {(["sign_in", "sign_up"] as Mode[]).map((m) => (
-                <motion.button
+                <button
                   key={m}
                   onClick={() => switchMode(m)}
                   style={{
@@ -534,9 +455,9 @@ export default function AuthPanel() {
                   }}
                 >
                   {m === "sign_in" ? "sign in" : "sign up"}
-                </motion.button>
+                </button>
               ))}
-            </motion.div>
+            </div>
 
             {/* Auth form */}
             <StepAuth
@@ -549,10 +470,7 @@ export default function AuthPanel() {
             />
 
             {/* Footer */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4, duration: 0.4 }}
+            <p
               style={{
                 fontFamily: "var(--font-space-mono)",
                 fontSize: 10,
@@ -566,7 +484,7 @@ export default function AuthPanel() {
               {mode === "sign_up"
                 ? "by signing up you confirm you're an osu student."
                 : "osu student accounts only."}
-            </motion.p>
+            </p>
           </div>
         </motion.div>
       </div>

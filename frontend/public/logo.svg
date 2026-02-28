@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <!-- BuckeyeClaw logo: three claw slash marks in OSU scarlet -->
+  <!-- Left claw — fans left as it descends -->
+  <path
+    d="M72 28 C68 60 60 100 54 172"
+    stroke="rgb(198,40,40)"
+    stroke-width="14"
+    stroke-linecap="round"
+    fill="none"
+  />
+  <!-- Center claw — near-straight, slight rightward sweep -->
+  <path
+    d="M100 24 C98 58 98 100 102 172"
+    stroke="rgb(198,40,40)"
+    stroke-width="14"
+    stroke-linecap="round"
+    fill="none"
+  />
+  <!-- Right claw — fans right as it descends -->
+  <path
+    d="M128 28 C132 60 140 100 146 172"
+    stroke="rgb(198,40,40)"
+    stroke-width="14"
+    stroke-linecap="round"
+    fill="none"
+  />
+</svg>
