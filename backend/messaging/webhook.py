@@ -207,6 +207,9 @@ async def _handle_inbound_message(msg: InboundMessage):
     ])
     await sender.send_message(from_number, ack)
 
+    # Restart typing — sending the ack message clears the indicator
+    await sender.start_typing(from_number)
+
     try:
         if _agent_handler:
             reply = await _agent_handler(msg.text, from_number)
