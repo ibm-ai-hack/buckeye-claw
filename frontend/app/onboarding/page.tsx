@@ -255,7 +255,7 @@ export default function OnboardingPage() {
                     lineHeight: 1,
                   }}
                 >
-                  scarlet
+                  BuckeyeClaw
                 </h1>
                 <p
                   style={{
@@ -300,7 +300,7 @@ export default function OnboardingPage() {
                         register your phone number
                         <br />
                         <span style={{ color: "rgba(255,255,255,0.18)", fontSize: 10 }}>
-                          this is the number you&apos;ll text to use scarlet
+                          this is the number you&apos;ll text to use BuckeyeClaw 
                         </span>
                       </motion.p>
 

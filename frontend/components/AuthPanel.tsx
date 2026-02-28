@@ -418,7 +418,7 @@ export default function AuthPanel() {
                   lineHeight: 1,
                 }}
               >
-                buckeyeclaw
+                BuckeyeClaw
               </h1>
               <p
                 style={{
