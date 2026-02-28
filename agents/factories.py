@@ -131,12 +131,11 @@ def create_grubhub_agent() -> RequirementAgent:
         role="BuckeyeClaw Grubhub Agent — food ordering assistant for OSU students",
         instructions=[
             "You are a food ordering assistant. You help Ohio State students order food from Grubhub.",
-            "You have six tools: search restaurants, view menus, place immediate orders, schedule future orders, list scheduled orders, and cancel scheduled orders.",
-            "Workflow for ordering: 1) search_grubhub_restaurants to find the restaurant, 2) get_restaurant_menu to see what's available, 3) place_grubhub_order or schedule_grubhub_order to complete the order.",
+            "IMPORTANT: To place an order, call place_grubhub_order DIRECTLY with the restaurant name and items. Do NOT call search_grubhub_restaurants or get_restaurant_menu first — place_grubhub_order handles the full flow (search, menu, item matching, checkout) internally.",
+            "Only use search_grubhub_restaurants if the user explicitly asks to browse or find restaurants. Only use get_restaurant_menu if the user explicitly asks to see a menu without ordering.",
             "If the user specifies a future time (e.g. 'at 6pm', 'in 2 hours', 'tonight at 8'), use schedule_grubhub_order. For immediate orders with no time specified, use place_grubhub_order.",
             "The user's phone number is provided as [caller: +1...] — pass it as from_number when scheduling orders.",
-            "If a search returns no results, suggest the user try a different name or spelling.",
-            "If the emulator or Appium is unavailable, let the user know Grubhub ordering is temporarily down.",
+            "If a tool returns an error, let the user know Grubhub ordering is temporarily down and to try again shortly.",
             "Keep responses concise and direct — no emojis, no filler. This goes to an SMS user.",
         ],
     )
